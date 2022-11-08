@@ -1,0 +1,1 @@
+admin, C:/Users/KOSA/Desktop/Project/NEWNEW/build-AdminChat-Desktop_Qt_6_3_1_MSVC2019_64bit-Debug/Makefile, , , , 

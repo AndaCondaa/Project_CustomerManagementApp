@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>admintr_ko.qm</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,57 @@
+/*
+ *  Program Name    :  Admin
+ *  File Name       :  orderinput.h
+ *  Description     :  신규 주문을 입력하는 위젯
+ *                      -> OrderManager위젯으로 정보를 전달하여, 새로운 주문객체 생성
+*/
+
+#ifndef ORDERINPUT_H
+#define ORDERINPUT_H
+
+#include <QWidget>
+
+class QLabel;
+class QLineEdit;
+class QPushButton;
+class QComboBox;
+class QDateEdit;
+
+class OrderInput : public QWidget
+{
+    Q_OBJECT
+public:
+    explicit OrderInput(QWidget *parent = nullptr);
+
+signals:
+    // Send inputted result to OrderManager for checking
+    void input(QString, QString, QString, QString);
+
+private slots:
+    void recvCustomerKey(QString, bool);    // Receive the CustomerKey from OrderManager and add ComboBox
+    void recvProductKey(QString, bool);     // Receive the ProductKey from OrderManager and add ComboBox
+
+    void clear();               // Slot connected to Clicked() of ClearButton
+    void inputEmit();           // Slot connected to Clicked() of InputButton
+
+
+private:
+    // Variables for setting GUI
+    QLabel *orderNum;
+    QLabel *orderCK;
+    QLabel *orderPK;
+    QLabel *date;
+    QLabel *quantity;
+    QLabel *total;
+
+    QLineEdit *orderNumLine;
+    QComboBox *orderCkBox;
+    QComboBox *orderPkBox;
+    QDateEdit *dateEdit;
+    QLineEdit *quantityLine;
+    QLineEdit *totalLine;
+
+    QPushButton *clearButton;
+    QPushButton *inputButton;
+};
+
+#endif // ORDERINPUT_H

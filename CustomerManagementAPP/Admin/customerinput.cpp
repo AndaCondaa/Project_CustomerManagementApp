@@ -11,6 +11,9 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QSqlQuery>
+#include <QSqlQueryModel>
+#include <QSqlError>
 
 CustomerInput::CustomerInput(QWidget *parent)
     : QWidget{parent}
@@ -18,23 +21,23 @@ CustomerInput::CustomerInput(QWidget *parent)
     setFixedSize(290, 340);
 
     //Setting GUI
-    ck = new QLabel("CustomerKey", this);
-    clinic = new QLabel("Clinic", this);
-    license = new QLabel("License", this);
-    dentist = new QLabel("Dentist", this);
-    number = new QLabel("Number", this);
+    ckLabel = new QLabel(tr("CustomerKey"), this);
+    clinicLabel = new QLabel(tr("Clinic"), this);
+    licenseLabel = new QLabel(tr("License"), this);
+    dentistLabel = new QLabel(tr("Dentist"), this);
+    numberLabel = new QLabel(tr("Number"), this);
 
-    ck->setGeometry(10,20,110,30);
-    clinic->setGeometry(10,50,110,30);
-    license->setGeometry(10,80,110,30);
-    dentist->setGeometry(10,110,110,30);
-    number->setGeometry(10,140,110,30);
+    ckLabel->setGeometry(10,20,110,30);
+    clinicLabel->setGeometry(10,50,110,30);
+    licenseLabel->setGeometry(10,80,110,30);
+    dentistLabel->setGeometry(10,110,110,30);
+    numberLabel->setGeometry(10,140,110,30);
 
-    ck->setAlignment(Qt::AlignRight);
-    clinic->setAlignment(Qt::AlignRight);
-    license->setAlignment(Qt::AlignRight);
-    dentist->setAlignment(Qt::AlignRight);
-    number->setAlignment(Qt::AlignRight);
+    ckLabel->setAlignment(Qt::AlignRight);
+    clinicLabel->setAlignment(Qt::AlignRight);
+    licenseLabel->setAlignment(Qt::AlignRight);
+    dentistLabel->setAlignment(Qt::AlignRight);
+    numberLabel->setAlignment(Qt::AlignRight);
 
     ckLine = new QLineEdit("Randomly created", this);
     clinicLine = new QLineEdit(this);
@@ -63,7 +66,30 @@ CustomerInput::CustomerInput(QWidget *parent)
 
     // Connecting Signal and Slot
     connect(clearButton, SIGNAL(clicked()), SLOT(clear()));
-    connect(inputButton, SIGNAL(clicked()), SLOT(inputEmit()));
+    connect(inputButton, SIGNAL(clicked()), SLOT(input()));
+}
+
+void CustomerInput::recvCurrentCK(int ck)
+{
+    index = ck / 10000;
+}
+
+// Make CustomerKey by using index, license, number
+int CustomerInput::makeCustomerKey(QString license, QString number) const
+{
+    QString tmp_license = license.split("-")[0] +
+            license.split("-")[1] + license.split("-")[2];
+    QString tmp_number = number.split("-")[0] +
+            number.split("-")[1] + number.split("-")[2];
+
+    // string to integer
+    int temp1 = (tmp_license.toULongLong() * 111) % 10000;
+    int temp2 = (tmp_number.toULongLong() * 111) % 10000;
+
+    // making CustomerKey
+    int CK = (index * 10000) + (temp1 + temp2) % 10000;     // 만의 자리 값이 고객등록 순서를 의미
+
+    return CK;
 }
 
 // Slot connected to Clicked() of ClearButton
@@ -75,15 +101,20 @@ void CustomerInput::clear()
     numberLine->clear();
 }
 
-// Slot connected to Clicked() of InputButton
-void CustomerInput::inputEmit()
+void CustomerInput::input()
 {
-    // Send inputted result to CustomerManager for checking
-    emit input(clinicLine->text(), licenseLine->text(),
-               dentistLine->text(), numberLine->text());
-    clinicLine->clear();
-    licenseLine->clear();
-    dentistLine->clear();
-    numberLine->clear();
-}
 
+    int ck = makeCustomerKey(licenseLine->text(), numberLine->text());
+    QString clinic = clinicLine->text();
+    QString license = licenseLine->text();
+    QString dentist = dentistLine->text();
+    QString number = numberLine->text();
+
+    QSqlQueryModel inputQuery;
+    inputQuery.setQuery
+            (QString("CALL INPUT_CUSTOMER (%1, %2, %3, %4, %5, %6)")
+             .arg(ck).arg(clinic).arg(license).arg(dentist).arg(number).arg(0));
+    if (inputQuery.lastError().isValid())
+        qDebug() << inputQuery.lastError();
+
+}

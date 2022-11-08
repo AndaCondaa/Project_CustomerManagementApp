@@ -73,31 +73,6 @@ OrderInput::OrderInput(QWidget *parent)
 
     // Connecting signals and slots
     connect(clearButton, SIGNAL(clicked()), SLOT(clear()));
-    connect(inputButton, SIGNAL(clicked()), SLOT(inputEmit()));
-}
-
-// Receive the CustomerKey from OrderManager and add ComboBox
-void OrderInput::recvCustomerKey(QString ck, bool check)
-{
-    int index = orderCkBox->count();
-    if (check) {
-        orderCkBox->insertItem(index, ck);
-    } else if (!check){
-        index = orderCkBox->findText(ck);
-        orderCkBox->removeItem(index);
-    }
-}
-
-// Receive the ProductKey from OrderManager and add ComboBox
-void OrderInput::recvProductKey(QString pk, bool check)
-{
-    int index = orderPkBox->count();
-    if (check) {
-        orderPkBox->insertItem(index, pk);
-    } else if (!check){
-        index = orderPkBox->findText(pk);
-        orderPkBox->removeItem(index);
-    }
 }
 
 // Slot connected to Clicked() of ClearButton
@@ -107,13 +82,4 @@ void OrderInput::clear()
     orderPkBox->setCurrentIndex(0);
     dateEdit->setDate(QDate::currentDate());
     quantityLine->clear();
-}
-
-// Slot connected to Clicked() of InputButton
-void OrderInput::inputEmit()
-{
-    // Send inputted result to OrderManager for checking
-    emit input(orderCkBox->currentText(), orderPkBox->currentText(),
-               dateEdit->date().toString(), quantityLine->text());
-    clear();
 }

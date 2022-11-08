@@ -22,13 +22,8 @@ class ProductInput : public QWidget
 public:
     explicit ProductInput(QWidget *parent = nullptr);
 
-signals:
-    // Send inputted result to ProductManager for checking
-    void input(QString, QString, QString);
-
 private slots:
     void clear();               // Slot connected to Clicked() of ClearButton
-    void inputEmit();           // Slot connected to Clicked() of InputButton
 
 private:
     // Variables for setting GUI

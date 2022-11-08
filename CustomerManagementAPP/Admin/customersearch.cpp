@@ -7,7 +7,6 @@
 
 #include "customersearch.h"
 #include "ui_customersearch.h"
-#include "customer.h"
 
 #include <QMessageBox>
 
@@ -29,31 +28,6 @@ void CustomerSearch::on_clearButton_clicked()
 {
     ui->searchEdit->clear();
     ui->treeWidget->clear();
-}
-
-// Slot connected to Clicked() of SearchButton
-void CustomerSearch::on_searchButton_clicked()
-{
-    ui->treeWidget->clear();
-    if (ui->searchEdit->text() == "") {
-        QMessageBox nothing;
-        nothing.setIcon(QMessageBox::Warning);
-        nothing.setText("Please input word for search");
-        nothing.setWindowTitle("NOTHING!!");
-        nothing.exec();
-    } else {
-        emit search(ui->comboBox->currentIndex(),
-                    ui->searchEdit->text());
-    }
-}
-
-// Receive the result of search from CustomerManager
-void CustomerSearch::recvSearchResult(QString ck, QString clinic, QString license,
-                                      QString dentist, QString number)
-{
-    Customer* customer = new Customer(ck.toInt(), clinic, license,
-                                      dentist, number);
-    ui->treeWidget->addTopLevelItem(customer);
 }
 
 

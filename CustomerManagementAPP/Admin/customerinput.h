@@ -20,21 +20,21 @@ class CustomerInput : public QWidget
 public:
     explicit CustomerInput(QWidget *parent = nullptr);
 
-signals:
-    // Send inputted result to CustomerManager for checking
-    void input(QString, QString, QString, QString);
-
 private slots:
+    void recvCurrentCK(int);
+    void input();
     void clear();          // Slot connected to Clicked() of ClearButton
-    void inputEmit();      // Slot connected to Clicked() of InputButton
+
 
 private:
+    int makeCustomerKey(QString license, QString number) const;
+
     // Variables for setting GUI
-    QLabel *ck;
-    QLabel *clinic;
-    QLabel *license;
-    QLabel *dentist;
-    QLabel *number;
+    QLabel *ckLabel;
+    QLabel *clinicLabel;
+    QLabel *licenseLabel;
+    QLabel *dentistLabel;
+    QLabel *numberLabel;
 
     QLineEdit *ckLine;
     QLineEdit *clinicLine;
@@ -44,6 +44,8 @@ private:
 
     QPushButton *clearButton;
     QPushButton *inputButton;
+
+    int index = 1;
 };
 
 #endif // CUSTOMERINPUT_H

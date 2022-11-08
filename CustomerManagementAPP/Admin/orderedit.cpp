@@ -71,33 +71,7 @@ OrderEdit::OrderEdit(QWidget *parent)
     editButton->setGeometry(155,320,115,115);
 
     // Connecting Signal and Slot
-    connect(searchButton, SIGNAL(clicked()), SLOT(isOrderNum()));
     connect(clearButton, SIGNAL(clicked()), SLOT(clear()));
-    connect(editButton, SIGNAL(clicked()), SLOT(sendEdit()));
-}
-
-// Receive CustomerKey for Edit from OrderManager
-void OrderEdit::recvCustomerKey(QString ck, bool check)
-{
-    int index = orderCkLine->count();
-    if (check) { // What is True means that New Customer was appended
-        orderCkLine->insertItem(index, ck);
-    } else if (!check){ // WHat is False means that Customer was deleted
-        index = orderCkLine->findText(ck);
-        orderCkLine->removeItem(index);
-    }
-}
-
-// Receive ProductKey for Edit from OrderManager
-void OrderEdit::recvProductKey(QString pk, bool check)
-{
-    int index = orderPkLine->count();
-    if (check) { // What is True means that New Product was appended
-        orderPkLine->insertItem(index, pk);
-    } else if (!check){ // WHat is False means that Customer was deleted
-        index = orderPkLine->findText(pk);
-        orderPkLine->removeItem(index);
-    }
 }
 
 // Slot connected to Clicked() of ClearButton
@@ -110,45 +84,3 @@ void OrderEdit::clear()
     orderQuantity->clear();
 }
 
-// Slot connected to Clicked() of SearchButton and emit signal sendOrderNum()
-void OrderEdit::isOrderNum()
-{
-    // Send inputted OrderNumber to OrderManager for checking
-   emit sendOrderNum(searchLine->text());
-}
-
-// Receive the Search Result from OrderManager
-void OrderEdit::recvResult
-(int recvNumber, int recvCk, int recvPk, QString recvDate, int recvQuantity, int total)
-{
-    Q_UNUSED(total);
-
-    orderNumLine->setText(QString::number(recvNumber));
-    orderCkLine->setCurrentIndex(orderCkLine->findText(QString::number(recvCk), Qt::MatchExactly));
-    orderPkLine->setCurrentIndex(orderPkLine->findText(QString::number(recvPk), Qt::MatchExactly));
-    orderDate->setDate(QDate::fromString(recvDate));
-    orderQuantity->setText(QString::number(recvQuantity));
-}
-
-// Slot connected to Clicked() and emit signal resultEdit()
-void OrderEdit::sendEdit()
-{
-    // Checking whether user inputted all of arguments
-    if (orderNumLine->text().length() && orderQuantity->text().length()) {
-        // Send inputted result for edit to OrderManager
-        emit resultEdit(orderNumLine->text(), orderCkLine->currentText(),
-                orderPkLine->currentText(), orderDate->date().toString(),
-                    orderQuantity->text());
-        QMessageBox edit;
-        edit.button(QMessageBox::Ok);
-        edit.setText(tr("Edit Succeed"));
-        edit.setWindowTitle(tr("Edit Succeed"));
-        edit.exec();
-    } else {
-        QMessageBox fail;
-        fail.button(QMessageBox::Ok);
-        fail.setText(tr("Please Fill all arguments"));
-        fail.setWindowTitle(tr("Fill all things!"));
-        fail.exec();
-    }
-}

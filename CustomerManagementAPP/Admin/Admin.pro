@@ -1,4 +1,4 @@
-QT       += core gui network
+QT       += core gui network sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -10,7 +10,6 @@ CONFIG += c++17
 
 SOURCES += \
     chatmanager.cpp \
-    customer.cpp \
     customeredit.cpp \
     customerinput.cpp \
     customermanager.cpp \
@@ -19,12 +18,10 @@ SOURCES += \
     logsavethread.cpp \
     main.cpp \
     mainwindow.cpp \
-    order.cpp \
     orderedit.cpp \
     orderinput.cpp \
     ordermanager.cpp \
     ordersearch.cpp \
-    product.cpp \
     productedit.cpp \
     productinput.cpp \
     productmanager.cpp \
@@ -32,7 +29,6 @@ SOURCES += \
 
 HEADERS += \
     chatmanager.h \
-    customer.h \
     customeredit.h \
     customerinput.h \
     customermanager.h \
@@ -40,12 +36,10 @@ HEADERS += \
     home.h \
     logsavethread.h \
     mainwindow.h \
-    order.h \
     orderedit.h \
     orderinput.h \
     ordermanager.h \
     ordersearch.h \
-    product.h \
     productedit.h \
     productinput.h \
     productmanager.h \

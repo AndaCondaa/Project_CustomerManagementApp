@@ -21,7 +21,7 @@
     <message>
         <location filename="chatmanager.ui" line="154"/>
         <source>CK</source>
-        <translation type="unfinished">고객키</translation>
+        <translation type="unfinished">고객 키</translation>
     </message>
     <message>
         <location filename="chatmanager.ui" line="162"/>
@@ -96,6 +96,11 @@
         <translation type="unfinished">서버 시작 불가 : %1</translation>
     </message>
     <message>
+        <location filename="chatmanager.cpp" line="72"/>
+        <source>Server Open</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="chatmanager.cpp" line="92"/>
         <source>Disconnected</source>
         <translation type="unfinished">미접속</translation>
@@ -143,22 +148,6 @@
         <source>EDIT</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <location filename="customeredit.cpp" line="122"/>
-        <location filename="customeredit.cpp" line="123"/>
-        <source>Edit Succeed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="customeredit.cpp" line="128"/>
-        <source>Please Fill all arguments</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="customeredit.cpp" line="129"/>
-        <source>Fill all things!</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>CustomerInput</name>
@@ -196,39 +185,8 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="customermanager.ui" line="214"/>
-        <source>CustomerKey</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="customermanager.ui" line="222"/>
         <source>Clinic</source>
-        <translation type="unfinished">병원이름</translation>
-    </message>
-    <message>
-        <location filename="customermanager.ui" line="230"/>
-        <source>License</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="customermanager.ui" line="238"/>
-        <source>Dentist</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="customermanager.ui" line="246"/>
-        <source>Number</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="customermanager.cpp" line="161"/>
-        <source>YES</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="customermanager.cpp" line="162"/>
-        <source>NO</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">병원이름</translation>
     </message>
 </context>
 <context>
@@ -295,47 +253,47 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="mainwindow.ui" line="26"/>
+        <location filename="mainwindow.ui" line="32"/>
         <source>Customer Management System</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="73"/>
+        <location filename="mainwindow.ui" line="83"/>
         <source>toolBar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="118"/>
+        <location filename="mainwindow.ui" line="132"/>
         <source>&amp;CUSTOMER</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="126"/>
+        <location filename="mainwindow.ui" line="144"/>
         <source>&amp;PRODUCT</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="134"/>
+        <location filename="mainwindow.ui" line="156"/>
         <source>&amp;ORDER</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="142"/>
+        <location filename="mainwindow.ui" line="171"/>
         <source>&amp;HOME</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="147"/>
+        <location filename="mainwindow.ui" line="180"/>
         <source>&amp;QUIT</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="158"/>
+        <location filename="mainwindow.ui" line="195"/>
         <source>&amp;CHAT</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="161"/>
+        <location filename="mainwindow.ui" line="198"/>
         <source>CHAT</source>
         <translation type="unfinished"></translation>
     </message>
@@ -380,22 +338,6 @@
     <message>
         <location filename="orderedit.cpp" line="68"/>
         <source>EDIT</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="orderedit.cpp" line="144"/>
-        <location filename="orderedit.cpp" line="145"/>
-        <source>Edit Succeed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="orderedit.cpp" line="150"/>
-        <source>Please Fill all arguments</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="orderedit.cpp" line="151"/>
-        <source>Fill all things!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -494,16 +436,6 @@
         <source>Total</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <location filename="ordermanager.cpp" line="161"/>
-        <source>YES</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="ordermanager.cpp" line="162"/>
-        <source>NO</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>OrderSearch</name>
@@ -558,11 +490,6 @@
         <source>&amp;CLEAR</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <location filename="ordersearch.cpp" line="41"/>
-        <source>Please input word for search</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>ProductEdit</name>
@@ -594,22 +521,6 @@
     <message>
         <location filename="productedit.cpp" line="55"/>
         <source>ETC</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="productedit.cpp" line="124"/>
-        <location filename="productedit.cpp" line="125"/>
-        <source>Edit Succeed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="productedit.cpp" line="134"/>
-        <source>Please Fill all arguments</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="productedit.cpp" line="135"/>
-        <source>Fill all things!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -713,16 +624,6 @@
         <source>Price</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <location filename="productmanager.cpp" line="162"/>
-        <source>YES</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="productmanager.cpp" line="163"/>
-        <source>NO</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>ProductSearch</name>
@@ -763,11 +664,6 @@
     <message>
         <location filename="productsearch.ui" line="164"/>
         <source>&amp;CLEAR</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="productsearch.cpp" line="41"/>
-        <source>Please input word for search</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

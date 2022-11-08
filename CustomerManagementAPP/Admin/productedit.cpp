@@ -71,10 +71,7 @@ ProductEdit::ProductEdit(QWidget *parent)
     editButton->setGeometry(155,290,115,115);
 
     // Connecting Signal and Slot
-    connect(searchButton, SIGNAL(clicked()), SLOT(isPK()));
     connect(clearButton, SIGNAL(clicked()), SLOT(clear()));
-    connect(editButton, SIGNAL(clicked()), SLOT(sendEdit()));
-
 }
 
 // Slot connected to Clicked() of ClearButton
@@ -83,56 +80,4 @@ void ProductEdit::clear()
     pkLine->clear();
     nameLine->clear();
     priceLine->clear();
-}
-
-// Slot connected to Clicked() of SearchButton and emit signal sendPk()
-void ProductEdit::isPK()
-{
-     // Send inputted ProductKey to ProductManager for checking
-    emit sendPK(searchLine->text());
-}
-
-// Receive the Search Result from ProductManager
-void ProductEdit::recvResult
-(QString pk, QString type, QString name, QString price)
-{
-    pkLine->setText(pk);
-    if (type == "IMPLANT")
-        typeLine->setCurrentIndex(0);
-    else if (type == "SCANNER")
-        typeLine->setCurrentIndex(1);
-    else if (type == "CHAIR")
-            typeLine->setCurrentIndex(2);
-    else
-        typeLine->setCurrentIndex(3);
-    nameLine->setText(name);
-    priceLine->setText(price);
-}
-
-// Slot connected to Clicked() and emit signal resultEdit()
-void ProductEdit::sendEdit()
-{
-    // Checking whether user inputted all of arguments
-    if (pkLine->text().length() && nameLine->text().length() &&
-            priceLine->text().length()) {
-        // Send inputted result for edit to ProductManager
-        emit resultEdit(pkLine->text(), typeLine->currentText(),
-                nameLine->text(), priceLine->text());
-
-        QMessageBox edit;
-        edit.button(QMessageBox::Ok);
-        edit.setText(tr("Edit Succeed"));
-        edit.setWindowTitle(tr("Edit Succeed"));
-        edit.exec();
-
-        pkLine->clear();
-        nameLine->clear();
-        priceLine->clear();
-    } else {
-        QMessageBox fail;
-        fail.button(QMessageBox::Ok);
-        fail.setText(tr("Please Fill all arguments"));
-        fail.setWindowTitle(tr("Fill all things!"));
-        fail.exec();
-    }
 }

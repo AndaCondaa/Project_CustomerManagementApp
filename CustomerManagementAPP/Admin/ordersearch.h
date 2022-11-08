@@ -21,14 +21,9 @@ public:
     explicit OrderSearch(QWidget *parent = nullptr);
     ~OrderSearch();
 
-signals:
-    void search(int, QString);              // Send Search type and keyword to OrderManager
-
 private slots:
     void on_clearButton_clicked();          // Slot connected to Clicked() of ClearButton
-    void on_searchButton_clicked();         // Slot connected to Clicked() of SearchButton
-    void recvSearchResult(int, int, int, QString, int, int);
-                                            // Receive the result of search from OrderManager
+
 private:
     Ui::OrderSearch *ui;
 };

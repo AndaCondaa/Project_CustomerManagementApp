@@ -18,7 +18,6 @@ class CustomerManager;
 class ProductManager;
 class OrderManager;
 class ChatManager;
-class Server;
 
 class MainWindow : public QMainWindow
 {

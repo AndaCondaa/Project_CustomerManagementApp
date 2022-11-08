@@ -9,6 +9,8 @@
 #define HOME_H
 
 #include <QWidget>
+#include <QSqlQueryModel>
+#include <QTableView>
 
 namespace Ui {
 class Home;

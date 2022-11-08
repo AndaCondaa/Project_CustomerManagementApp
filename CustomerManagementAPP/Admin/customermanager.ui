@@ -199,7 +199,7 @@
           </spacer>
          </item>
          <item>
-          <widget class="QTreeWidget" name="customerTreeWidget">
+          <widget class="QTableView" name="customerTableView">
            <property name="minimumSize">
             <size>
              <width>500</width>
@@ -209,46 +209,6 @@
            <property name="styleSheet">
             <string notr="true"/>
            </property>
-           <column>
-            <property name="text">
-             <string>CustomerKey</string>
-            </property>
-            <property name="textAlignment">
-             <set>AlignLeading|AlignVCenter</set>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Clinic</string>
-            </property>
-            <property name="textAlignment">
-             <set>AlignLeading|AlignVCenter</set>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>License</string>
-            </property>
-            <property name="textAlignment">
-             <set>AlignLeading|AlignVCenter</set>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Dentist</string>
-            </property>
-            <property name="textAlignment">
-             <set>AlignLeading|AlignVCenter</set>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Number</string>
-            </property>
-            <property name="textAlignment">
-             <set>AlignLeading|AlignVCenter</set>
-            </property>
-           </column>
           </widget>
          </item>
         </layout>
@@ -292,7 +252,7 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>customerTreeWidget</tabstop>
+  <tabstop>customerTableView</tabstop>
  </tabstops>
  <resources/>
  <connections/>

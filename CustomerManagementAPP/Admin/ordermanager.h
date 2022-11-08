@@ -13,11 +13,9 @@
 
 #include <QWidget>
 
-class Order;
 class OrderInput;
 class OrderSearch;
 class OrderEdit;
-class QTreeWidgetItem;
 
 namespace Ui {
 class OrderManager;
@@ -31,52 +29,19 @@ public:
     explicit OrderManager(QWidget *parent = nullptr);
     ~OrderManager();
 
-signals:
-    void sendCustomerKey(QString, bool);    // Send CustomerKey to OrderInput and OrderEdit
-    void sendProductKey(QString, bool);     // Send ProductKey to OrderInput and OrderEdit
-
-    // Send result of search to OrderSearch and OrderEdit
-    void searchResult(int, int, int, QString, int, int);
-
 private slots:
-    int makeIndex();                        // Make Index for Key of Map(OrderList)
-    int makeOrderNum(int, int, int);        // Make OrderNumber by using Index, CustomerKey, ProductKey
     int makeTotal(int ,int);                // Calculate Total price
-
 
     void on_inputButton_clicked();          // Show the OrderInput Widget
     void on_searchButton_clicked();         // Show the OrderSearch Widget
     void on_editButton_clicked();           // Show the OrderEdit Widget
-    void on_orderTreeWidget_itemDoubleClicked(QTreeWidgetItem *item, int column);
-                                            // Slot for Remove Item (Order)
 
-    // Receive Keys from CustomerManager and ProductManager for filling ComboBox
-    void recvCustomerKey(QString, QString, bool);
-    void recvProductKey(QString, QString, bool);
-    void recvChangePrice(QString, QString);
-
-    // Receive the data about new Order's information from OrderInput
-    void inputData(QString, QString, QString, QString);     // Add new Order
-
-    // Slots for Search
-    void checkSearch(int, QString);     // Receive OrderNumber from OrderSearch for search
-    void checkSearch(int);              // Check OrderNumber and emit signal searchResult()
-
-    // Slots for Edit
-    void recvOrderNumber(QString);      // Receive the OrderNumber from OrderEdit for check
-    void recvEditResult(QString, QString, QString, QString, QString);
-                                        // Receive the result of edit from OrderEdit
 private:
     Ui::OrderManager *ui;
-
-    QMap<int, Order*> orderList;        // <Index, Order>
 
     OrderInput *orderInput;             // Objects of Class OrderInput for function what input
     OrderSearch *orderSearch;           // Objects of Class OrderSearch for function what input
     OrderEdit *orderEdit;               // Objects of Class OrderEdit for function what input
-
-    QHash<QString, QString> productPriceHash;   // <ProductKey, Price>
-    QList<Order*> searchList;                   // list for sending SearchList for a time
 };
 
 #endif // ORDERMANAGER_H

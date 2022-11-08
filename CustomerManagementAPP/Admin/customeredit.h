@@ -20,16 +20,8 @@ class CustomerEdit : public QWidget
 public:
     explicit CustomerEdit(QWidget *parent = nullptr);
 
-signals:
-    void sendCK(QString);       // Send inputted CustomerKey to CustomerManager for checking
-    void resultEdit(QString, QString, QString, QString, QString);
-                                // Send inputted result for edit to CustomerManager
 private slots:
     void clear();               // Slot connected to Clicked() of ClearButton
-    void isCK();                // Slot connected to Clicked() of SearchButton and emit signal sendCK()
-    void recvSearchForEdit(QString, QString, QString, QString, QString);
-                                // Receive the Search Result from CutomerManager
-    void sendEdit();            // Slot connected to Clicked() and emit signal resultEdit()
 
 private:
     //Variables for setting GUI

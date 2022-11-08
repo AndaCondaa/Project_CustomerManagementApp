@@ -20,16 +20,8 @@ class ProductEdit : public QWidget
 public:
     explicit ProductEdit(QWidget *parent = nullptr);
 
-signals:
-    void sendPK(QString);       // Send inputted ProductKey to ProductManager for checking
-    void resultEdit(QString, QString, QString, QString);
-                                // Send inputted result for edit to ProductManager
 private slots:
     void clear();       // Slot connected to Clicked() of ClearButton
-    void isPK();        // Slot connected to Clicked() of SearchButton and emit signal sendPk()
-    void recvResult(QString, QString, QString, QString);
-                        // Receive the Search Result from ProductManager
-    void sendEdit();    // Slot connected to Clicked() and emit signal resultEdit()
 
 private:
     //Variables for setting GUI

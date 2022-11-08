@@ -15,26 +15,6 @@ Home::Home(QWidget *parent) :
 {
     //Set GUI
     ui->setupUi(this);
-
-    QPixmap pixmapCustomer("../Admin/images/CUSTOMER.PNG");
-    QPixmap pixmapProduct("../Admin/images/PRODUCT.PNG");
-    QPixmap pixmapOrder("../Admin/images/ORDER.PNG");
-    QPixmap pixmapChat("../Admin/images/CHAT.PNG");
-
-    QIcon customerIcon(pixmapCustomer);
-    QIcon productIcon(pixmapProduct);
-    QIcon orderIcon(pixmapOrder);
-    QIcon chatIcon(pixmapChat);
-
-    QSize size(100, 100);
-    ui->customerButton->setIcon(customerIcon);
-    ui->customerButton->setIconSize(size);
-    ui->productButton->setIcon(productIcon);
-    ui->productButton->setIconSize(size);
-    ui->orderButton->setIcon(orderIcon);
-    ui->orderButton->setIconSize(size);
-    ui->chatButton->setIcon(chatIcon);
-    ui->chatButton->setIconSize(size);
 }
 
 Home::~Home()

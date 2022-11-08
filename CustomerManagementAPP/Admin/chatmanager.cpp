@@ -69,7 +69,7 @@ ChatManager::ChatManager(QWidget *parent) :
     // Load the Previous Notice from file(.txt)
     noticeLoad();
 
-    qDebug() << "Server Open";
+    qDebug() << tr("Server Open");
 }
 
 ChatManager::~ChatManager()

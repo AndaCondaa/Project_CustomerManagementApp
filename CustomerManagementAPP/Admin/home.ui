@@ -109,10 +109,14 @@
          <property name="text">
           <string/>
          </property>
+         <property name="icon">
+          <iconset resource="resource.qrc">
+           <normaloff>:/images/HOME.png</normaloff>:/images/HOME.png</iconset>
+         </property>
          <property name="iconSize">
           <size>
-           <width>200</width>
-           <height>200</height>
+           <width>100</width>
+           <height>100</height>
           </size>
          </property>
         </widget>
@@ -156,10 +160,14 @@
          <property name="text">
           <string/>
          </property>
+         <property name="icon">
+          <iconset resource="resource.qrc">
+           <normaloff>:/images/CUSTOMER.png</normaloff>:/images/CUSTOMER.png</iconset>
+         </property>
          <property name="iconSize">
           <size>
-           <width>200</width>
-           <height>200</height>
+           <width>100</width>
+           <height>100</height>
           </size>
          </property>
         </widget>
@@ -203,10 +211,14 @@
          <property name="text">
           <string/>
          </property>
+         <property name="icon">
+          <iconset resource="resource.qrc">
+           <normaloff>:/images/PRODUCT.png</normaloff>:/images/PRODUCT.png</iconset>
+         </property>
          <property name="iconSize">
           <size>
-           <width>200</width>
-           <height>200</height>
+           <width>100</width>
+           <height>100</height>
           </size>
          </property>
         </widget>
@@ -250,10 +262,14 @@
          <property name="text">
           <string/>
          </property>
+         <property name="icon">
+          <iconset resource="resource.qrc">
+           <normaloff>:/images/CHAT.png</normaloff>:/images/CHAT.png</iconset>
+         </property>
          <property name="iconSize">
           <size>
-           <width>200</width>
-           <height>200</height>
+           <width>100</width>
+           <height>100</height>
           </size>
          </property>
         </widget>
@@ -296,6 +312,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
  <connections/>
 </ui>

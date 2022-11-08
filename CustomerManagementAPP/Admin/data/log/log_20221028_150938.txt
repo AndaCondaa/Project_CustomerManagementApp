@@ -1,3 +1,0 @@
-admin, .gitignore, , , , 
-17232, README.md, , , , 
-24627, 커리큘럼.PNG, , , , 

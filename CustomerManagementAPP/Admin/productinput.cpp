@@ -62,22 +62,11 @@ ProductInput::ProductInput(QWidget *parent) :
 
     // Connecting signals and slots
     connect(clearButton, SIGNAL(clicked()), SLOT(clear()));
-    connect(inputButton, SIGNAL(clicked()), SLOT(inputEmit()));
 }
 
 // Slot connected to Clicked() of ClearButton
 void ProductInput::clear()
 {
-    nameLine->clear();
-    priceLine->clear();
-}
-
-// Slot connected to Clicked() of InputButton
-void ProductInput::inputEmit()
-{
-    // Send inputted result to ProductManager for checking
-    emit input(typeLine->currentText(), nameLine->text(),
-               priceLine->text());
     nameLine->clear();
     priceLine->clear();
 }

@@ -14,25 +14,12 @@
 #include "ordermanager.h"
 #include "chatmanager.h"
 
-
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     // Set GUI
     ui->setupUi(this);
-    setFixedSize(1000, 600);
-    ui->action_Home->setChecked(true);
-
-    ui->toolBar->setFixedWidth(100);
-    ui->toolBar->setIconSize(QSize(40, 40));
-
-    ui->action_Home->setIcon(QIcon("../Admin/images/HOME.PNG"));
-    ui->action_Customer->setIcon(QIcon("../Admin/images/CUSTOMER.PNG"));
-    ui->action_Product->setIcon(QIcon("../Admin/images/PRODUCT.PNG"));
-    ui->action_Order->setIcon(QIcon("../Admin/images/ORDER.PNG"));
-    ui->action_Chat->setIcon(QIcon("../Admin/images/CHAT.PNG"));
-    ui->action_Quit->setIcon(QIcon("../Admin/images/QUIT.PNG"));
 
     home = new Home;
     customerManager = new CustomerManager;
@@ -46,7 +33,6 @@ MainWindow::MainWindow(QWidget *parent)
     ui->stackedWidget->insertWidget(3, orderManager);
     ui->stackedWidget->insertWidget(4, chatManager);
 
-    home->showMaximized();
     ui->stackedWidget->setCurrentIndex(0);
 
     // Connection Signal and Slot for Homa menu
@@ -54,22 +40,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(home, SIGNAL(gotoProduct()), SLOT(on_action_Product_triggered()));
     connect(home, SIGNAL(gotoOrder()), SLOT(on_action_Order_triggered()));
     connect(home, SIGNAL(gotoChat()), SLOT(on_action_Chat_triggered()));
-
-    // Connection Signal and Slot for sending CustomerKey to OrderManager and ChatManager
-    connect(customerManager, SIGNAL(sendCustomerKey(QString, QString, bool)),
-            orderManager, SLOT(recvCustomerKey(QString, QString, bool)));
-    connect(customerManager, SIGNAL(sendCustomerKey(QString, QString, bool)),
-            chatManager, SLOT(recvCustomerKey(QString, QString, bool)));
-
-    // Connection Signal and Slot for sending ProductKey and Price to OrderManager
-    connect(productManager, SIGNAL(sendProductKey(QString, QString, bool)),
-            orderManager, SLOT(recvProductKey(QString, QString, bool)));
-    connect(productManager, SIGNAL(changePrice(QString,QString)),
-            orderManager, SLOT(recvChangePrice(QString,QString)));
-
-    // Load data
-    customerManager->loadData();
-    productManager->loadData();
 }
 
 MainWindow::~MainWindow()

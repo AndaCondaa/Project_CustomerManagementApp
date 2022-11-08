@@ -23,13 +23,9 @@ public slots:
     void appendData(QTreeWidgetItem*);          // Append item at itemList
     void saveData();                            // Save the log
 
-
 private:
     QList<QTreeWidgetItem*> itemList;           // Logs
     QString filename;                           // File name for saving
-
-
-
 };
 
 #endif // LOGSAVETHREAD_H

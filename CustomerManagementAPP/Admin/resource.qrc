@@ -1,5 +1,12 @@
 <RCC>
     <qresource prefix="/">
         <file>admintr_ko.qm</file>
+        <file>images/CHAT.png</file>
+        <file>images/CUSTOMER.png</file>
+        <file>images/HOME.png</file>
+        <file>images/ORDER.png</file>
+        <file>images/PRODUCT.png</file>
+        <file>images/QUIT.png</file>
+        <file>images/window.png</file>
     </qresource>
 </RCC>

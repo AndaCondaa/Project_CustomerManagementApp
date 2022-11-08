@@ -73,9 +73,7 @@ CustomerEdit::CustomerEdit(QWidget *parent)
     editButton->setGeometry(155,320,115,115);
 
     // Connecting Signal and Slot
-    connect(searchButton, SIGNAL(clicked()), SLOT(isCK()));
     connect(clearButton, SIGNAL(clicked()), SLOT(clear()));
-    connect(editButton, SIGNAL(clicked()), SLOT(sendEdit()));
 }
 
 // Slot connected to Clicked() of ClearButton
@@ -86,47 +84,4 @@ void CustomerEdit::clear()
     licenseLine->clear();
     dentistLine->clear();
     numberLine->clear();
-}
-
-// Slot connected to Clicked() of SearchButton and emit signal sendCK()
-void CustomerEdit::isCK()
-{
-    // Send inputted CustomerKey to CustomerManager for checking
-   emit sendCK(searchLine->text());
-}
-
-// Send inputted result for edit to CustomerManager
-void CustomerEdit::recvSearchForEdit
-(QString ck, QString clinic, QString license, QString dentist, QString number)
-{
-    ckLine->setText(ck);
-    clinicLine->setText(clinic);
-    licenseLine->setText(license);
-    dentistLine->setText(dentist);
-    numberLine->setText(number);
-}
-
-// Slot connected to Clicked() and emit signal resultEdit()
-void CustomerEdit::sendEdit()
-{
-    // Checking whether user inputted all of arguments
-    if (ckLine->text().length() && clinicLine->text().length() &&
-        licenseLine->text().length() && dentistLine->text().length() &&
-            numberLine->text().length()) {
-        // Send inputted result for edit to CustomerManager
-        emit resultEdit(ckLine->text(), clinicLine->text(),
-                licenseLine->text(), dentistLine->text(),
-                    numberLine->text());
-        QMessageBox edit;
-        edit.button(QMessageBox::Ok);
-        edit.setText(tr("Edit Succeed"));
-        edit.setWindowTitle(tr("Edit Succeed"));
-        edit.exec();
-    } else { // if user didn't fill any arguments, Show the MessageBox
-        QMessageBox fill;
-        fill.button(QMessageBox::Ok);
-        fill.setText(tr("Please Fill all arguments"));
-        fill.setWindowTitle(tr("Fill all things!"));
-        fill.exec();
-    }
 }

@@ -42,7 +42,13 @@ private slots:
 
     void on_customerTableView_clicked(const QModelIndex &index);
 
+    void on_searchButton_clicked();
+
+    void on_pushButton_clicked();
+
 private:
+    void updateTable();
+
     Ui::CustomerManager *ui;
 
     CustomerInput *customerInput;        // Objects of Class CustomerInput for function what input

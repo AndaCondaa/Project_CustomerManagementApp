@@ -74,10 +74,7 @@ CustomerInput::CustomerInput(QWidget *parent)
 
 void CustomerInput::recvCurrentCK(int ck)
 {
-    if (ck == 0)
-        index = 1;
-    else
-        index = ck / 10000;
+    index = ck / 10000;
 }
 
 // Make CustomerKey by using index, license, number

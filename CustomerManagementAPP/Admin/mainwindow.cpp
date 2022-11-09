@@ -14,10 +14,38 @@
 #include "ordermanager.h"
 #include "chatmanager.h"
 
+
+//For SQL
+#include <QApplication>
+#include <QTableView>
+#include <QSqlQueryModel>
+#include <QSqlDatabase>
+#include <QSqlQuery>
+#include <QSqlError>
+#include <QDebug>
+
+static bool createConnection()
+{
+    QSqlDatabase db = QSqlDatabase::addDatabase("QODBC");
+    db.setDatabaseName("Oracle11gx64");
+    db.setUserName("project");
+    db.setPassword("project");
+    if (!db.open()) {
+        qDebug() << db.lastError().text();
+    } else {
+        qDebug("success");
+    }
+
+    return true;
+}
+
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+    createConnection();
+
     // Set GUI
     ui->setupUi(this);
 

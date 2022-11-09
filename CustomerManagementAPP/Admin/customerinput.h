@@ -9,6 +9,7 @@
 #define CUSTOMERINPUT_H
 
 #include <QWidget>
+#include <QSqlQueryModel>
 
 class QLabel;
 class QLineEdit;
@@ -20,14 +21,17 @@ class CustomerInput : public QWidget
 public:
     explicit CustomerInput(QWidget *parent = nullptr);
 
+signals:
+    void inputCustomer();
+
+
 private slots:
     void recvCurrentCK(int);
     void input();
     void clear();          // Slot connected to Clicked() of ClearButton
 
-
 private:
-    int makeCustomerKey(QString license, QString number) const;
+    int makeCustomerKey(QString license, QString number);
 
     // Variables for setting GUI
     QLabel *ckLabel;
@@ -45,7 +49,9 @@ private:
     QPushButton *clearButton;
     QPushButton *inputButton;
 
-    int index = 1;
+    int index;
+
+    QSqlQueryModel *inputQuery;
 };
 
 #endif // CUSTOMERINPUT_H

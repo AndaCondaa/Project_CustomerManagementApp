@@ -32,11 +32,13 @@ CustomerManager::CustomerManager(QWidget *parent) :
     customerEdit = new CustomerEdit;   
 
     queryModel = new QSqlQueryModel(this);
-    queryModel->setQuery("select * from customer");
+    queryModel->setQuery("select * from customer order by customer_key");
 
     ui->customerTableView->setModel(queryModel);
+    ui->customerTableView->resizeColumnsToContents();
 
     connect(this, SIGNAL(sendCurrentCK(int)), customerInput, SLOT(recvCurrentCK(int)));
+    connect(customerInput, SIGNAL(inputCustomer()), this, SLOT(update()));
 }
 
 CustomerManager::~CustomerManager()
@@ -48,7 +50,7 @@ CustomerManager::~CustomerManager()
 void CustomerManager::on_inputButton_clicked()
 {
     customerInput->show();
-    int currentCK = queryModel->index(queryModel->rowCount(), 0).data().toInt();
+    int currentCK = queryModel->index(queryModel->rowCount() - 1, 0).data().toInt();
     emit sendCurrentCK(currentCK);
 }
 
@@ -64,9 +66,8 @@ void CustomerManager::on_editButton_clicked()
     customerEdit->show();
 }
 
-
-
-
-
-
-
+void CustomerManager::update()
+{
+    queryModel->setQuery("select * from customer order by customer_key");
+    ui->customerTableView->resizeColumnsToContents();
+}

@@ -41,6 +41,7 @@ private slots:
     void on_inputButton_clicked();      // Show the CustomerInput Widget
     void on_searchButton_clicked();     // Show the CustomerSearch Widget
     void on_editButton_clicked();       // Show the CustomerEdit Widget
+    void update();
 
 private:
     Ui::CustomerManager *ui;

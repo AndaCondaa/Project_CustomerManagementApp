@@ -14,13 +14,12 @@
 
 #include <QWidget>
 #include <QMap>
-#include <QSqlQueryModel>
+
 
 class CustomerInput;
 class CustomerSearch;
 class CustomerEdit;
-class QTreeWidgetItem;
-class QAbstractButton;
+class QSqlQueryModel;
 
 namespace Ui {
 class CustomerManager;
@@ -39,9 +38,9 @@ signals:
 
 private slots:
     void on_inputButton_clicked();      // Show the CustomerInput Widget
-    void on_searchButton_clicked();     // Show the CustomerSearch Widget
-    void on_editButton_clicked();       // Show the CustomerEdit Widget
     void update();
+
+    void on_customerTableView_clicked(const QModelIndex &index);
 
 private:
     Ui::CustomerManager *ui;
@@ -50,7 +49,7 @@ private:
     CustomerSearch *customerSearch;      // Objects of Class CustomerSearch for function what search
     CustomerEdit *customerEdit;          // Objects of Class CustomerEdit for function what edit
 
-    QSqlQueryModel *queryModel;
+    QSqlQueryModel *customerQueryModel;
 };
 
 #endif // CUSTOMERMANAGER_H

@@ -13,7 +13,6 @@ SOURCES += \
     customeredit.cpp \
     customerinput.cpp \
     customermanager.cpp \
-    customersearch.cpp \
     home.cpp \
     logsavethread.cpp \
     main.cpp \
@@ -32,7 +31,6 @@ HEADERS += \
     customeredit.h \
     customerinput.h \
     customermanager.h \
-    customersearch.h \
     home.h \
     logsavethread.h \
     mainwindow.h \
@@ -48,7 +46,6 @@ HEADERS += \
 FORMS += \
     chatmanager.ui \
     customermanager.ui \
-    customersearch.ui \
     home.ui \
     mainwindow.ui \
     ordermanager.ui \

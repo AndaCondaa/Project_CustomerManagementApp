@@ -50,8 +50,6 @@ private:
     QPushButton *inputButton;
 
     int index;
-
-    QSqlQueryModel *inputQuery;
 };
 
 #endif // CUSTOMERINPUT_H

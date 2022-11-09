@@ -27,11 +27,11 @@ CustomerInput::CustomerInput(QWidget *parent)
     dentistLabel = new QLabel(tr("Dentist"), this);
     numberLabel = new QLabel(tr("Number"), this);
 
-    ckLabel->setGeometry(10,20,110,30);
-    clinicLabel->setGeometry(10,50,110,30);
-    licenseLabel->setGeometry(10,80,110,30);
-    dentistLabel->setGeometry(10,110,110,30);
-    numberLabel->setGeometry(10,140,110,30);
+    ckLabel->setGeometry(10,20,90,30);
+    clinicLabel->setGeometry(10,50,90,30);
+    licenseLabel->setGeometry(10,80,90,30);
+    dentistLabel->setGeometry(10,110,90,30);
+    numberLabel->setGeometry(10,140,90,30);
 
     ckLabel->setAlignment(Qt::AlignRight);
     clinicLabel->setAlignment(Qt::AlignRight);
@@ -117,17 +117,17 @@ void CustomerInput::input()
     QString dentist = dentistLine->text();
     QString number = numberLine->text();
 
-    QSqlDatabase db = QSqlDatabase::database();
-
-    QSqlQuery query(db);
+//    QSqlDatabase db = QSqlDatabase::database();
+//    QSqlQuery query(db);
+    QSqlQuery query;
     query.prepare("INSERT INTO CUSTOMER(CUSTOMER_KEY, CLINIC_NAME, LICENSE_NUMBER, DENTIST_NAME, PHONE_NUMBER, ORDER_AMOUNT)"
-                  "VALUES  (:ck, :clinic, :license, :dentist, :number_c, :amount);");
+                  "VALUES  (:ck, :clinic, :license, :dentist, :number, :amount);");
     query.setForwardOnly(true);
     query.bindValue(":ck", ck);
     query.bindValue(":clinic", clinic);
     query.bindValue(":license", license);
     query.bindValue(":dentist", dentist);
-    query.bindValue(":number_c", number);
+    query.bindValue(":number", number);
     query.bindValue(":amount", 0);
     bool isExec = query.exec();
 

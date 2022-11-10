@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>804</width>
-    <height>577</height>
+    <height>584</height>
    </rect>
   </property>
   <property name="baseSize">
@@ -34,6 +34,21 @@
         <item row="0" column="0">
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
+           <widget class="QLabel" name="titlel">
+            <property name="font">
+             <font>
+              <pointsize>20</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>CUSTOMER MANAGER</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QPushButton" name="inputButton">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -44,13 +59,13 @@
             <property name="minimumSize">
              <size>
               <width>270</width>
-              <height>90</height>
+              <height>70</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
               <width>250</width>
-              <height>90</height>
+              <height>70</height>
              </size>
             </property>
             <property name="sizeIncrement">
@@ -202,6 +217,9 @@
                    </property>
                    <property name="alignment">
                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                   <property name="placeholderText">
+                    <string>Input CustomerKey</string>
                    </property>
                   </widget>
                  </item>
@@ -443,6 +461,9 @@
                      <height>25</height>
                     </size>
                    </property>
+                   <property name="inputMask">
+                    <string>NNNNNNNNNN</string>
+                   </property>
                    <property name="alignment">
                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                    </property>
@@ -554,6 +575,9 @@
                      <height>25</height>
                     </size>
                    </property>
+                   <property name="inputMask">
+                    <string>NNNNNNNNNN</string>
+                   </property>
                    <property name="alignment">
                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                    </property>
@@ -664,6 +688,9 @@
                      <width>180</width>
                      <height>25</height>
                     </size>
+                   </property>
+                   <property name="inputMask">
+                    <string>0000000000</string>
                    </property>
                    <property name="alignment">
                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

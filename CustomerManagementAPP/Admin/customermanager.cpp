@@ -150,10 +150,12 @@ void CustomerManager::on_searchComboBox_currentIndexChanged(int index)
     case 0:
         ui->searchLine->clear();
         ui->searchLine->setInputMask("000000");
+        ui->searchLine->setPlaceholderText(tr("Input CustomerKey"));
         break;
     case 1:
         ui->searchLine->clear();
         ui->searchLine->setInputMask("NNNNNNNNNNNNNNNNNNNN");
+        ui->searchLine->setPlaceholderText(tr("Input Clinic Name"));
         break;
     case 2:
         ui->searchLine->clear();
@@ -162,6 +164,7 @@ void CustomerManager::on_searchComboBox_currentIndexChanged(int index)
     case 3:
         ui->searchLine->clear();
         ui->searchLine->setInputMask("NNNNNNNNNNNNNNNNNNNN");
+        ui->searchLine->setPlaceholderText(tr("Input Number"));
         break;
     case 4:
         ui->searchLine->clear();

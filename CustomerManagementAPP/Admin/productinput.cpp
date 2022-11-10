@@ -22,21 +22,25 @@ ProductInput::ProductInput(QWidget *parent) :
 {
     // Setting GUI
     setFixedSize(290, 340);
+    setWindowTitle(tr("PRODUCT INPUT"));
 
     pk = new QLabel(tr("ProductKey"), this);
     type = new QLabel(tr("Type"), this);
     name = new QLabel(tr("Name"), this);
     price = new QLabel(tr("Price"), this);
+    stock = new QLabel(tr("Stock"), this);
 
     pk->setGeometry(10,20,110,30);
     type->setGeometry(10,50,110,30);
     name->setGeometry(10,80,110,30);
     price->setGeometry(10,110,110,30);
+    stock->setGeometry(10,140,110,30);
 
     pk->setAlignment(Qt::AlignRight);
     type->setAlignment(Qt::AlignRight);
     name->setAlignment(Qt::AlignRight);
     price->setAlignment(Qt::AlignRight);
+    stock->setAlignment(Qt::AlignRight);
 
     pkLine = new QLineEdit(tr("Randomly created"), this);
     typeBox = new QComboBox(this);
@@ -51,10 +55,13 @@ ProductInput::ProductInput(QWidget *parent) :
     stockLine->setGeometry(140,140,130,20);
 
     pkLine->setReadOnly(true);
-    pkLine->setAlignment(Qt::AlignRight);
     nameLine->setAlignment(Qt::AlignRight);
     priceLine->setAlignment(Qt::AlignRight);
     stockLine->setAlignment(Qt::AlignRight);
+
+    nameLine->setInputMask("NNNNNNNNNN");
+    priceLine->setInputMask("000000");
+    stockLine->setInputMask("00000");
 
     clearButton = new QPushButton(tr("CLEAR"), this);
     inputButton = new QPushButton(tr("INPUT"), this);
@@ -70,17 +77,17 @@ ProductInput::ProductInput(QWidget *parent) :
     QSqlQuery query;
     query.exec("SELECT * FROM PRODUCT_TYPE ORDER BY TYPE_ID");
 
-    QSqlRecord record = query.record();
-    int nameCol = record.indexOf("TYPE_NAME");
     while (query.next())
-         typeBox->addItem(query.value(nameCol).toString());
+         typeBox->addItem(query.value(1).toString());
 }
 
 // Slot connected to Clicked() of ClearButton
 void ProductInput::clear()
 {
+    typeBox->setCurrentIndex(0);
     nameLine->clear();
     priceLine->clear();
+    stockLine->clear();
 }
 
 void ProductInput::recvCurrentPK(int pk)
@@ -93,12 +100,11 @@ void ProductInput::recvCurrentPK(int pk)
 int ProductInput::makeProductKey(int typeID)
 {
 
-    srand(QTime::currentTime().msecsSinceStartOfDay()); //시드를 주어 매번 랜덤한 값으로 나타냄
+    srand(QTime::currentTime().msecsSinceStartOfDay());     //시드를 주어 매번 랜덤한 값으로 나타냄
     int tmp = rand() % 9;
 
     index ++;
     int PK = (index * 100) + ((typeID % 10) * 10) + tmp;
-
 
     return PK;
 }
@@ -131,6 +137,4 @@ void ProductInput::input()
         } else if (inputQuery.lastError().text().contains("ORA-12899"))
             qDebug() << "컬럼 데이터 초과 에러";
     }
-
-
 }

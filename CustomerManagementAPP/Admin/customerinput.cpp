@@ -21,6 +21,7 @@ CustomerInput::CustomerInput(QWidget *parent)
     : QWidget{parent}
 {
     setFixedSize(290, 340);
+    setWindowTitle(tr("CUSTOMER INPUT"));
 
     //Setting GUI
     ckLabel = new QLabel(tr("CustomerKey"), this);
@@ -60,9 +61,9 @@ CustomerInput::CustomerInput(QWidget *parent)
     dentistLine->setAlignment(Qt::AlignRight);
     numberLine->setAlignment(Qt::AlignRight);
 
-    clinicLine->setInputMask("NNNNNNNNNNNNNNNNNNNN");
+    clinicLine->setInputMask("NNNNNNNNNN");
     licenseLine->setInputMask("00-0000-00");
-    dentistLine->setInputMask("NNNNNNNNNNNNNNNNNNNN");
+    dentistLine->setInputMask("NNNNNNNNNN");
     numberLine->setInputMask("000-0000-0000");
 
     clearButton = new QPushButton(tr("CLEAR"), this);

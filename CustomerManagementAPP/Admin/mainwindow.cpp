@@ -14,7 +14,6 @@
 #include "ordermanager.h"
 #include "chatmanager.h"
 
-
 //For SQL
 #include <QApplication>
 #include <QTableView>

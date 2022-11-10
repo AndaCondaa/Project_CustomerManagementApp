@@ -75,6 +75,8 @@ CustomerInput::CustomerInput(QWidget *parent)
 void CustomerInput::recvCurrentCK(int ck)
 {
     index = ck / 10000;
+    if (index == 0)
+        index = 10;
 }
 
 // Make CustomerKey by using index, license, number
@@ -116,17 +118,18 @@ void CustomerInput::input()
 
 //    QSqlDatabase db = QSqlDatabase::database();
 //    QSqlQuery query(db);
-    QSqlQuery query;
-    query.prepare("INSERT INTO CUSTOMER(CUSTOMER_KEY, CLINIC_NAME, LICENSE_NUMBER, DENTIST_NAME, PHONE_NUMBER, ORDER_AMOUNT)"
-                  "VALUES  (:ck, :clinic, :license, :dentist, :number, :amount);");
-    query.setForwardOnly(true);
-    query.bindValue(":ck", ck);
-    query.bindValue(":clinic", clinic);
-    query.bindValue(":license", license);
-    query.bindValue(":dentist", dentist);
-    query.bindValue(":number", number);
-    query.bindValue(":amount", 0);
-    bool isExec = query.exec();
+    QSqlQuery inputQuery;
+//    query.prepare("INSERT INTO CUSTOMER(CUSTOMER_KEY, CLINIC_NAME, LICENSE_NUMBER, DENTIST_NAME, PHONE_NUMBER, ORDER_AMOUNT)"
+//                  "VALUES  (:ck, :clinic, :license, :dentist, :number, :amount);");
+    inputQuery.prepare("CALL INPUT_CUSTOMER (:ck, :clinic, :license, :dentist, :number, :amount)");
+    inputQuery.setForwardOnly(true);
+    inputQuery.bindValue(":ck", ck);
+    inputQuery.bindValue(":clinic", clinic);
+    inputQuery.bindValue(":license", license);
+    inputQuery.bindValue(":dentist", dentist);
+    inputQuery.bindValue(":number", number);
+    inputQuery.bindValue(":amount", 0);
+    bool isExec = inputQuery.exec();
 
     if (isExec) {
         clear();
@@ -134,9 +137,9 @@ void CustomerInput::input()
         emit inputCustomer();
     }
     else {
-        if (query.lastError().text().contains("ORA-00001")) {
+        if (inputQuery.lastError().text().contains("ORA-00001")) {
             qDebug() << "유니크 에러";
-        } else if (query.lastError().text().contains("ORA-12899"))
+        } else if (inputQuery.lastError().text().contains("ORA-12899"))
             qDebug() << "컬럼 데이터 초과 에러";
 
     }

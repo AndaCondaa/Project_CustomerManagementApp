@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>791</width>
-    <height>538</height>
+    <width>804</width>
+    <height>577</height>
    </rect>
   </property>
   <property name="baseSize">
@@ -147,27 +147,27 @@
                  </property>
                  <item>
                   <property name="text">
-                   <string>CustomerKey</string>
+                   <string>CUSTOMER_KEY</string>
                   </property>
                  </item>
                  <item>
                   <property name="text">
-                   <string>Clinic</string>
+                   <string>CLINIC_NAME</string>
                   </property>
                  </item>
                  <item>
                   <property name="text">
-                   <string>License</string>
+                   <string>LICENSE_NUMBER</string>
                   </property>
                  </item>
                  <item>
                   <property name="text">
-                   <string>Dentist</string>
+                   <string>DENTIST_NAME</string>
                   </property>
                  </item>
                  <item>
                   <property name="text">
-                   <string>Number</string>
+                   <string>PHONE_NUMBER</string>
                   </property>
                  </item>
                 </widget>
@@ -253,15 +253,15 @@
               </widget>
              </item>
              <item row="2" column="0">
-              <widget class="QPushButton" name="pushButton">
+              <widget class="QPushButton" name="totalButton">
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>30</height>
+                 <height>35</height>
                 </size>
                </property>
                <property name="text">
-                <string>PushButton</string>
+                <string>Total View</string>
                </property>
               </widget>
              </item>

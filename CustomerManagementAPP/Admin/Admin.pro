@@ -10,7 +10,6 @@ CONFIG += c++17
 
 SOURCES += \
     chatmanager.cpp \
-    customeredit.cpp \
     customerinput.cpp \
     customermanager.cpp \
     home.cpp \
@@ -28,7 +27,6 @@ SOURCES += \
 
 HEADERS += \
     chatmanager.h \
-    customeredit.h \
     customerinput.h \
     customermanager.h \
     home.h \

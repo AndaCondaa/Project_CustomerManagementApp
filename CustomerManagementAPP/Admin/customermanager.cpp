@@ -20,6 +20,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QSqlQuery>
 #include <QSqlQueryModel>
 
 CustomerManager::CustomerManager(QWidget *parent) :
@@ -83,22 +84,12 @@ void CustomerManager::on_searchButton_clicked()
         return;
     }
 
-    int searchFlag = ui->searchComboBox->currentIndex(); //0부터 순서대로 인덱스
+    QString searchFlag = ui->searchComboBox->currentText();
     QString searchWord = ui->searchLine->text();
 
-    switch (searchFlag) {
-    case 0:
-        customerQueryModel->setQuery(QString("SELECT * FROM CUSTOMER WHERE customer_key = %1").arg(searchWord.toInt()));
-        break;
-    case 1:
-        break;
-    case 2:
-        break;
-    case 3:
-        break;
-    case 4:
-        break;
-    }
+    customerQueryModel->setQuery
+            (QString("SELECT * FROM CUSTOMER WHERE %1 LIKE '%%2%'")
+                                        .arg(searchFlag, searchWord));
 }
 
 void CustomerManager::updateTable()
@@ -113,11 +104,15 @@ void CustomerManager::updateTable()
 
     ui->customerTableView->setModel(customerQueryModel);
     ui->customerTableView->horizontalHeader()->setStretchLastSection(true);
+    ui->customerTableView->horizontalHeader()->setStyleSheet(
+                "QHeaderView { font-size: 10pt; color: blue; }");
     ui->customerTableView->resizeColumnsToContents();
 }
 
-void CustomerManager::on_pushButton_clicked()
+void CustomerManager::on_totalButton_clicked()
 {
     updateTable();
+    ui->searchComboBox->setCurrentIndex(0);
+    ui->searchLine->clear();
 }
 

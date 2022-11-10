@@ -44,7 +44,7 @@ private slots:
 
     void on_searchButton_clicked();
 
-    void on_pushButton_clicked();
+    void on_totalButton_clicked();
 
 private:
     void updateTable();

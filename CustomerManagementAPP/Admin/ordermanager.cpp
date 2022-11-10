@@ -11,10 +11,7 @@
 
 #include "ordermanager.h"
 #include "ui_ordermanager.h"
-
 #include "orderinput.h"
-#include "ordersearch.h"
-#include "orderedit.h"
 
 #include <QFile>
 #include <QMessageBox>
@@ -25,8 +22,7 @@ OrderManager::OrderManager(QWidget *parent) :
 {
     ui->setupUi(this);
     orderInput = new OrderInput;
-    orderSearch = new OrderSearch;
-    orderEdit = new OrderEdit;
+
 }
 
 OrderManager::~OrderManager()
@@ -47,14 +43,3 @@ void OrderManager::on_inputButton_clicked()
     orderInput->show();
 }
 
-// Show the OrderSearch Widget
-void OrderManager::on_searchButton_clicked()
-{
-    orderSearch->show();
-}
-
-// Show the OrderEdit Widget
-void OrderManager::on_editButton_clicked()
-{
-    orderEdit->show();
-}

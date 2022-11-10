@@ -13,13 +13,8 @@
 #include "customermanager.h"
 #include "ui_customermanager.h"
 #include "customerinput.h"
-#include "customeredit.h"
 
-#include <QFile>
 #include <QMessageBox>
-#include <QLabel>
-#include <QLineEdit>
-#include <QPushButton>
 #include <QSqlQuery>
 #include <QSqlQueryModel>
 
@@ -29,7 +24,6 @@ CustomerManager::CustomerManager(QWidget *parent) :
 {
     ui->setupUi(this);
     customerInput = new CustomerInput;
-    customerEdit = new CustomerEdit;   
     customerQueryModel = new QSqlQueryModel(ui->customerTableView);
 
     updateTable();
@@ -114,5 +108,65 @@ void CustomerManager::on_totalButton_clicked()
     updateTable();
     ui->searchComboBox->setCurrentIndex(0);
     ui->searchLine->clear();
+}
+
+void CustomerManager::on_editButton_clicked()
+{
+    QSqlQuery editQuery;
+    editQuery.prepare("CALL EDIT_CUSTOMER (:ck, :clinic, :license, :dentist, :number_c)");
+    editQuery.bindValue(":ck", ui->ckEditLine->text());
+    editQuery.bindValue(":clinic", ui->clinicEditLine->text());
+    editQuery.bindValue(":license", ui->licenseEditLine->text());
+    editQuery.bindValue(":dentist", ui->dentistEditLine->text());
+    editQuery.bindValue(":number_c", ui->numberEditLine->text());
+    bool isExec = editQuery.exec();
+
+    if (isExec) {
+        ui->ckEditLine->clear();
+        ui->clinicEditLine->clear();
+        ui->licenseEditLine->clear();
+        ui->dentistEditLine->clear();
+        ui->numberEditLine->clear();
+        ui->amountEditLine->clear();
+        updateTable();
+        qDebug() << tr("EDIT succeed!");
+    } else
+        qDebug() << tr("EDTI fail!");
+}
+
+void CustomerManager::on_clearButton_clicked()
+{
+    ui->ckEditLine->clear();
+    ui->clinicEditLine->clear();
+    ui->licenseEditLine->clear();
+    ui->dentistEditLine->clear();
+    ui->numberEditLine->clear();
+    ui->amountEditLine->clear();
+}
+
+void CustomerManager::on_searchComboBox_currentIndexChanged(int index)
+{
+    switch (index) {
+    case 0:
+        ui->searchLine->clear();
+        ui->searchLine->setInputMask("000000");
+        break;
+    case 1:
+        ui->searchLine->clear();
+        ui->searchLine->setInputMask("NNNNNNNNNNNNNNNNNNNN");
+        break;
+    case 2:
+        ui->searchLine->clear();
+        ui->searchLine->setInputMask("00-0000-00");
+        break;
+    case 3:
+        ui->searchLine->clear();
+        ui->searchLine->setInputMask("NNNNNNNNNNNNNNNNNNNN");
+        break;
+    case 4:
+        ui->searchLine->clear();
+        ui->searchLine->setInputMask("000-0000-0000");
+        break;
+    }
 }
 

@@ -14,8 +14,6 @@
 #include <QWidget>
 
 class OrderInput;
-class OrderSearch;
-class OrderEdit;
 
 namespace Ui {
 class OrderManager;
@@ -33,15 +31,11 @@ private slots:
     int makeTotal(int ,int);                // Calculate Total price
 
     void on_inputButton_clicked();          // Show the OrderInput Widget
-    void on_searchButton_clicked();         // Show the OrderSearch Widget
-    void on_editButton_clicked();           // Show the OrderEdit Widget
 
 private:
     Ui::OrderManager *ui;
 
     OrderInput *orderInput;             // Objects of Class OrderInput for function what input
-    OrderSearch *orderSearch;           // Objects of Class OrderSearch for function what input
-    OrderEdit *orderEdit;               // Objects of Class OrderEdit for function what input
 };
 
 #endif // ORDERMANAGER_H

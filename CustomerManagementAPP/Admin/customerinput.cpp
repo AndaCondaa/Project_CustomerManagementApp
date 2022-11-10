@@ -11,6 +11,8 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QTime>
+#include <QRandomGenerator>
 #include <QSqlQuery>
 #include <QSqlQueryModel>
 #include <QSqlError>
@@ -58,7 +60,9 @@ CustomerInput::CustomerInput(QWidget *parent)
     dentistLine->setAlignment(Qt::AlignRight);
     numberLine->setAlignment(Qt::AlignRight);
 
+    clinicLine->setInputMask("NNNNNNNNNNNNNNNNNNNN");
     licenseLine->setInputMask("00-0000-00");
+    dentistLine->setInputMask("NNNNNNNNNNNNNNNNNNNN");
     numberLine->setInputMask("000-0000-0000");
 
     clearButton = new QPushButton(tr("CLEAR"), this);
@@ -74,26 +78,23 @@ CustomerInput::CustomerInput(QWidget *parent)
 
 void CustomerInput::recvCurrentCK(int ck)
 {
-    index = ck / 10000;
+    index = ck / 1000;
     if (index == 0)
-        index = 10;
+        index = 99;
 }
 
 // Make CustomerKey by using index, license, number
-int CustomerInput::makeCustomerKey(QString license, QString number)
+int CustomerInput::makeCustomerKey(QString recvLicense)
 {
-    QString tmp_license = license.split("-")[0] +
-            license.split("-")[1] + license.split("-")[2];
-    QString tmp_number = number.split("-")[0] +
-            number.split("-")[1] + number.split("-")[2];
+    int license = (recvLicense.split("-")[0] +
+            recvLicense.split("-")[1] + recvLicense.split("-")[2]).toInt();
 
-    // string to integer
-    int temp1 = (tmp_license.toULongLong() * 111) % 10000;
-    int temp2 = (tmp_number.toULongLong() * 111) % 10000;
+    srand(QTime::currentTime().msecsSinceStartOfDay());  //시드를 주어 매번 랜덤한 값으로 나타냄
+    int tmp = (rand() % 9) * 100;
+    int tmp_license = (license * 111) % 100;
 
-    // making CustomerKey
-    index += 1;
-    int CK = (index * 10000) + (temp1 + temp2) % 10000;     // 만의 자리 값이 고객등록 순서를 의미
+    index++;
+    int CK = (index * 1000) + tmp + tmp_license;
 
     return CK;
 }
@@ -109,8 +110,7 @@ void CustomerInput::clear()
 
 void CustomerInput::input()
 {
-
-    int ck = makeCustomerKey(licenseLine->text(), numberLine->text());
+    int ck = makeCustomerKey(licenseLine->text());
     QString clinic = clinicLine->text();
     QString license = licenseLine->text();
     QString dentist = dentistLine->text();
@@ -141,6 +141,5 @@ void CustomerInput::input()
             qDebug() << "유니크 에러";
         } else if (inputQuery.lastError().text().contains("ORA-12899"))
             qDebug() << "컬럼 데이터 초과 에러";
-
     }
 }

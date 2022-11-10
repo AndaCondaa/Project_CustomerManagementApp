@@ -13,12 +13,9 @@
 #define PRODUCTMANAGER_H
 
 #include <QWidget>
-#include <QMap>
 
 class ProductInput;
-class ProductSearch;
-class ProductEdit;
-
+class QSqlQueryModel;
 
 namespace Ui {
 class ProductManager;
@@ -32,17 +29,21 @@ public:
     explicit ProductManager(QWidget *parent = nullptr);
     ~ProductManager();
 
+signals:
+    void sendCurrentPK(int);
+
 private slots:
     void on_inputButton_clicked();              // Show the ProductInput Widget
-    void on_searchButton_clicked();             // Show the ProductSearch Widget
-    void on_editButton_clicked();               // Show the ProductEdit Widget
+    void update();
 
 private:
+    void updateTable();
+
     Ui::ProductManager *ui;
 
     ProductInput *productInput;             // Objects of Class ProductInput for function what input
-    ProductSearch *productSearch;           // Objects of Class ProductSearch for function what input
-    ProductEdit *productEdit;               // Objects of Class ProductEdit for function what input
+
+    QSqlQueryModel *productQueryModel;
 };
 
 #endif // PRODUCTMANAGER_H

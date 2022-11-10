@@ -22,23 +22,34 @@ class ProductInput : public QWidget
 public:
     explicit ProductInput(QWidget *parent = nullptr);
 
+signals:
+    void inputProduct();
+
 private slots:
+    void recvCurrentPK(int);
+    void input();
     void clear();               // Slot connected to Clicked() of ClearButton
 
 private:
+    int makeProductKey(int typeID);
+
     // Variables for setting GUI
     QLabel *pk;
     QLabel *type;
     QLabel *name;
     QLabel *price;
+    QLabel *stock;
 
     QLineEdit *pkLine;
-    QComboBox *typeLine;
+    QComboBox *typeBox;
     QLineEdit *nameLine;
     QLineEdit *priceLine;
+    QLineEdit *stockLine;
 
     QPushButton *clearButton;
     QPushButton *inputButton;
+
+    int index;
 };
 
 #endif // PRODUCTINPUT_H

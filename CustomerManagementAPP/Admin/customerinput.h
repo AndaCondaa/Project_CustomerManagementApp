@@ -24,14 +24,13 @@ public:
 signals:
     void inputCustomer();
 
-
 private slots:
     void recvCurrentCK(int);
     void input();
     void clear();          // Slot connected to Clicked() of ClearButton
 
 private:
-    int makeCustomerKey(QString license, QString number);
+    int makeCustomerKey(QString license);
 
     // Variables for setting GUI
     QLabel *ckLabel;

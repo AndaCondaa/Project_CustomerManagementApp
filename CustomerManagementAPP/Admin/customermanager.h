@@ -17,8 +17,6 @@
 
 
 class CustomerInput;
-class CustomerSearch;
-class CustomerEdit;
 class QSqlQueryModel;
 
 namespace Ui {
@@ -43,8 +41,13 @@ private slots:
     void on_customerTableView_clicked(const QModelIndex &index);
 
     void on_searchButton_clicked();
-
     void on_totalButton_clicked();
+
+    void on_editButton_clicked();
+
+    void on_clearButton_clicked();
+
+    void on_searchComboBox_currentIndexChanged(int index);
 
 private:
     void updateTable();
@@ -52,8 +55,6 @@ private:
     Ui::CustomerManager *ui;
 
     CustomerInput *customerInput;        // Objects of Class CustomerInput for function what input
-    CustomerSearch *customerSearch;      // Objects of Class CustomerSearch for function what search
-    CustomerEdit *customerEdit;          // Objects of Class CustomerEdit for function what edit
 
     QSqlQueryModel *customerQueryModel;
 };

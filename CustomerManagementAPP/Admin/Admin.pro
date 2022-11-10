@@ -16,14 +16,10 @@ SOURCES += \
     logsavethread.cpp \
     main.cpp \
     mainwindow.cpp \
-    orderedit.cpp \
     orderinput.cpp \
     ordermanager.cpp \
-    ordersearch.cpp \
-    productedit.cpp \
     productinput.cpp \
-    productmanager.cpp \
-    productsearch.cpp
+    productmanager.cpp
 
 HEADERS += \
     chatmanager.h \
@@ -32,14 +28,10 @@ HEADERS += \
     home.h \
     logsavethread.h \
     mainwindow.h \
-    orderedit.h \
     orderinput.h \
     ordermanager.h \
-    ordersearch.h \
-    productedit.h \
     productinput.h \
-    productmanager.h \
-    productsearch.h
+    productmanager.h
 
 FORMS += \
     chatmanager.ui \
@@ -47,9 +39,7 @@ FORMS += \
     home.ui \
     mainwindow.ui \
     ordermanager.ui \
-    ordersearch.ui \
-    productmanager.ui \
-    productsearch.ui
+    productmanager.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

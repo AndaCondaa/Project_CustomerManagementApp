@@ -82,13 +82,13 @@ void CustomerManager::on_searchButton_clicked()
     QString searchWord = ui->searchLine->text();
 
     customerQueryModel->setQuery
-            (QString("SELECT * FROM CUSTOMER WHERE %1 LIKE '%%2%'")
+            (QString("SELECT * FROM CUSTOMER_TABLE WHERE %1 LIKE '%%2%'")
                                         .arg(searchFlag, searchWord));
 }
 
 void CustomerManager::updateTable()
 {
-    customerQueryModel->setQuery("SELECT * FROM CUSTOMER ORDER BY CUSTOMER_KEY");
+    customerQueryModel->setQuery("SELECT * FROM CUSTOMER_TABLE ORDER BY CUSTOMER_KEY");
     customerQueryModel->setHeaderData(0, Qt::Horizontal, tr("CustomerKey"));
     customerQueryModel->setHeaderData(1, Qt::Horizontal, tr("Clinic"));
     customerQueryModel->setHeaderData(2, Qt::Horizontal, tr("License"));

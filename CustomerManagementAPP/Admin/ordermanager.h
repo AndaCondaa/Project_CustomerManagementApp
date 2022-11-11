@@ -30,8 +30,6 @@ public:
 private slots:
     int makeTotal(int ,int);                // Calculate Total price
 
-    void on_inputButton_clicked();          // Show the OrderInput Widget
-
 private:
     Ui::OrderManager *ui;
 

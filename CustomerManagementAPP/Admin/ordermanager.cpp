@@ -37,9 +37,4 @@ int OrderManager::makeTotal(int price, int quantity)
     return total;
 }
 
-// Show the OrderInput Widget
-void OrderManager::on_inputButton_clicked()
-{
-    orderInput->show();
-}
 

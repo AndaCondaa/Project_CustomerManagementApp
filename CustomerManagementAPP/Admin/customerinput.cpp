@@ -55,11 +55,11 @@ CustomerInput::CustomerInput(QWidget *parent)
     numberLine->setGeometry(140,140,130,20);
 
     ckLine->setReadOnly(true);
-    ckLine->setAlignment(Qt::AlignRight);
-    clinicLine->setAlignment(Qt::AlignRight);
-    licenseLine->setAlignment(Qt::AlignRight);
-    dentistLine->setAlignment(Qt::AlignRight);
-    numberLine->setAlignment(Qt::AlignRight);
+//    ckLine->setAlignment(Qt::AlignRight);
+//    clinicLine->setAlignment(Qt::AlignRight);
+//    licenseLine->setAlignment(Qt::AlignRight);
+//    dentistLine->setAlignment(Qt::AlignRight);
+//    numberLine->setAlignment(Qt::AlignRight);
 
     clinicLine->setInputMask("NNNNNNNNNN");
     licenseLine->setInputMask("00-0000-00");

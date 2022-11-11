@@ -55,7 +55,7 @@ void ProductManager::on_inputButton_clicked()
 
 void ProductManager::updateTable()
 {
-    productQueryModel->setQuery("SELECT * FROM PRODUCT ORDER BY PRODUCT_KEY");
+    productQueryModel->setQuery("SELECT * FROM PRODUCT_TABLE ORDER BY PRODUCT_KEY");
     productQueryModel->setHeaderData(0, Qt::Horizontal, tr("ProductKey"));
     productQueryModel->setHeaderData(1, Qt::Horizontal, tr("Type ID"));
     productQueryModel->setHeaderData(2, Qt::Horizontal, tr("Name"));
@@ -138,7 +138,7 @@ void ProductManager::on_searchButton_clicked()
     QString searchWord = ui->searchLine->text();
 
     productQueryModel->setQuery
-            (QString("SELECT * FROM PRODUCT WHERE %1 LIKE '%%2%'")
+            (QString("SELECT * FROM PRODUCT_TABLE WHERE %1 LIKE '%%2%'")
                                         .arg(searchFlag, searchWord));
 }
 

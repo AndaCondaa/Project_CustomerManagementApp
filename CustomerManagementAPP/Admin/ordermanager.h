@@ -15,6 +15,7 @@
 
 class OrderInput;
 class QSqlQueryModel;
+class QStandardItemModel;
 
 namespace Ui {
 class OrderManager;
@@ -48,6 +49,7 @@ private:
     OrderInput *orderInput;             // Objects of Class OrderInput for function what input
 
     QSqlQueryModel *orderQueryModel;
+    QStandardItemModel *orderPriceModel;
 };
 
 #endif // ORDERMANAGER_H

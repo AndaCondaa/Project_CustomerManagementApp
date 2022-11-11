@@ -111,7 +111,7 @@
          </property>
          <property name="icon">
           <iconset resource="resource.qrc">
-           <normaloff>:/images/HOME.png</normaloff>:/images/HOME.png</iconset>
+           <normaloff>:/images/CUSTOMER.png</normaloff>:/images/CUSTOMER.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -162,7 +162,7 @@
          </property>
          <property name="icon">
           <iconset resource="resource.qrc">
-           <normaloff>:/images/CUSTOMER.png</normaloff>:/images/CUSTOMER.png</iconset>
+           <normaloff>:/images/PRODUCT.png</normaloff>:/images/PRODUCT.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -213,7 +213,7 @@
          </property>
          <property name="icon">
           <iconset resource="resource.qrc">
-           <normaloff>:/images/PRODUCT.png</normaloff>:/images/PRODUCT.png</iconset>
+           <normaloff>:/images/ORDER.png</normaloff>:/images/ORDER.png</iconset>
          </property>
          <property name="iconSize">
           <size>

@@ -109,55 +109,49 @@
 <context>
     <name>CustomerEdit</name>
     <message>
-        <location filename="customeredit.cpp" line="24"/>
-        <source>SEARCH</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="customeredit.cpp" line="32"/>
-        <source>CustomerKey</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="customeredit.cpp" line="33"/>
         <source>Clinic</source>
-        <translation type="unfinished">병원이름</translation>
-    </message>
-    <message>
-        <location filename="customeredit.cpp" line="34"/>
-        <source>License</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="customeredit.cpp" line="35"/>
-        <source>Dentist</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="customeredit.cpp" line="36"/>
-        <source>Number</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="customeredit.cpp" line="69"/>
-        <source>CLEAR</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="customeredit.cpp" line="70"/>
-        <source>EDIT</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">병원이름</translation>
     </message>
 </context>
 <context>
     <name>CustomerInput</name>
     <message>
-        <location filename="customerinput.cpp" line="58"/>
+        <location filename="customerinput.cpp" line="24"/>
+        <source>CUSTOMER INPUT</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="customerinput.cpp" line="27"/>
+        <source>CustomerKey</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="customerinput.cpp" line="28"/>
+        <source>Clinic</source>
+        <translation type="unfinished">병원이름</translation>
+    </message>
+    <message>
+        <location filename="customerinput.cpp" line="29"/>
+        <source>License</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="customerinput.cpp" line="30"/>
+        <source>Dentist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="customerinput.cpp" line="31"/>
+        <source>Number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="customerinput.cpp" line="69"/>
         <source>CLEAR</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="customerinput.cpp" line="59"/>
+        <location filename="customerinput.cpp" line="70"/>
         <source>INPUT</source>
         <translation type="unfinished"></translation>
     </message>
@@ -170,71 +164,180 @@
         <translation type="unfinished">채팅</translation>
     </message>
     <message>
-        <location filename="customermanager.ui" line="99"/>
+        <location filename="customermanager.ui" line="44"/>
+        <source>CUSTOMER MANAGER</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="customermanager.ui" line="84"/>
         <source>INPUT</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="customermanager.ui" line="144"/>
-        <source>&amp;SEARCH</source>
+        <location filename="customermanager.ui" line="165"/>
+        <source>CUSTOMER_KEY</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="customermanager.ui" line="179"/>
-        <source>&amp;EDIT</source>
+        <location filename="customermanager.ui" line="170"/>
+        <source>CLINIC_NAME</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="customermanager.ui" line="175"/>
+        <source>LICENSE_NUMBER</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="customermanager.ui" line="180"/>
+        <source>DENTIST_NAME</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="customermanager.ui" line="185"/>
+        <source>PHONE_NUMBER</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="customermanager.ui" line="216"/>
+        <source>000000</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="customermanager.ui" line="222"/>
+        <location filename="customermanager.cpp" line="153"/>
+        <source>Input CustomerKey</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="customermanager.ui" line="247"/>
+        <location filename="customermanager.ui" line="269"/>
+        <source>SEARCH</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="customermanager.ui" line="285"/>
+        <source>Total View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="customermanager.ui" line="343"/>
+        <location filename="customermanager.ui" line="761"/>
+        <source>EDIT</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="customermanager.ui" line="383"/>
+        <location filename="customermanager.cpp" line="92"/>
+        <source>CustomerKey</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="customermanager.ui" line="411"/>
+        <source>CustomerKey is unique</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="customermanager.ui" line="465"/>
+        <location filename="customermanager.ui" line="579"/>
+        <source>NNNNNNNNNN</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="customermanager.ui" line="500"/>
+        <location filename="customermanager.cpp" line="94"/>
+        <source>License</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="customermanager.ui" line="522"/>
+        <source>00-0000-00</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="customermanager.ui" line="557"/>
+        <location filename="customermanager.cpp" line="95"/>
+        <source>Dentist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="customermanager.ui" line="614"/>
+        <location filename="customermanager.cpp" line="96"/>
+        <source>Number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="customermanager.ui" line="636"/>
+        <source>000-0000-0000</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="customermanager.ui" line="671"/>
+        <location filename="customermanager.cpp" line="97"/>
+        <source>OrderAmount</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="customermanager.ui" line="693"/>
+        <source>0000000000</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="customermanager.ui" line="702"/>
+        <source>Amount can not edit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="customermanager.ui" line="736"/>
+        <source>CLEAR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="customermanager.ui" line="443"/>
+        <location filename="customermanager.cpp" line="93"/>
         <source>Clinic</source>
-        <translation type="obsolete">병원이름</translation>
+        <translation type="unfinished">병원이름</translation>
+    </message>
+    <message>
+        <location filename="customermanager.cpp" line="75"/>
+        <source>Please input word for search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="customermanager.cpp" line="76"/>
+        <source>NOTHING INPUT for Search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="customermanager.cpp" line="132"/>
+        <source>EDIT succeed!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="customermanager.cpp" line="134"/>
+        <source>EDTI fail!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="customermanager.cpp" line="158"/>
+        <source>Input Clinic Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="customermanager.cpp" line="167"/>
+        <source>Input Number</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>CustomerSearch</name>
     <message>
-        <location filename="customersearch.ui" line="20"/>
         <source>Form</source>
-        <translation type="unfinished">채팅</translation>
+        <translation type="obsolete">채팅</translation>
     </message>
     <message>
-        <location filename="customersearch.ui" line="103"/>
-        <location filename="customersearch.ui" line="213"/>
-        <source>CustomerKey</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="customersearch.ui" line="108"/>
-        <location filename="customersearch.ui" line="221"/>
         <source>Clinic</source>
-        <translation type="unfinished">병원이름</translation>
-    </message>
-    <message>
-        <location filename="customersearch.ui" line="113"/>
-        <location filename="customersearch.ui" line="229"/>
-        <source>License</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="customersearch.ui" line="118"/>
-        <location filename="customersearch.ui" line="237"/>
-        <source>Dentist</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="customersearch.ui" line="123"/>
-        <location filename="customersearch.ui" line="245"/>
-        <source>Number</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="customersearch.ui" line="159"/>
-        <source>&amp;SEARCH</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="customersearch.ui" line="178"/>
-        <source>&amp;CLEAR</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">병원이름</translation>
     </message>
 </context>
 <context>
@@ -301,44 +404,8 @@
 <context>
     <name>OrderEdit</name>
     <message>
-        <location filename="orderedit.cpp" line="25"/>
-        <source>SEARCH</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="orderedit.cpp" line="34"/>
-        <source>OrderNumber</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="orderedit.cpp" line="35"/>
-        <source>CustomerKey</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="orderedit.cpp" line="36"/>
-        <source>ProductKey</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="orderedit.cpp" line="37"/>
         <source>Date</source>
-        <translation type="unfinished">날짜</translation>
-    </message>
-    <message>
-        <location filename="orderedit.cpp" line="38"/>
-        <source>Quantity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="orderedit.cpp" line="67"/>
-        <source>CLEAR</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="orderedit.cpp" line="68"/>
-        <source>EDIT</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">날짜</translation>
     </message>
 </context>
 <context>
@@ -440,144 +507,58 @@
 <context>
     <name>OrderSearch</name>
     <message>
-        <location filename="ordersearch.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished">채팅</translation>
+        <translation type="obsolete">채팅</translation>
     </message>
     <message>
-        <location filename="ordersearch.ui" line="79"/>
-        <location filename="ordersearch.ui" line="194"/>
-        <source>OrderNumber</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="ordersearch.ui" line="84"/>
-        <location filename="ordersearch.ui" line="202"/>
-        <source>OrderCustomer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="ordersearch.ui" line="89"/>
-        <location filename="ordersearch.ui" line="210"/>
-        <source>OrderProduct</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="ordersearch.ui" line="94"/>
-        <location filename="ordersearch.ui" line="218"/>
         <source>Date</source>
-        <translation type="unfinished">날짜</translation>
-    </message>
-    <message>
-        <location filename="ordersearch.ui" line="99"/>
-        <location filename="ordersearch.ui" line="226"/>
-        <source>Quantity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="ordersearch.ui" line="104"/>
-        <location filename="ordersearch.ui" line="231"/>
-        <source>Total</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="ordersearch.ui" line="140"/>
-        <source>&amp;SEARCH</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="ordersearch.ui" line="159"/>
-        <source>&amp;CLEAR</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>ProductEdit</name>
-    <message>
-        <location filename="productedit.cpp" line="22"/>
-        <source>PRODUCTKEY</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="productedit.cpp" line="24"/>
-        <source>SEARCH</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="productedit.cpp" line="52"/>
-        <source>IMPLANT</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="productedit.cpp" line="53"/>
-        <source>SCANNER</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="productedit.cpp" line="54"/>
-        <source>CHAIR</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="productedit.cpp" line="55"/>
-        <source>ETC</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">날짜</translation>
     </message>
 </context>
 <context>
     <name>ProductInput</name>
     <message>
-        <location filename="productinput.cpp" line="22"/>
+        <location filename="productinput.cpp" line="25"/>
+        <source>PRODUCT INPUT</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="productinput.cpp" line="27"/>
         <source>ProductKey</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="productinput.cpp" line="23"/>
+        <location filename="productinput.cpp" line="28"/>
         <source>Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="productinput.cpp" line="24"/>
+        <location filename="productinput.cpp" line="29"/>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="productinput.cpp" line="25"/>
+        <location filename="productinput.cpp" line="30"/>
         <source>Price</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="productinput.cpp" line="37"/>
-        <source>Randomly created</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="productinput.cpp" line="42"/>
-        <source>IMPLANT</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="productinput.cpp" line="43"/>
-        <source>SCANNER</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="productinput.cpp" line="44"/>
-        <source>CHAIR</source>
+        <location filename="productinput.cpp" line="31"/>
+        <source>Stock</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="productinput.cpp" line="45"/>
-        <source>ETC</source>
+        <source>Randomly created</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="productinput.cpp" line="57"/>
+        <location filename="productinput.cpp" line="66"/>
         <source>CLEAR</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="productinput.cpp" line="58"/>
+        <location filename="productinput.cpp" line="67"/>
         <source>INPUT</source>
         <translation type="unfinished"></translation>
     </message>
@@ -590,81 +571,168 @@
         <translation type="unfinished">채팅</translation>
     </message>
     <message>
-        <location filename="productmanager.ui" line="93"/>
+        <location filename="productmanager.ui" line="38"/>
+        <source>PRODUCT MANAGER</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="productmanager.ui" line="78"/>
         <source>INPUT</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="productmanager.ui" line="138"/>
-        <source>&amp;SEARCH</source>
+        <location filename="productmanager.ui" line="159"/>
+        <source>PRODUCT_KEY</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="productmanager.ui" line="173"/>
-        <source>&amp;EDIT</source>
+        <location filename="productmanager.ui" line="164"/>
+        <source>TYPE_ID</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="productmanager.ui" line="208"/>
+        <location filename="productmanager.ui" line="169"/>
+        <source>PRODUCT_NAME</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="productmanager.ui" line="174"/>
+        <source>PRODUCT_PRICE</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="productmanager.ui" line="205"/>
+        <location filename="productmanager.ui" line="394"/>
+        <source>0000</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="productmanager.ui" line="211"/>
+        <location filename="productmanager.cpp" line="91"/>
+        <source>Input ProductKey</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="productmanager.ui" line="236"/>
+        <location filename="productmanager.ui" line="258"/>
+        <source>SEARCH</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="productmanager.ui" line="274"/>
+        <source>Total View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="productmanager.ui" line="332"/>
+        <location filename="productmanager.ui" line="684"/>
+        <source>EDIT</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="productmanager.ui" line="372"/>
+        <location filename="productmanager.cpp" line="59"/>
         <source>ProductKey</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="productmanager.ui" line="216"/>
+        <location filename="productmanager.ui" line="403"/>
+        <source>ProductKey is unique</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="productmanager.ui" line="435"/>
         <source>Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="productmanager.ui" line="224"/>
+        <location filename="productmanager.ui" line="473"/>
+        <location filename="productmanager.cpp" line="61"/>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="productmanager.ui" line="232"/>
+        <location filename="productmanager.ui" line="495"/>
+        <source>NNNNNNNNNN</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="productmanager.ui" line="530"/>
+        <location filename="productmanager.cpp" line="62"/>
         <source>Price</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="productmanager.ui" line="552"/>
+        <source>000000</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="productmanager.ui" line="594"/>
+        <source>Stock</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="productmanager.ui" line="616"/>
+        <source>00000</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="productmanager.ui" line="659"/>
+        <source>CLEAR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="productmanager.cpp" line="60"/>
+        <source>Type ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="productmanager.cpp" line="63"/>
+        <source>the Number of stock</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="productmanager.cpp" line="96"/>
+        <source>Input Type ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="productmanager.cpp" line="101"/>
+        <source>Input Product Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="productmanager.cpp" line="106"/>
+        <source>Input Product Price</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="productmanager.cpp" line="131"/>
+        <source>Please input word for search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="productmanager.cpp" line="132"/>
+        <source>NOTHING INPUT for Search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="productmanager.cpp" line="172"/>
+        <source>EDIT succeed!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="productmanager.cpp" line="174"/>
+        <source>EDTI fail!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>ProductSearch</name>
     <message>
-        <location filename="productsearch.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished">채팅</translation>
-    </message>
-    <message>
-        <location filename="productsearch.ui" line="94"/>
-        <location filename="productsearch.ui" line="199"/>
-        <source>ProductKey</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="productsearch.ui" line="99"/>
-        <location filename="productsearch.ui" line="207"/>
-        <source>Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="productsearch.ui" line="104"/>
-        <location filename="productsearch.ui" line="215"/>
-        <source>Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="productsearch.ui" line="109"/>
-        <location filename="productsearch.ui" line="223"/>
-        <source>Price</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="productsearch.ui" line="145"/>
-        <source>&amp;SEARCH</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="productsearch.ui" line="164"/>
-        <source>&amp;CLEAR</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">채팅</translation>
     </message>
 </context>
 </TS>

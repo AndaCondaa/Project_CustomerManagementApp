@@ -22,10 +22,18 @@ class OrderInput : public QWidget
 public:
     explicit OrderInput(QWidget *parent = nullptr);
 
+signals:
+    void inputOrder();
+
 private slots:
     void clear();               // Slot connected to Clicked() of ClearButton
+    void recvCkList(QVector<int>);
+    void input();
+    void recvPkList(QVector<int>);
 
 private:
+    QString makeOrderNumber();
+
     // Variables for setting GUI
     QLabel *orderNum;
     QLabel *orderCK;

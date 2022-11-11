@@ -67,6 +67,14 @@ MainWindow::MainWindow(QWidget *parent)
     connect(home, SIGNAL(gotoProduct()), SLOT(on_action_Product_triggered()));
     connect(home, SIGNAL(gotoOrder()), SLOT(on_action_Order_triggered()));
     connect(home, SIGNAL(gotoChat()), SLOT(on_action_Chat_triggered()));
+
+    connect(customerManager, SIGNAL(sendCustomerKey(QVector<int>)),
+            orderManager, SLOT(recvCustomerKey(QVector<int>)));
+    connect(productManager, SIGNAL(sendProductKey(QVector<int>)),
+            orderManager, SLOT(recvProductKey(QVector<int>)));
+
+    customerManager->notifyCk();
+    productManager->notifyPk();
 }
 
 MainWindow::~MainWindow()

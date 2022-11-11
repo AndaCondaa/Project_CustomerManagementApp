@@ -97,8 +97,9 @@ void ProductInput::recvCurrentPK(int pk)
         index = 9;
 }
 
-int ProductInput::makeProductKey(int typeID)
+int ProductInput::makeProductKey()
 {
+    int typeID = typeBox->currentIndex() + 1;
 
     srand(QTime::currentTime().msecsSinceStartOfDay());     //시드를 주어 매번 랜덤한 값으로 나타냄
     int tmp = rand() % 9;
@@ -111,7 +112,7 @@ int ProductInput::makeProductKey(int typeID)
 
 void ProductInput::input()
 {
-    int pk = makeProductKey(typeBox->currentIndex() + 1);
+    int pk = makeProductKey();
     int typeID = typeBox->currentIndex() + 1;
     QString name = nameLine->text();
     int price = priceLine->text().toInt();

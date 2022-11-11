@@ -48,6 +48,7 @@ void CustomerManager::on_inputButton_clicked()
 void CustomerManager::update()
 {
     updateTable();
+    notifyCk();
 }
 
 void CustomerManager::on_customerTableView_clicked(const QModelIndex &index)
@@ -113,12 +114,12 @@ void CustomerManager::on_totalButton_clicked()
 void CustomerManager::on_editButton_clicked()
 {
     QSqlQuery editQuery;
-    editQuery.prepare("CALL EDIT_CUSTOMER (:ck, :clinic, :license, :dentist, :number_c)");
+    editQuery.prepare("CALL EDIT_CUSTOMER (:ck, :clinic, :license, :dentist, :number)");
     editQuery.bindValue(":ck", ui->ckEditLine->text());
     editQuery.bindValue(":clinic", ui->clinicEditLine->text());
     editQuery.bindValue(":license", ui->licenseEditLine->text());
     editQuery.bindValue(":dentist", ui->dentistEditLine->text());
-    editQuery.bindValue(":number_c", ui->numberEditLine->text());
+    editQuery.bindValue(":number", ui->numberEditLine->text());
     bool isExec = editQuery.exec();
 
     if (isExec) {
@@ -173,3 +174,15 @@ void CustomerManager::on_searchComboBox_currentIndexChanged(int index)
     }
 }
 
+void CustomerManager::notifyCk()
+{
+    //업데이트하면 오더와 챗에 ck 전송
+    QSqlQuery sendQuery;
+    sendQuery.exec("SELECT * FROM CUSTOMER_TABLE ORDER BY CUSTOMER_KEY");
+
+    QVector<int> ckVector;
+    while (sendQuery.next()) {
+        ckVector.append(sendQuery.value(0).toInt());
+    }
+    emit sendCustomerKey(ckVector);
+}

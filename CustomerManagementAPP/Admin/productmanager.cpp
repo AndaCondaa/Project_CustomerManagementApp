@@ -72,6 +72,7 @@ void ProductManager::updateTable()
 void ProductManager::update()
 {
     updateTable();
+    notifyPk();
 }
 
 void ProductManager::on_totalButton_clicked()
@@ -174,3 +175,14 @@ void ProductManager::on_editButton_clicked()
         qDebug() << tr("EDTI fail!");
 }
 
+void ProductManager::notifyPk()
+{
+    //업데이트하면 오더와 챗에 ck 전송
+    QSqlQuery sendQuery;
+    sendQuery.exec("SELECT * FROM PRODUCT_TABLE ORDER BY PRODUCT_KEY");
+    QVector<int> pkVector;
+    while (sendQuery.next()) {
+        pkVector.append(sendQuery.value(0).toInt());
+    }
+    emit sendProductKey(pkVector);
+}

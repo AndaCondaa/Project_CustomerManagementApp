@@ -13,12 +13,18 @@
 #include <QPushButton>
 #include <QComboBox>
 #include <QDateEdit>
+#include <QTime>
+#include <QRandomGenerator>
+#include <QSqlQuery>
+#include <QSqlError>
+
 
 OrderInput::OrderInput(QWidget *parent)
     : QWidget{parent}
 {
     // Setting GUI
     setFixedSize(290, 340);
+    setWindowTitle(tr("ORDER INPUT"));
 
     orderNum = new QLabel(tr("OrderNumber"), this);
     orderCK = new QLabel(tr("CustomerKey"), this);
@@ -65,6 +71,8 @@ OrderInput::OrderInput(QWidget *parent)
     quantityLine->setAlignment(Qt::AlignRight);
     totalLine->setAlignment(Qt::AlignRight);
 
+    quantityLine->setInputMask("00000");
+
     clearButton = new QPushButton("&CLEAR", this);
     inputButton = new QPushButton("&INPUT", this);
 
@@ -73,6 +81,9 @@ OrderInput::OrderInput(QWidget *parent)
 
     // Connecting signals and slots
     connect(clearButton, SIGNAL(clicked()), SLOT(clear()));
+    connect(inputButton, SIGNAL(clicked()), SLOT(input()));
+//    connect(quantityLine, SIGNAL(textChanged(QString)), SLOT(calTotal(QString)));
+//    connect(orderPkBox, SIGNAL(currentIndexChanged(int)), SLOT(calTotal(int)));
 }
 
 // Slot connected to Clicked() of ClearButton
@@ -82,4 +93,71 @@ void OrderInput::clear()
     orderPkBox->setCurrentIndex(0);
     dateEdit->setDate(QDate::currentDate());
     quantityLine->clear();
+    totalLine->clear();
+}
+
+void OrderInput::recvCkList(QVector<int> ckVector)
+{
+    orderCkBox->clear();
+    foreach (auto ck, ckVector) {
+        orderCkBox->addItem(QString::number(ck));
+    }
+}
+
+void OrderInput::recvPkList(QVector<int> pkVector)
+{
+    orderPkBox->clear();
+    foreach (auto pk, pkVector) {
+        orderPkBox->addItem(QString::number(pk));
+    }
+}
+
+void OrderInput::input()
+{
+    QString orderNumber = makeOrderNumber();
+    int ck = orderCkBox->currentText().toInt();
+    int pk = orderPkBox->currentText().toInt();
+    QString date = dateEdit->text();
+    int quantity = quantityLine->text().toInt();
+//    int total = totalLine->text().toInt();
+    int total = 1000;
+
+    QSqlQuery inputQuery;
+    inputQuery.prepare("CALL INPUT_ORDER(:orderNum, :ck, :pk, :date, :quantity, :total)");
+    inputQuery.bindValue(":orderNum", orderNumber);
+    inputQuery.bindValue(":ck", ck);
+    inputQuery.bindValue(":pk", pk);
+    inputQuery.bindValue(":date", date);
+    inputQuery.bindValue(":quantity", quantity);
+    inputQuery.bindValue(":total", total);
+    bool isExec = inputQuery.exec();
+
+    if (isExec) {
+        clear();
+        qDebug() << "성공";
+        emit inputOrder();
+    }
+    else {
+        if (inputQuery.lastError().text().contains("ORA-00001")) {
+            qDebug() << "유니크 에러";
+        } else if (inputQuery.lastError().text().contains("ORA-12899"))
+            qDebug() << "컬럼 데이터 초과 에러";
+    }
+}
+
+QString OrderInput::makeOrderNumber()
+{
+    QString ckIndex = QString::number(orderCkBox->currentText().toInt() / 1000);
+    QString pkIndex = QString::number(orderPkBox->currentText().toInt() / 100);
+
+    QString date = dateEdit->text().split("-")[0] + dateEdit->text().split("-")[1] +
+                            dateEdit->text().split("-")[2]; //YYYY-MM-DD -> YYYYMMDD
+    QString dateIndex = date.right(6);  //YYYYMMDD->YYMMDD
+    srand(QTime::currentTime().msecsSinceStartOfDay());     //시드를 주어 매번 랜덤한 값으로 나타냄
+    QString tmp = QString::number(rand() % 100);
+
+    QString orderNumber = dateIndex + ckIndex + pkIndex + tmp;
+    qDebug() << orderNumber;
+
+    return orderNumber;
 }

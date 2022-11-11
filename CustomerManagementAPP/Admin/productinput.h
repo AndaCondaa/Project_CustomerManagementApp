@@ -31,7 +31,7 @@ private slots:
     void clear();               // Slot connected to Clicked() of ClearButton
 
 private:
-    int makeProductKey(int typeID);
+    int makeProductKey();
 
     // Variables for setting GUI
     QLabel *pk;

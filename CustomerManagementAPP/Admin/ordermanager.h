@@ -14,6 +14,7 @@
 #include <QWidget>
 
 class OrderInput;
+class QSqlQueryModel;
 
 namespace Ui {
 class OrderManager;
@@ -27,13 +28,26 @@ public:
     explicit OrderManager(QWidget *parent = nullptr);
     ~OrderManager();
 
+signals:
+    void sendCkToInput(QVector<int>);       //인풋으로 고객매니저에서 받은 ck전송
+    void sendPkToInput(QVector<int>);       //인풋으로 상품매니저에서 받은 pk전송
+
 private slots:
+    void recvCustomerKey(QVector<int>);     //고객매니저에서 ck받기
+    void recvProductKey(QVector<int>);      //상품매니저에게 pk받기
     int makeTotal(int ,int);                // Calculate Total price
 
+    void on_inputButton_clicked();
+    void update();
+
 private:
+    void updateTable();
+
     Ui::OrderManager *ui;
 
     OrderInput *orderInput;             // Objects of Class OrderInput for function what input
+
+    QSqlQueryModel *orderQueryModel;
 };
 
 #endif // ORDERMANAGER_H

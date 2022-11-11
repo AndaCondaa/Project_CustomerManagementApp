@@ -55,11 +55,11 @@ CustomerInput::CustomerInput(QWidget *parent)
     numberLine->setGeometry(140,140,130,20);
 
     ckLine->setReadOnly(true);
-//    ckLine->setAlignment(Qt::AlignRight);
-//    clinicLine->setAlignment(Qt::AlignRight);
-//    licenseLine->setAlignment(Qt::AlignRight);
-//    dentistLine->setAlignment(Qt::AlignRight);
-//    numberLine->setAlignment(Qt::AlignRight);
+    ckLine->setAlignment(Qt::AlignRight);
+    clinicLine->setAlignment(Qt::AlignRight);
+    licenseLine->setAlignment(Qt::AlignRight);
+    dentistLine->setAlignment(Qt::AlignRight);
+    numberLine->setAlignment(Qt::AlignRight);
 
     clinicLine->setInputMask("NNNNNNNNNN");
     licenseLine->setInputMask("00-0000-00");
@@ -85,10 +85,10 @@ void CustomerInput::recvCurrentCK(int ck)
 }
 
 // Make CustomerKey by using index, license, number
-int CustomerInput::makeCustomerKey(QString recvLicense)
+int CustomerInput::makeCustomerKey()
 {
-    int license = (recvLicense.split("-")[0] +
-            recvLicense.split("-")[1] + recvLicense.split("-")[2]).toInt();
+    int license = (licenseLine->text().split("-")[0] +
+            licenseLine->text().split("-")[1] + licenseLine->text().split("-")[2]).toInt();
 
     srand(QTime::currentTime().msecsSinceStartOfDay());  //시드를 주어 매번 랜덤한 값으로 나타냄
     int tmp = (rand() % 9) * 100;
@@ -111,7 +111,7 @@ void CustomerInput::clear()
 
 void CustomerInput::input()
 {
-    int ck = makeCustomerKey(licenseLine->text());
+    int ck = makeCustomerKey();
     QString clinic = clinicLine->text();
     QString license = licenseLine->text();
     QString dentist = dentistLine->text();
@@ -120,8 +120,6 @@ void CustomerInput::input()
 //    QSqlDatabase db = QSqlDatabase::database();
 //    QSqlQuery query(db);
     QSqlQuery inputQuery;
-//    query.prepare("INSERT INTO CUSTOMER(CUSTOMER_KEY, CLINIC_NAME, LICENSE_NUMBER, DENTIST_NAME, PHONE_NUMBER, ORDER_AMOUNT)"
-//                  "VALUES  (:ck, :clinic, :license, :dentist, :number, :amount);");
     inputQuery.prepare("CALL INPUT_CUSTOMER (:ck, :clinic, :license, :dentist, :number, :amount)");
     inputQuery.setForwardOnly(true);
     inputQuery.bindValue(":ck", ck);

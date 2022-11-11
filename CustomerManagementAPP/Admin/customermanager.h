@@ -13,8 +13,6 @@
 #define CUSTOMERMANAGER_H
 
 #include <QWidget>
-#include <QMap>
-
 
 class CustomerInput;
 class QSqlQueryModel;
@@ -31,22 +29,20 @@ public:
     explicit CustomerManager(QWidget *parent = nullptr);
     ~CustomerManager();
 
+    void notifyCk();
+
 signals:
-    void sendCurrentCK(int);
+    void sendCurrentCK(int);          //고객인풋클래스에 전송 for 인덱싱
+    void sendCustomerKey(QVector<int>);       //오더매니저와 챗매니저에게 전송
 
 private slots:
     void on_inputButton_clicked();      // Show the CustomerInput Widget
     void update();
-
     void on_customerTableView_clicked(const QModelIndex &index);
-
     void on_searchButton_clicked();
     void on_totalButton_clicked();
-
     void on_editButton_clicked();
-
     void on_clearButton_clicked();
-
     void on_searchComboBox_currentIndexChanged(int index);
 
 private:

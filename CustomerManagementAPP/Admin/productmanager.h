@@ -29,8 +29,11 @@ public:
     explicit ProductManager(QWidget *parent = nullptr);
     ~ProductManager();
 
+    void notifyPk();
+
 signals:
     void sendCurrentPK(int);
+    void sendProductKey(QVector<int>);
 
 private slots:
     void on_inputButton_clicked();              // Show the ProductInput Widget

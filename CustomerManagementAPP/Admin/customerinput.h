@@ -30,7 +30,7 @@ private slots:
     void clear();          // Slot connected to Clicked() of ClearButton
 
 private:
-    int makeCustomerKey(QString license);
+    int makeCustomerKey();
 
     // Variables for setting GUI
     QLabel *ckLabel;

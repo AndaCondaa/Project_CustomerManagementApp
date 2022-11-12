@@ -73,6 +73,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(productManager, SIGNAL(sendProductKey(QVector<int>)),
             orderManager, SLOT(recvProductKey(QVector<int>)));
 
+    connect(orderManager, SIGNAL(checkPrice(QString)), productManager, SLOT(recvPk(QString)));
+    connect(productManager, SIGNAL(sendResultPrice(QStringList)),
+            orderManager, SLOT(recvResultPrice(QStringList)));
+
     customerManager->notifyCk();
     productManager->notifyPk();
 }

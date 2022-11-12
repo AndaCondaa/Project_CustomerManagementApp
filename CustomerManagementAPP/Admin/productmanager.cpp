@@ -186,3 +186,15 @@ void ProductManager::notifyPk()
     }
     emit sendProductKey(pkVector);
 }
+
+void ProductManager::recvPk(QString pk)
+{
+    QModelIndexList index = productQueryModel->match(productQueryModel->index(0, 0), Qt::EditRole, pk, 1, Qt::MatchFlag(Qt::MatchCaseSensitive));
+    foreach (auto idx, index) {
+        QString price = productQueryModel->data(idx.siblingAtColumn(3)).toString();
+        QStringList result;
+        result << pk << price;
+
+        emit sendResultPrice(result);
+    }
+}

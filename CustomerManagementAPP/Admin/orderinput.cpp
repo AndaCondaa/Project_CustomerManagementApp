@@ -17,6 +17,7 @@
 #include <QRandomGenerator>
 #include <QSqlQuery>
 #include <QSqlError>
+#include <QStandardItemModel>
 
 
 OrderInput::OrderInput(QWidget *parent)
@@ -52,7 +53,7 @@ OrderInput::OrderInput(QWidget *parent)
     orderPkBox = new QComboBox(this);
     dateEdit = new QDateEdit(this);
     quantityLine = new QLineEdit(this);
-    totalLine = new QLineEdit(tr("Automatic calculation"),this);
+    totalLine = new QLineEdit(this);
 
     orderNumLine->setGeometry(140,20,130,20);
     orderCkBox->setGeometry(140,50,130,20);
@@ -71,7 +72,7 @@ OrderInput::OrderInput(QWidget *parent)
     quantityLine->setAlignment(Qt::AlignRight);
     totalLine->setAlignment(Qt::AlignRight);
 
-    quantityLine->setInputMask("00000");
+    quantityLine->setInputMask("000");
 
     clearButton = new QPushButton("&CLEAR", this);
     inputButton = new QPushButton("&INPUT", this);
@@ -79,11 +80,14 @@ OrderInput::OrderInput(QWidget *parent)
     clearButton->setGeometry(20,205,115,115);
     inputButton->setGeometry(155,205,115,115);
 
+
+    priceModel = new QStandardItemModel(0,2);
+
     // Connecting signals and slots
     connect(clearButton, SIGNAL(clicked()), SLOT(clear()));
     connect(inputButton, SIGNAL(clicked()), SLOT(input()));
-//    connect(quantityLine, SIGNAL(textChanged(QString)), SLOT(calTotal(QString)));
-//    connect(orderPkBox, SIGNAL(currentIndexChanged(int)), SLOT(calTotal(int)));
+    connect(orderPkBox, SIGNAL(currentIndexChanged(int)), SLOT(sendPk(int)));
+    connect(quantityLine, SIGNAL(textChanged(QString)), SLOT(calTotal(QString)));
 }
 
 // Slot connected to Clicked() of ClearButton
@@ -119,8 +123,8 @@ void OrderInput::input()
     int pk = orderPkBox->currentText().toInt();
     QString date = dateEdit->text();
     int quantity = quantityLine->text().toInt();
-//    int total = totalLine->text().toInt();
-    int total = 1000;
+    int total = totalLine->text().toInt();
+
 
     QSqlQuery inputQuery;
     inputQuery.prepare("CALL INPUT_ORDER(:orderNum, :ck, :pk, :date, :quantity, :total)");
@@ -157,7 +161,35 @@ QString OrderInput::makeOrderNumber()
     QString tmp = QString::number(rand() % 100);
 
     QString orderNumber = dateIndex + ckIndex + pkIndex + tmp;
-    qDebug() << orderNumber;
 
     return orderNumber;
+}
+
+void OrderInput::sendPk(int idx)
+{
+    Q_UNUSED(idx);
+    QString pk = orderPkBox->currentText();
+    emit sendPkToManager(pk);
+}
+
+void OrderInput::recvPriceModel(QStringList list)
+{
+    priceModel->clear();
+    QList<QStandardItem *> result;
+    for (int i = 0; i < 2; ++i) {
+        result.append(new QStandardItem(list.at(i)));
+    }
+    priceModel->appendRow(result);
+    calTotal(list.at(1));
+}
+
+void OrderInput::calTotal(QString quantity)
+{
+    if (quantityLine->text().isEmpty()) {
+        totalLine->setText("0");
+    }
+    else {
+        int price = priceModel->item(0, 1)->text().toInt();
+        totalLine->setText(QString::number(price * quantity.toInt()));
+    }
 }

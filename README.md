@@ -3,7 +3,7 @@ Customer Management System
 
 <h2> 진행중 </h2>
 <h4>
--오더 pk,ck 전송은 그대로, 가격은 시그널 슬롯 or standarmodel?!?!?
+
 </h4>
 
 

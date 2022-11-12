@@ -34,6 +34,7 @@ public:
 signals:
     void sendCurrentPK(int);
     void sendProductKey(QVector<int>);
+    void sendResultPrice(QStringList);
 
 private slots:
     void on_inputButton_clicked();              // Show the ProductInput Widget
@@ -50,6 +51,7 @@ private slots:
     void on_clearButton_clicked();
 
     void on_editButton_clicked();
+    void recvPk(QString);           //가격 체크할 pk받기 from order
 
 private:
     void updateTable();

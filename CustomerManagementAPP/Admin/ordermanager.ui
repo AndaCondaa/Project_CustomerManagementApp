@@ -211,7 +211,7 @@
                  </item>
                  <item>
                   <property name="text">
-                   <string>DATE</string>
+                   <string>ORDER_DATE</string>
                   </property>
                  </item>
                 </widget>
@@ -242,13 +242,13 @@
                     </size>
                    </property>
                    <property name="inputMask">
-                    <string/>
+                    <string>0000000000000</string>
                    </property>
                    <property name="alignment">
                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                    </property>
                    <property name="placeholderText">
-                    <string/>
+                    <string>Input OrderNumber</string>
                    </property>
                   </widget>
                  </item>
@@ -593,7 +593,7 @@
                     </size>
                    </property>
                    <property name="inputMask">
-                    <string>00000</string>
+                    <string>000</string>
                    </property>
                    <property name="alignment">
                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

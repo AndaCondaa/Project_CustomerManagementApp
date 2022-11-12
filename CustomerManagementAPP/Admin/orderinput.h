@@ -15,6 +15,7 @@ class QLineEdit;
 class QPushButton;
 class QComboBox;
 class QDateEdit;
+class QStandardItemModel;
 
 class OrderInput : public QWidget
 {
@@ -24,12 +25,16 @@ public:
 
 signals:
     void inputOrder();
+    void sendPkToManager(QString);
 
 private slots:
     void clear();               // Slot connected to Clicked() of ClearButton
     void recvCkList(QVector<int>);
     void input();
     void recvPkList(QVector<int>);
+    void sendPk(int);
+    void recvPriceModel(QStringList);
+    void calTotal(QString);
 
 private:
     QString makeOrderNumber();
@@ -51,6 +56,8 @@ private:
 
     QPushButton *clearButton;
     QPushButton *inputButton;
+
+    QStandardItemModel *priceModel;
 };
 
 #endif // ORDERINPUT_H

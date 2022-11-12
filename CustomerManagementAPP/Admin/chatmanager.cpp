@@ -407,3 +407,9 @@ void ChatManager::readClient()
         delete file;
     }
 }
+
+void ChatManager::on_logSaveButton_clicked()
+{
+
+}
+

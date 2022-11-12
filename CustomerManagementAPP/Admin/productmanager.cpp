@@ -18,6 +18,14 @@
 #include <QSqlQuery>
 #include <QSqlQueryModel>
 
+#include <QApplication>
+#include <QTableView>
+#include <QSqlQueryModel>
+#include <QSqlDatabase>
+#include <QSqlQuery>
+#include <QSqlError>
+#include <QDebug>
+
 ProductManager::ProductManager(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ProductManager)
@@ -38,6 +46,17 @@ ProductManager::ProductManager(QWidget *parent) :
     query.exec("SELECT * FROM PRODUCT_TYPE ORDER BY TYPE_ID");
     while (query.next())
          ui->typeBox->addItem(query.value(1).toString());
+
+    qDebug() << "product";
+    QSqlDatabase db = QSqlDatabase::addDatabase("QODBC", "ProductManager");
+    db.setDatabaseName("Oracle11gx64");
+    db.setUserName("project");
+    db.setPassword("project");
+    if (!db.open()) {
+        qDebug() << db.lastError().text();
+    } else {
+        qDebug("success");
+    }
 }
 
 ProductManager::~ProductManager()

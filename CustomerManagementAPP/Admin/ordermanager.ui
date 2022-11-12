@@ -421,7 +421,7 @@
                     <bool>true</bool>
                    </property>
                    <property name="placeholderText">
-                    <string>OrderNumber is unique</string>
+                    <string>OrderNumber </string>
                    </property>
                   </widget>
                  </item>
@@ -461,7 +461,35 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QComboBox" name="ckBox"/>
+                  <widget class="QLineEdit" name="ckLine">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>180</width>
+                     <height>25</height>
+                    </size>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                   <property name="readOnly">
+                    <bool>true</bool>
+                   </property>
+                   <property name="placeholderText">
+                    <string>Order CustomerKey</string>
+                   </property>
+                  </widget>
                  </item>
                 </layout>
                </item>
@@ -598,6 +626,9 @@
                    <property name="alignment">
                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                    </property>
+                   <property name="placeholderText">
+                    <string>Order Quantity</string>
+                   </property>
                   </widget>
                  </item>
                 </layout>
@@ -659,7 +690,7 @@
                     <bool>true</bool>
                    </property>
                    <property name="placeholderText">
-                    <string/>
+                    <string>Total Price</string>
                    </property>
                   </widget>
                  </item>

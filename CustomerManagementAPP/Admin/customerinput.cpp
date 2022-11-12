@@ -75,6 +75,7 @@ CustomerInput::CustomerInput(QWidget *parent)
     // Connecting Signal and Slot
     connect(clearButton, SIGNAL(clicked()), SLOT(clear()));
     connect(inputButton, SIGNAL(clicked()), SLOT(input()));
+
 }
 
 void CustomerInput::recvCurrentCK(int ck)

@@ -78,11 +78,6 @@ void OrderManager::updateTable()
 void OrderManager::recvCustomerKey(QVector<int> ckVector)
 {
     emit sendCkToInput(ckVector);
-
-    ui->ckBox->clear();
-    foreach (auto ck, ckVector) {
-        ui->ckBox->addItem(QString::number(ck));
-    }
 }
 
 void OrderManager::recvProductKey(QVector<int> pkVector)
@@ -173,7 +168,7 @@ void OrderManager::on_searchComboBox_currentIndexChanged(int index)
 void OrderManager::on_clearButton_clicked()
 {
     ui->orderNumLine->clear();
-    ui->ckBox->setCurrentIndex(0);
+    ui->ckLine->clear();
     ui->pkBox->setCurrentIndex(0);
     ui->dateEdit->setDate(QDate::currentDate());
     ui->quantityLine->clear();
@@ -185,7 +180,7 @@ void OrderManager::on_editButton_clicked()
     QSqlQuery editQuery;
     editQuery.prepare("CALL EDIT_ORDER (:orderNum, :ck, :pk, :date, :quantity, :total)");
     editQuery.bindValue(":orderNum", ui->orderNumLine->text());
-    editQuery.bindValue(":ck", ui->ckBox->currentText());
+    editQuery.bindValue(":ck", ui->ckLine->text());
     editQuery.bindValue(":pk", ui->pkBox->currentText());
     editQuery.bindValue(":date", ui->dateEdit->text());
     editQuery.bindValue(":quantity", ui->quantityLine->text());
@@ -194,7 +189,7 @@ void OrderManager::on_editButton_clicked()
 
     if (isExec) {
         ui->orderNumLine->clear();
-        ui->ckBox->setCurrentIndex(0);
+        ui->ckLine->clear();
         ui->pkBox->setCurrentIndex(0);
         ui->dateEdit->setDate(QDate::currentDate());
         ui->quantityLine->clear();
@@ -215,7 +210,7 @@ void OrderManager::on_orderTableView_clicked(const QModelIndex &index)
     QString total = orderQueryModel->data(index.siblingAtColumn(5)).toString();
 
     ui->orderNumLine->setText(orderNum);
-    ui->ckBox->setCurrentIndex(ui->ckBox->findText(ck));
+    ui->ckLine->setText(ck);
     ui->pkBox->setCurrentIndex(ui->pkBox->findText(pk));
     ui->dateEdit->setDate(QDate::fromString(date, "YYYY-MM-DD"));
     ui->quantityLine->setText(quantity);

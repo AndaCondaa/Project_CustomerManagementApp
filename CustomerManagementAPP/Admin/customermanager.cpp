@@ -18,6 +18,14 @@
 #include <QSqlQuery>
 #include <QSqlQueryModel>
 
+#include <QApplication>
+#include <QTableView>
+#include <QSqlQueryModel>
+#include <QSqlDatabase>
+#include <QSqlQuery>
+#include <QSqlError>
+#include <QDebug>
+
 CustomerManager::CustomerManager(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::CustomerManager)
@@ -29,7 +37,20 @@ CustomerManager::CustomerManager(QWidget *parent) :
     updateTable();
 
     connect(this, SIGNAL(sendCurrentCK(int)), customerInput, SLOT(recvCurrentCK(int)));
-    connect(customerInput, SIGNAL(inputCustomer()), this, SLOT(update()));
+    connect(customerInput, SIGNAL(inputCustomer()), this, SLOT(update()));    
+
+
+    qDebug() << "customer";
+    QSqlDatabase db = QSqlDatabase::addDatabase("QODBC", "CustomerManager");
+    db.setDatabaseName("Oracle11gx64");
+    db.setUserName("test1");
+    db.setPassword("test1");
+
+    if (!db.open()) {
+        qDebug() << db.lastError().text();
+    } else {
+        qDebug("success");
+    }
 }
 
 CustomerManager::~CustomerManager()

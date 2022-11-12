@@ -64,6 +64,8 @@ private slots:
     void acceptConnection();         // Make Socket for FileSending and Connect signal/slot
     void readClient();               // Read Socket sent from Client and AdaminChat for saving file
 
+    void on_logSaveButton_clicked();
+
 private:
     Ui::ChatManager *ui;
 

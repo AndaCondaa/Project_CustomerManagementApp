@@ -67,3 +67,9 @@ from product_type order by type_id;
 --drop SEQUENCE seq_type_id;
 
 commit;
+
+
+GRANT SELECT ON customer_table TO customer_manager;
+commit;
+
+

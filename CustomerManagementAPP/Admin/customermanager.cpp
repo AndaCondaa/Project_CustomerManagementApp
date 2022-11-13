@@ -9,7 +9,6 @@
  *                      -> 주문클래스로 고객정보 전송
 */
 
-
 #include "customermanager.h"
 #include "ui_customermanager.h"
 #include "customerinput.h"

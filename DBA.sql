@@ -4,7 +4,6 @@ CREATE TABLE customer_table (
 	license_number varchar2(10) NOT NULL,
 	dentist_name varchar2(20) NOT NULL,
 	phone_number varchar2(15),
-    order_amount number(10),
 	PRIMARY KEY(customer_key)
 );
 

@@ -527,7 +527,29 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QComboBox" name="pkBox"/>
+                  <widget class="QLineEdit" name="pkLine">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>180</width>
+                     <height>25</height>
+                    </size>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                   <property name="readOnly">
+                    <bool>true</bool>
+                   </property>
+                   <property name="placeholderText">
+                    <string>Order ProductKey</string>
+                   </property>
+                  </widget>
                  </item>
                 </layout>
                </item>
@@ -566,6 +588,9 @@
                  </item>
                  <item>
                   <widget class="QDateEdit" name="dateEdit">
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
                    <property name="timeSpec">
                     <enum>Qt::LocalTime</enum>
                    </property>

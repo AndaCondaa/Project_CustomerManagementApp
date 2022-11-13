@@ -7,6 +7,7 @@
 
 
 #include "orderinput.h"
+#include "qsqlrecord.h"
 
 #include <QLabel>
 #include <QLineEdit>
@@ -19,6 +20,14 @@
 #include <QSqlError>
 #include <QStandardItemModel>
 
+
+#include <QApplication>
+#include <QTableView>
+#include <QSqlQueryModel>
+#include <QSqlDatabase>
+#include <QSqlQuery>
+#include <QSqlError>
+#include <QDebug>
 
 OrderInput::OrderInput(QWidget *parent)
     : QWidget{parent}
@@ -69,6 +78,7 @@ OrderInput::OrderInput(QWidget *parent)
     totalLine->setReadOnly(true);
 
     orderNumLine->setAlignment(Qt::AlignRight);
+    dateEdit->setAlignment(Qt::AlignRight);
     quantityLine->setAlignment(Qt::AlignRight);
     totalLine->setAlignment(Qt::AlignRight);
 
@@ -80,14 +90,40 @@ OrderInput::OrderInput(QWidget *parent)
     clearButton->setGeometry(20,205,115,115);
     inputButton->setGeometry(155,205,115,115);
 
-
-    priceModel = new QStandardItemModel(0,2);
-
     // Connecting signals and slots
     connect(clearButton, SIGNAL(clicked()), SLOT(clear()));
     connect(inputButton, SIGNAL(clicked()), SLOT(input()));
-    connect(orderPkBox, SIGNAL(currentIndexChanged(int)), SLOT(sendPk(int)));
+    connect(orderPkBox, SIGNAL(currentIndexChanged(int)), SLOT(getPrice(int)));
     connect(quantityLine, SIGNAL(textChanged(QString)), SLOT(calTotal(QString)));
+
+    QSqlDatabase orderDB = QSqlDatabase::database("OrderManager");
+    //ck채우기
+    QSqlQuery countCK(orderDB);
+    countCK.exec("SELECT sys.count_customer FROM dual");
+    countCK.first();
+    int countCustomer = countCK.value(0).toInt();
+    for (int i = 1; i <= countCustomer; i++) {
+        QSqlQuery getCK(orderDB);
+        getCK.prepare("SELECT sys.ck_order(:rownum) FROM dual");
+        getCK.bindValue(":rownum", i);
+        getCK.exec();
+        getCK.first();
+        orderCkBox->addItem(getCK.value(0).toString());
+    }
+
+    //pk채우기
+    QSqlQuery countPK(orderDB);
+    countPK.exec("SELECT sys.count_product FROM dual");
+    countPK.first();
+    int countProduct = countPK.value(0).toInt();
+    for (int i = 1; i <= countProduct; i++) {
+        QSqlQuery getPK(orderDB);
+        getPK.prepare("SELECT sys.pk_order(:rownum) FROM dual");
+        getPK.bindValue(":rownum", i);
+        getPK.exec();
+        getPK.first();
+        orderPkBox->addItem(getPK.value(0).toString());
+    }
 }
 
 // Slot connected to Clicked() of ClearButton
@@ -100,22 +136,6 @@ void OrderInput::clear()
     totalLine->clear();
 }
 
-void OrderInput::recvCkList(QVector<int> ckVector)
-{
-    orderCkBox->clear();
-    foreach (auto ck, ckVector) {
-        orderCkBox->addItem(QString::number(ck));
-    }
-}
-
-void OrderInput::recvPkList(QVector<int> pkVector)
-{
-    orderPkBox->clear();
-    foreach (auto pk, pkVector) {
-        orderPkBox->addItem(QString::number(pk));
-    }
-}
-
 void OrderInput::input()
 {
     QString orderNumber = makeOrderNumber();
@@ -125,9 +145,9 @@ void OrderInput::input()
     int quantity = quantityLine->text().toInt();
     int total = totalLine->text().toInt();
 
-
-    QSqlQuery inputQuery;
-    inputQuery.prepare("CALL INPUT_ORDER(:orderNum, :ck, :pk, :date, :quantity, :total)");
+    QSqlDatabase orderDB = QSqlDatabase::database("OrderManager");
+    QSqlQuery inputQuery(orderDB);
+    inputQuery.prepare("CALL sys.INPUT_ORDER(:orderNum, :ck, :pk, :date, :quantity, :total)");
     inputQuery.bindValue(":orderNum", orderNumber);
     inputQuery.bindValue(":ck", ck);
     inputQuery.bindValue(":pk", pk);
@@ -165,31 +185,25 @@ QString OrderInput::makeOrderNumber()
     return orderNumber;
 }
 
-void OrderInput::sendPk(int idx)
+void OrderInput::getPrice(int idx)
 {
     Q_UNUSED(idx);
-    QString pk = orderPkBox->currentText();
-    emit sendPkToManager(pk);
-}
-
-void OrderInput::recvPriceModel(QStringList list)
-{
-    priceModel->clear();
-    QList<QStandardItem *> result;
-    for (int i = 0; i < 2; ++i) {
-        result.append(new QStandardItem(list.at(i)));
-    }
-    priceModel->appendRow(result);
-    calTotal(list.at(1));
+    QSqlDatabase orderDB = QSqlDatabase::database("OrderManager");
+    QSqlQuery getPrice(orderDB);
+    getPrice.prepare("SELECT sys.check_price(:pk) FROM dual");
+    getPrice.bindValue(":pk", orderPkBox->currentText().toInt());
+    getPrice.exec();
+    getPrice.first();
+    tmp_price = getPrice.value(0).toInt();
+    calTotal(quantityLine->text());
 }
 
 void OrderInput::calTotal(QString quantity)
 {
-    if (quantityLine->text().isEmpty()) {
+    if (quantity.isEmpty()) {
         totalLine->setText("0");
     }
     else {
-        int price = priceModel->item(0, 1)->text().toInt();
-        totalLine->setText(QString::number(price * quantity.toInt()));
+        totalLine->setText(QString::number(tmp_price * quantity.toInt()));
     }
 }

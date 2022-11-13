@@ -75,7 +75,6 @@ CustomerInput::CustomerInput(QWidget *parent)
     // Connecting Signal and Slot
     connect(clearButton, SIGNAL(clicked()), SLOT(clear()));
     connect(inputButton, SIGNAL(clicked()), SLOT(input()));
-
 }
 
 void CustomerInput::recvCurrentCK(int ck)
@@ -118,10 +117,9 @@ void CustomerInput::input()
     QString dentist = dentistLine->text();
     QString number = numberLine->text();
 
-//    QSqlDatabase db = QSqlDatabase::database();
-//    QSqlQuery query(db);
-    QSqlQuery inputQuery;
-    inputQuery.prepare("CALL INPUT_CUSTOMER (:ck, :clinic, :license, :dentist, :number, :amount)");
+    QSqlDatabase customerDB = QSqlDatabase::database("CustomerManager");
+    QSqlQuery inputQuery(customerDB);
+    inputQuery.prepare("CALL sys.INPUT_CUSTOMER (:ck, :clinic, :license, :dentist, :number, :amount)");
     inputQuery.setForwardOnly(true);
     inputQuery.bindValue(":ck", ck);
     inputQuery.bindValue(":clinic", clinic);

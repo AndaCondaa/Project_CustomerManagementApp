@@ -19,14 +19,34 @@
 #include <QSqlQueryModel>
 #include <QStandardItemModel>
 
+
+#include <QApplication>
+#include <QTableView>
+#include <QSqlQueryModel>
+#include <QSqlDatabase>
+#include <QSqlQuery>
+#include <QSqlError>
+#include <QDebug>
+
+
 OrderManager::OrderManager(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::OrderManager)
 {
     ui->setupUi(this);
+
+    QSqlDatabase orderDB = QSqlDatabase::addDatabase("QODBC", "OrderManager");
+    orderDB.setDatabaseName("Oracle11gx64");
+    orderDB.setUserName("ORDER_MANAGER");
+    orderDB.setPassword("om");
+    if (!orderDB.open()) {
+        qDebug() << orderDB.lastError().text();
+    } else {
+        qDebug("Order DB connect success");
+    }
+
     orderInput = new OrderInput;
     orderQueryModel = new QSqlQueryModel(ui->orderTableView);
-    priceModel = new QStandardItemModel(0,2);
 
     ui->dateEdit->setDate(QDate::currentDate());
     ui->dateEdit->setMaximumDate(QDate::currentDate());
@@ -34,16 +54,19 @@ OrderManager::OrderManager(QWidget *parent) :
     updateTable();
 
     connect(orderInput, SIGNAL(inputOrder()), this, SLOT(update()));    //주문 인풋 후 메인테이블 업데이트하라고 알려주기
-    connect(this, SIGNAL(sendCkToInput(QVector<int>)), orderInput, SLOT(recvCkList(QVector<int>))); //ck리스트 전송 연결
-    connect(this, SIGNAL(sendPkToInput(QVector<int>)), orderInput, SLOT(recvPkList(QVector<int>)));
-    connect(orderInput, SIGNAL(sendPkToManager(QString)), this, SLOT(recvPkFromInput(QString)));
-    connect(this, SIGNAL(sendResultPrice(QStringList)),
-            orderInput,SLOT(recvPriceModel(QStringList)));
 }
 
 OrderManager::~OrderManager()
 {
     delete ui;
+    QSqlDatabase orderDB = QSqlDatabase::database("OrderManager");
+    if(orderDB.isOpen()) {
+        delete orderQueryModel;
+        orderDB.commit();
+        orderDB.close();
+    }
+    orderInput->close();
+    orderInput->deleteLater();
 }
 
 // Calculate Total price
@@ -60,7 +83,8 @@ void OrderManager::on_inputButton_clicked()
 
 void OrderManager::updateTable()
 {
-    orderQueryModel->setQuery("SELECT * FROM ORDER_TABLE ORDER BY ORDER_NUMBER");
+    QSqlDatabase orderDB = QSqlDatabase::database("OrderManager");
+    orderQueryModel->setQuery("SELECT * FROM sys.ORDER_TABLE ORDER BY ORDER_NUMBER", orderDB);
     orderQueryModel->setHeaderData(0, Qt::Horizontal, tr("OrderNumber"));
     orderQueryModel->setHeaderData(1, Qt::Horizontal, tr("CustomerKey"));
     orderQueryModel->setHeaderData(2, Qt::Horizontal, tr("ProductKey"));
@@ -72,44 +96,11 @@ void OrderManager::updateTable()
     ui->orderTableView->horizontalHeader()->setStretchLastSection(true);
     ui->orderTableView->horizontalHeader()->setStyleSheet(
                 "QHeaderView { font-size: 10pt; color: blue; }");
-    ui->orderTableView->resizeColumnsToContents();
-}
-
-void OrderManager::recvCustomerKey(QVector<int> ckVector)
-{
-    emit sendCkToInput(ckVector);
-}
-
-void OrderManager::recvProductKey(QVector<int> pkVector)
-{
-    emit sendPkToInput(pkVector);
-
-    ui->pkBox->clear();
-    foreach (auto pk, pkVector) {
-        ui->pkBox->addItem(QString::number(pk));
-    }
 }
 
 void OrderManager::update()
 {
     updateTable();
-}
-
-void OrderManager::recvPkFromInput(QString pk)
-{
-    emit checkPrice(pk);
-}
-
-void OrderManager::recvResultPrice(QStringList list)
-{
-    priceModel->clear();
-    QList<QStandardItem *> result;
-    for (int i = 0; i < 2; ++i) {
-        result.append(new QStandardItem(list.at(i)));
-    }
-    priceModel->appendRow(result);
-
-    emit sendResultPrice(list);
 }
 
 void OrderManager::on_totalButton_clicked()
@@ -130,12 +121,13 @@ void OrderManager::on_searchButton_clicked()
         return;
     }
 
-    QString searchFlag = ui->searchComboBox->currentText();
+    QString searchColumn = ui->searchComboBox->currentText();
     QString searchWord = ui->searchLine->text();
 
+    QSqlDatabase orderDB = QSqlDatabase::database("OrderManager");
     orderQueryModel->setQuery
-            (QString("SELECT * FROM ORDER_TABLE WHERE %1 LIKE '%%2%'")
-                                        .arg(searchFlag, searchWord));
+            (QString("SELECT * FROM sys.ORDER_TABLE WHERE %1 LIKE '%%2%'")
+                                        .arg(searchColumn, searchWord), orderDB);
 }
 
 
@@ -169,7 +161,7 @@ void OrderManager::on_clearButton_clicked()
 {
     ui->orderNumLine->clear();
     ui->ckLine->clear();
-    ui->pkBox->setCurrentIndex(0);
+    ui->pkLine->clear();
     ui->dateEdit->setDate(QDate::currentDate());
     ui->quantityLine->clear();
     ui->totalLine->clear();
@@ -177,11 +169,12 @@ void OrderManager::on_clearButton_clicked()
 
 void OrderManager::on_editButton_clicked()
 {
-    QSqlQuery editQuery;
-    editQuery.prepare("CALL EDIT_ORDER (:orderNum, :ck, :pk, :date, :quantity, :total)");
+    QSqlDatabase orderDB = QSqlDatabase::database("OrderManager");
+    QSqlQuery editQuery(orderDB);
+    editQuery.prepare("CALL sys.EDIT_ORDER (:orderNum, :ck, :pk, :date, :quantity, :total)");
     editQuery.bindValue(":orderNum", ui->orderNumLine->text());
     editQuery.bindValue(":ck", ui->ckLine->text());
-    editQuery.bindValue(":pk", ui->pkBox->currentText());
+    editQuery.bindValue(":pk", ui->pkLine->text());
     editQuery.bindValue(":date", ui->dateEdit->text());
     editQuery.bindValue(":quantity", ui->quantityLine->text());
     editQuery.bindValue(":total", ui->totalLine->text());
@@ -190,7 +183,7 @@ void OrderManager::on_editButton_clicked()
     if (isExec) {
         ui->orderNumLine->clear();
         ui->ckLine->clear();
-        ui->pkBox->setCurrentIndex(0);
+        ui->pkLine->clear();
         ui->dateEdit->setDate(QDate::currentDate());
         ui->quantityLine->clear();
         ui->totalLine->clear();
@@ -211,28 +204,30 @@ void OrderManager::on_orderTableView_clicked(const QModelIndex &index)
 
     ui->orderNumLine->setText(orderNum);
     ui->ckLine->setText(ck);
-    ui->pkBox->setCurrentIndex(ui->pkBox->findText(pk));
+    ui->pkLine->setText(pk);
     ui->dateEdit->setDate(QDate::fromString(date, "YYYY-MM-DD"));
     ui->quantityLine->setText(quantity);
     ui->totalLine->setText(total);
 }
 
-void OrderManager::on_pkBox_currentIndexChanged(int index)
+void OrderManager::on_pkLine_textChanged(const QString &pk)
 {
-    Q_UNUSED(index);
-    emit checkPrice(ui->pkBox->currentText());
-    on_quantityLine_textChanged(ui->quantityLine->text());
+    QSqlDatabase orderDB = QSqlDatabase::database("OrderManager");
+    QSqlQuery getPrice(orderDB);
+    getPrice.prepare("SELECT sys.check_price(:pk) FROM dual");
+    getPrice.bindValue(":pk", pk);
+    getPrice.exec();
+    getPrice.first();
+    tmp_price = getPrice.value(0).toInt();
 }
-
 
 void OrderManager::on_quantityLine_textChanged(const QString &quantity)
 {
-    if (ui->quantityLine->text().isEmpty()) {
-        ui->totalLine->setText("0");
+    if (quantity.isEmpty()) {
+        ui->totalLine->clear();
     }
     else {
-        int price = priceModel->item(0, 1)->text().toInt();
-        ui->totalLine->setText(QString::number(price * quantity.toInt()));
+        ui->totalLine->setText(QString::number(tmp_price * quantity.toInt()));
     }
 }
 

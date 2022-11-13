@@ -32,6 +32,16 @@ ProductManager::ProductManager(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    QSqlDatabase productDB = QSqlDatabase::addDatabase("QODBC", "ProductManager");
+    productDB.setDatabaseName("Oracle11gx64");
+    productDB.setUserName("PRODUCT_MANAGER");
+    productDB.setPassword("pm");
+    if (!productDB.open()) {
+        qDebug() << productDB.lastError().text();
+    } else {
+        qDebug("Product DB connect success");
+    }
+
     productInput = new ProductInput;
     productQueryModel = new QSqlQueryModel(ui->productTableView);
 
@@ -40,28 +50,22 @@ ProductManager::ProductManager(QWidget *parent) :
     connect(this, SIGNAL(sendCurrentPK(int)), productInput, SLOT(recvCurrentPK(int)));
     connect(productInput, SIGNAL(inputProduct()), this, SLOT(update()));
 
-
     // 타입콤보박스 세팅 -> 타입테이블에서 가져오기
-    QSqlQuery query;
-    query.exec("SELECT * FROM PRODUCT_TYPE ORDER BY TYPE_ID");
+    QSqlQuery query(productDB);
+    query.exec("SELECT * FROM sys.PRODUCT_TYPE ORDER BY TYPE_ID");
     while (query.next())
          ui->typeBox->addItem(query.value(1).toString());
-
-    qDebug() << "product";
-    QSqlDatabase db = QSqlDatabase::addDatabase("QODBC", "ProductManager");
-    db.setDatabaseName("Oracle11gx64");
-    db.setUserName("project");
-    db.setPassword("project");
-    if (!db.open()) {
-        qDebug() << db.lastError().text();
-    } else {
-        qDebug("success");
-    }
 }
 
 ProductManager::~ProductManager()
 {
     delete ui;
+    QSqlDatabase productDB = QSqlDatabase::database("ProductManager");
+    if(productDB.isOpen()) {
+        delete productQueryModel;
+        productDB.commit();
+        productDB.close();
+    }
 }
 
 // Show the ProductInput Widget
@@ -74,7 +78,8 @@ void ProductManager::on_inputButton_clicked()
 
 void ProductManager::updateTable()
 {
-    productQueryModel->setQuery("SELECT * FROM PRODUCT_TABLE ORDER BY PRODUCT_KEY");
+    QSqlDatabase productDB = QSqlDatabase::database("ProductManager");
+    productQueryModel->setQuery("SELECT * FROM sys.PRODUCT_TABLE ORDER BY PRODUCT_KEY", productDB);
     productQueryModel->setHeaderData(0, Qt::Horizontal, tr("ProductKey"));
     productQueryModel->setHeaderData(1, Qt::Horizontal, tr("Type ID"));
     productQueryModel->setHeaderData(2, Qt::Horizontal, tr("Name"));
@@ -85,13 +90,11 @@ void ProductManager::updateTable()
     ui->productTableView->horizontalHeader()->setStretchLastSection(true);
     ui->productTableView->horizontalHeader()->setStyleSheet(
                 "QHeaderView { font-size: 10pt; color: blue; }");
-    ui->productTableView->resizeColumnsToContents();
 }
 
 void ProductManager::update()
 {
     updateTable();
-    notifyPk();
 }
 
 void ProductManager::on_totalButton_clicked()
@@ -100,7 +103,6 @@ void ProductManager::on_totalButton_clicked()
     ui->searchComboBox->setCurrentIndex(0);
     ui->searchLine->clear();
 }
-
 
 void ProductManager::on_searchComboBox_currentIndexChanged(int index)
 {
@@ -154,12 +156,15 @@ void ProductManager::on_searchButton_clicked()
         return;
     }
 
-    QString searchFlag = ui->searchComboBox->currentText();
+    QString searchColumn = ui->searchComboBox->currentText();
     QString searchWord = ui->searchLine->text();
 
+    QSqlDatabase productDB = QSqlDatabase::database("ProductManager");
     productQueryModel->setQuery
-            (QString("SELECT * FROM PRODUCT_TABLE WHERE %1 LIKE '%%2%'")
-                                        .arg(searchFlag, searchWord));
+            (QString("SELECT * FROM sys.PRODUCT_TABLE WHERE %1 LIKE '%%2%'")
+                                        .arg(searchColumn, searchWord), productDB);
+    ui->productTableView->horizontalHeader()->setStretchLastSection(true);
+
 }
 
 void ProductManager::on_clearButton_clicked()
@@ -173,8 +178,9 @@ void ProductManager::on_clearButton_clicked()
 
 void ProductManager::on_editButton_clicked()
 {
-    QSqlQuery editQuery;
-    editQuery.prepare("CALL EDIT_PRODUCT (:pk, :type_id, :name, :price, :stock)");
+    QSqlDatabase productDB = QSqlDatabase::database("ProductManager");
+    QSqlQuery editQuery(productDB);
+    editQuery.prepare("CALL sys.EDIT_PRODUCT (:pk, :type_id, :name, :price, :stock)");
     editQuery.bindValue(":pk", ui->pkEditLine->text());
     editQuery.bindValue(":type_id", ui->typeBox->currentIndex() + 1);
     editQuery.bindValue(":name", ui->nameEditLine->text());
@@ -192,18 +198,6 @@ void ProductManager::on_editButton_clicked()
         qDebug() << tr("EDIT succeed!");
     } else
         qDebug() << tr("EDTI fail!");
-}
-
-void ProductManager::notifyPk()
-{
-    //업데이트하면 오더와 챗에 ck 전송
-    QSqlQuery sendQuery;
-    sendQuery.exec("SELECT * FROM PRODUCT_TABLE ORDER BY PRODUCT_KEY");
-    QVector<int> pkVector;
-    while (sendQuery.next()) {
-        pkVector.append(sendQuery.value(0).toInt());
-    }
-    emit sendProductKey(pkVector);
 }
 
 void ProductManager::recvPk(QString pk)

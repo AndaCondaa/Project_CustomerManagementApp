@@ -74,9 +74,9 @@ ProductInput::ProductInput(QWidget *parent) :
     connect(inputButton, SIGNAL(clicked()), SLOT(input()));
 
     // 타입콤보박스 세팅 -> 타입테이블에서 가져오기
-    QSqlQuery query;
-    query.exec("SELECT * FROM PRODUCT_TYPE ORDER BY TYPE_ID");
-
+    QSqlDatabase productDB = QSqlDatabase::database("ProductManager");
+    QSqlQuery query(productDB);
+    query.exec("SELECT * FROM sys.PRODUCT_TYPE ORDER BY TYPE_ID");
     while (query.next())
          typeBox->addItem(query.value(1).toString());
 }
@@ -118,8 +118,9 @@ void ProductInput::input()
     int price = priceLine->text().toInt();
     int stock = stockLine->text().toInt();
 
-    QSqlQuery inputQuery;
-    inputQuery.prepare("CALL INPUT_PRODUCT (:pk, :type_id, :name, :price, :stock)");
+    QSqlDatabase productDB = QSqlDatabase::database("ProductManager");
+    QSqlQuery inputQuery(productDB);
+    inputQuery.prepare("CALL sys.INPUT_PRODUCT (:pk, :type_id, :name, :price, :stock)");
     inputQuery.bindValue(":pk", pk);
     inputQuery.bindValue(":type_id", typeID);
     inputQuery.bindValue(":name", name);

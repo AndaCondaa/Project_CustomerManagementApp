@@ -8,7 +8,6 @@
  *                      -> 정보수정 요청 수행
  *                      -> 주문클래스로 고객정보 전송
 */
-
 #include "customermanager.h"
 #include "ui_customermanager.h"
 #include "customerinput.h"
@@ -29,6 +28,16 @@ CustomerManager::CustomerManager(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::CustomerManager)
 {
+    QSqlDatabase customerDB = QSqlDatabase::addDatabase("QODBC", "CustomerManager");
+    customerDB.setDatabaseName("Oracle11gx64");
+    customerDB.setUserName("customer_manager");
+    customerDB.setPassword("cm");
+    if (!customerDB.open()) {
+        qDebug() << customerDB.lastError().text();
+    } else {
+        qDebug("Customer DB success");
+    }
+
     ui->setupUi(this);
     customerInput = new CustomerInput;
     customerQueryModel = new QSqlQueryModel(ui->customerTableView);
@@ -36,25 +45,18 @@ CustomerManager::CustomerManager(QWidget *parent) :
     updateTable();
 
     connect(this, SIGNAL(sendCurrentCK(int)), customerInput, SLOT(recvCurrentCK(int)));
-    connect(customerInput, SIGNAL(inputCustomer()), this, SLOT(update()));    
-
-
-    qDebug() << "customer";
-    QSqlDatabase db = QSqlDatabase::addDatabase("QODBC", "CustomerManager");
-    db.setDatabaseName("Oracle11gx64");
-    db.setUserName("test1");
-    db.setPassword("test1");
-
-    if (!db.open()) {
-        qDebug() << db.lastError().text();
-    } else {
-        qDebug("success");
-    }
+    connect(customerInput, SIGNAL(inputCustomer()), this, SLOT(update()));
 }
 
 CustomerManager::~CustomerManager()
 {
     delete ui;
+    QSqlDatabase customerDB = QSqlDatabase::database("CustomerManager");
+    if(customerDB.isOpen()) {
+        delete customerQueryModel;
+        customerDB.commit();
+        customerDB.close();
+    }
 }
 
 // Show the CustomerInput Widget
@@ -68,7 +70,6 @@ void CustomerManager::on_inputButton_clicked()
 void CustomerManager::update()
 {
     updateTable();
-    notifyCk();
 }
 
 void CustomerManager::on_customerTableView_clicked(const QModelIndex &index)
@@ -90,6 +91,7 @@ void CustomerManager::on_customerTableView_clicked(const QModelIndex &index)
 
 void CustomerManager::on_searchButton_clicked()
 {
+    QSqlDatabase customerDB = QSqlDatabase::database("CustomerManager");
     if (!ui->searchLine->text().length()) {
         QMessageBox nothing;
         nothing.setIcon(QMessageBox::Warning);
@@ -99,17 +101,19 @@ void CustomerManager::on_searchButton_clicked()
         return;
     }
 
-    QString searchFlag = ui->searchComboBox->currentText();
+    QString searchColumn = ui->searchComboBox->currentText();
     QString searchWord = ui->searchLine->text();
 
     customerQueryModel->setQuery
-            (QString("SELECT * FROM CUSTOMER_TABLE WHERE %1 LIKE '%%2%'")
-                                        .arg(searchFlag, searchWord));
+            (QString("SELECT * FROM sys.CUSTOMER_TABLE WHERE %1 LIKE '%%2%'")
+                                        .arg(searchColumn, searchWord), customerDB);
+    ui->customerTableView->horizontalHeader()->setStretchLastSection(true);
 }
 
 void CustomerManager::updateTable()
 {
-    customerQueryModel->setQuery("SELECT * FROM CUSTOMER_TABLE ORDER BY CUSTOMER_KEY");
+    QSqlDatabase customerDB = QSqlDatabase::database("CustomerManager");
+    customerQueryModel->setQuery("SELECT * FROM sys.CUSTOMER_TABLE ORDER BY CUSTOMER_KEY", customerDB);
     customerQueryModel->setHeaderData(0, Qt::Horizontal, tr("CustomerKey"));
     customerQueryModel->setHeaderData(1, Qt::Horizontal, tr("Clinic"));
     customerQueryModel->setHeaderData(2, Qt::Horizontal, tr("License"));
@@ -121,7 +125,6 @@ void CustomerManager::updateTable()
     ui->customerTableView->horizontalHeader()->setStretchLastSection(true);
     ui->customerTableView->horizontalHeader()->setStyleSheet(
                 "QHeaderView { font-size: 10pt; color: blue; }");
-    ui->customerTableView->resizeColumnsToContents();
 }
 
 void CustomerManager::on_totalButton_clicked()
@@ -133,8 +136,9 @@ void CustomerManager::on_totalButton_clicked()
 
 void CustomerManager::on_editButton_clicked()
 {
-    QSqlQuery editQuery;
-    editQuery.prepare("CALL EDIT_CUSTOMER (:ck, :clinic, :license, :dentist, :number)");
+    QSqlDatabase customerDB = QSqlDatabase::database("CustomerManager");
+    QSqlQuery editQuery(customerDB);
+    editQuery.prepare("CALL sys.EDIT_CUSTOMER (:ck, :clinic, :license, :dentist, :number)");
     editQuery.bindValue(":ck", ui->ckEditLine->text());
     editQuery.bindValue(":clinic", ui->clinicEditLine->text());
     editQuery.bindValue(":license", ui->licenseEditLine->text());
@@ -192,17 +196,4 @@ void CustomerManager::on_searchComboBox_currentIndexChanged(int index)
         ui->searchLine->setInputMask("000-0000-0000");
         break;
     }
-}
-
-void CustomerManager::notifyCk()
-{
-    //업데이트하면 오더와 챗에 ck 전송
-    QSqlQuery sendQuery;
-    sendQuery.exec("SELECT * FROM CUSTOMER_TABLE ORDER BY CUSTOMER_KEY");
-
-    QVector<int> ckVector;
-    while (sendQuery.next()) {
-        ckVector.append(sendQuery.value(0).toInt());
-    }
-    emit sendCustomerKey(ckVector);
 }

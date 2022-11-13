@@ -27,8 +27,8 @@ CREATE TABLE product_table (
 
 CREATE TABLE order_table (
 	order_number varchar2(30) NOT NULL,
-    order_ck number(10) NOT NULL,
-	order_pk number(10) NOT NULL,
+    order_ck number(10) ,
+	order_pk number(10) ,
 	order_date varchar2(15) NOT NULL,
 	quantity number(5) not null,
     total   number(30) not null,
@@ -38,7 +38,6 @@ CREATE TABLE order_table (
     CONSTRAINT fk_pk FOREIGN KEY (order_pk)
     REFERENCES product_table(product_key)  
 );
-
 
 CREATE SEQUENCE seq_type_id
 INCREMENT BY 1
@@ -59,7 +58,6 @@ VALUES (seq_type_id.NEXTVAL, 'ETC');
 SELECT *
 from product_type order by type_id;
 
-
 --drop table order_table;
 --drop table customer_table;
 --drop table product_table;
@@ -70,6 +68,20 @@ commit;
 
 
 GRANT SELECT ON customer_table TO customer_manager;
+GRANT SELECT ON product_table TO product_manager;
+GRANT SELECT ON product_type TO product_manager;
+GRANT SELECT ON order_table TO order_manager;
 commit;
 
-
+GRANT EXECUTE ON INPUT_CUSTOMER TO customer_manager;
+GRANT EXECUTE ON INPUT_PRODUCT TO product_manager;
+GRANT EXECUTE ON INPUT_ORDER TO order_manager;
+GRANT EXECUTE ON EDIT_CUSTOMER TO customer_manager;
+GRANT EXECUTE ON EDIT_PRODUCT TO product_manager;
+GRANT EXECUTE ON EDIT_ORDER TO order_manager;
+GRANT EXECUTE ON ck_order TO order_manager;
+GRANT EXECUTE ON count_customer TO order_manager;
+GRANT EXECUTE ON pk_order TO order_manager;
+GRANT EXECUTE ON count_product TO order_manager;
+GRANT EXECUTE ON check_price TO order_manager;
+commit;

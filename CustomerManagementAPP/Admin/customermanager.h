@@ -29,8 +29,6 @@ public:
     explicit CustomerManager(QWidget *parent = nullptr);
     ~CustomerManager();
 
-    void notifyCk();
-
 signals:
     void sendCurrentCK(int);          //고객인풋클래스에 전송 for 인덱싱
     void sendCustomerKey(QVector<int>);       //오더매니저와 챗매니저에게 전송

@@ -25,15 +25,11 @@ public:
 
 signals:
     void inputOrder();
-    void sendPkToManager(QString);
 
 private slots:
     void clear();               // Slot connected to Clicked() of ClearButton
-    void recvCkList(QVector<int>);
     void input();
-    void recvPkList(QVector<int>);
-    void sendPk(int);
-    void recvPriceModel(QStringList);
+    void getPrice(int);
     void calTotal(QString);
 
 private:
@@ -57,7 +53,7 @@ private:
     QPushButton *clearButton;
     QPushButton *inputButton;
 
-    QStandardItemModel *priceModel;
+    int tmp_price;
 };
 
 #endif // ORDERINPUT_H

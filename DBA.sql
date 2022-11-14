@@ -4,6 +4,7 @@ CREATE TABLE customer_table (
 	license_number varchar2(10) NOT NULL,
 	dentist_name varchar2(20) NOT NULL,
 	phone_number varchar2(15),
+    order_count number(5),
 	PRIMARY KEY(customer_key)
 );
 
@@ -62,8 +63,7 @@ from product_type order by type_id;
 --drop table product_table;
 --drop table product_type;
 --drop SEQUENCE seq_type_id;
-
-commit;
+--commit;
 
 
 GRANT SELECT ON customer_table TO customer_manager;
@@ -83,4 +83,9 @@ GRANT EXECUTE ON count_customer TO order_manager;
 GRANT EXECUTE ON pk_order TO order_manager;
 GRANT EXECUTE ON count_product TO order_manager;
 GRANT EXECUTE ON check_price TO order_manager;
+GRANT EXECUTE ON order_count TO order_manager;
+GRANT EXECUTE ON check_stock TO order_manager;
+GRANT EXECUTE ON order_stock TO order_manager;
 commit;
+
+

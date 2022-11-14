@@ -49,7 +49,6 @@ public:
     ~ChatManager();
 
 private slots:
-    void recvCustomerKey(QString, QString, bool);           // Receive CustomerKey and Name from CustomerManger
     void noticeSave();                                      // Save the Notice to file(.txt)
     void noticeLoad();                                      // Load the Previous Notice from file(.txt)
 

@@ -29,11 +29,13 @@ public:
     explicit OrderManager(QWidget *parent = nullptr);
     ~OrderManager();
 
+    void updateTable();
+
 private slots:
     int makeTotal(int ,int);                // Calculate Total price
 
     void on_inputButton_clicked();
-    void update();
+    void update(int);
     void on_totalButton_clicked();
 
     void on_searchButton_clicked();
@@ -52,8 +54,6 @@ private slots:
     void on_quantityLine_textChanged(const QString &arg1);
 
 private:
-    void updateTable();
-
     Ui::OrderManager *ui;
 
     OrderInput *orderInput;             // Objects of Class OrderInput for function what input
@@ -61,7 +61,7 @@ private:
     QSqlQueryModel *orderQueryModel;
 
     int tmp_price;
-
+    int tmp_stock;
 };
 
 #endif // ORDERMANAGER_H

@@ -29,6 +29,8 @@ public:
     explicit ProductManager(QWidget *parent = nullptr);
     ~ProductManager();
 
+    void updateTable();
+
 signals:
     void sendCurrentPK(int);
     void sendProductKey(QVector<int>);
@@ -52,7 +54,6 @@ private slots:
     void recvPk(QString);           //가격 체크할 pk받기 from order
 
 private:
-    void updateTable();
 
     Ui::ProductManager *ui;
 

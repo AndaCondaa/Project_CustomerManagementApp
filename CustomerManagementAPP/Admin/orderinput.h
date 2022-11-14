@@ -23,13 +23,15 @@ class OrderInput : public QWidget
 public:
     explicit OrderInput(QWidget *parent = nullptr);
 
+    void fillCombo();
+
 signals:
-    void inputOrder();
+    void inputOrder(int);
 
 private slots:
     void clear();               // Slot connected to Clicked() of ClearButton
     void input();
-    void getPrice(int);
+    void getInfo(int);
     void calTotal(QString);
 
 private:
@@ -54,6 +56,7 @@ private:
     QPushButton *inputButton;
 
     int tmp_price;
+    int tmp_stock;
 };
 
 #endif // ORDERINPUT_H

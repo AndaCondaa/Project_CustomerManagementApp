@@ -71,6 +71,7 @@ void MainWindow::on_action_Home_triggered()
 // Slot connected triggered() of Cusotmer Action
 void MainWindow::on_action_Customer_triggered()
 {
+    customerManager->updateTable();
     customerManager->showMaximized();
     ui->stackedWidget->setCurrentIndex(1);
     ui->action_Home->setChecked(false);
@@ -83,6 +84,7 @@ void MainWindow::on_action_Customer_triggered()
 // Slot connected triggered() of Product Action
 void MainWindow::on_action_Product_triggered()
 {
+    productManager->updateTable();
     productManager->showMaximized();
     ui->stackedWidget->setCurrentIndex(2);
     ui->action_Home->setChecked(false);
@@ -95,6 +97,7 @@ void MainWindow::on_action_Product_triggered()
 // Slot connected triggered() of Order Action
 void MainWindow::on_action_Order_triggered()
 {
+    orderManager->updateTable();
     orderManager->showMaximized();
     ui->stackedWidget->setCurrentIndex(3);
     ui->action_Home->setChecked(false);

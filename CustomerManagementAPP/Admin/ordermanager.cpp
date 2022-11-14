@@ -53,7 +53,7 @@ OrderManager::OrderManager(QWidget *parent) :
 
     updateTable();
 
-    connect(orderInput, SIGNAL(inputOrder()), this, SLOT(update()));    //주문 인풋 후 메인테이블 업데이트하라고 알려주기
+    connect(orderInput, SIGNAL(inputOrder(int)), this, SLOT(update(int)));    //주문 인풋 후 메인테이블 업데이트하라고 알려주기
 }
 
 OrderManager::~OrderManager()
@@ -78,6 +78,7 @@ int OrderManager::makeTotal(int price, int quantity)
 
 void OrderManager::on_inputButton_clicked()
 {
+    orderInput->fillCombo();
     orderInput->show();
 }
 
@@ -98,9 +99,15 @@ void OrderManager::updateTable()
                 "QHeaderView { font-size: 10pt; color: blue; }");
 }
 
-void OrderManager::update()
+void OrderManager::update(int ck)
 {
     updateTable();
+
+    QSqlDatabase orderDB = QSqlDatabase::database("OrderManager");
+    QSqlQuery countUp(orderDB);
+    countUp.prepare("CALL sys.ORDER_COUNT(:ck)");
+    countUp.bindValue(":ck", ck);
+    countUp.exec();
 }
 
 void OrderManager::on_totalButton_clicked()

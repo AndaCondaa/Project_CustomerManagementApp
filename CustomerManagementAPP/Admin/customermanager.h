@@ -29,9 +29,10 @@ public:
     explicit CustomerManager(QWidget *parent = nullptr);
     ~CustomerManager();
 
+    void updateTable();
+
 signals:
     void sendCurrentCK(int);          //고객인풋클래스에 전송 for 인덱싱
-    void sendCustomerKey(QVector<int>);       //오더매니저와 챗매니저에게 전송
 
 private slots:
     void on_inputButton_clicked();      // Show the CustomerInput Widget
@@ -44,8 +45,6 @@ private slots:
     void on_searchComboBox_currentIndexChanged(int index);
 
 private:
-    void updateTable();
-
     Ui::CustomerManager *ui;
 
     CustomerInput *customerInput;        // Objects of Class CustomerInput for function what input

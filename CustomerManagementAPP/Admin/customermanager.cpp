@@ -119,7 +119,7 @@ void CustomerManager::updateTable()
     customerQueryModel->setHeaderData(2, Qt::Horizontal, tr("License"));
     customerQueryModel->setHeaderData(3, Qt::Horizontal, tr("Dentist"));
     customerQueryModel->setHeaderData(4, Qt::Horizontal, tr("Number"));
-    customerQueryModel->setHeaderData(5, Qt::Horizontal, tr("OrderAmount"));
+    customerQueryModel->setHeaderData(5, Qt::Horizontal, tr("OrderCount"));
 
     ui->customerTableView->setModel(customerQueryModel);
     ui->customerTableView->horizontalHeader()->setStretchLastSection(true);

@@ -7,18 +7,17 @@
 
 
 #include "orderinput.h"
-#include "qsqlrecord.h"
 
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
 #include <QComboBox>
+#include <QMessageBox>
 #include <QDateEdit>
 #include <QTime>
 #include <QRandomGenerator>
 #include <QSqlQuery>
 #include <QSqlError>
-#include <QStandardItemModel>
 
 
 #include <QApplication>
@@ -93,8 +92,120 @@ OrderInput::OrderInput(QWidget *parent)
     // Connecting signals and slots
     connect(clearButton, SIGNAL(clicked()), SLOT(clear()));
     connect(inputButton, SIGNAL(clicked()), SLOT(input()));
-    connect(orderPkBox, SIGNAL(currentIndexChanged(int)), SLOT(getPrice(int)));
+    connect(orderPkBox, SIGNAL(currentIndexChanged(int)), SLOT(getInfo(int)));
     connect(quantityLine, SIGNAL(textChanged(QString)), SLOT(calTotal(QString)));
+}
+
+// Slot connected to Clicked() of ClearButton
+void OrderInput::clear()
+{
+    orderCkBox->setCurrentIndex(0);
+    orderPkBox->setCurrentIndex(0);
+    dateEdit->setDate(QDate::currentDate());
+    quantityLine->clear();
+    totalLine->clear();
+}
+
+void OrderInput::input()
+{
+    QString orderNumber = makeOrderNumber();
+    int ck = orderCkBox->currentText().toInt();
+    int pk = orderPkBox->currentText().toInt();
+    QString date = dateEdit->text();
+    int quantity = quantityLine->text().toInt();
+    int total = totalLine->text().toInt();
+
+    if (tmp_stock < quantity) {
+        QMessageBox overStock;
+        overStock.setIcon(QMessageBox::Warning);
+        overStock.setText(tr("Quantity is more than the number of stock"));
+        overStock.setWindowTitle(tr("OVER STOCK!"));
+        overStock.exec();
+        return;
+    }
+
+    QSqlDatabase orderDB = QSqlDatabase::database("OrderManager");
+    QSqlQuery inputQuery(orderDB);
+    inputQuery.prepare("CALL sys.INPUT_ORDER(:orderNum, :ck, :pk, :date, :quantity, :total)");
+    inputQuery.bindValue(":orderNum", orderNumber);
+    inputQuery.bindValue(":ck", ck);
+    inputQuery.bindValue(":pk", pk);
+    inputQuery.bindValue(":date", date);
+    inputQuery.bindValue(":quantity", quantity);
+    inputQuery.bindValue(":total", total);
+    bool isInput = inputQuery.exec();
+
+    //재고수량 빼기
+    QSqlQuery stock(orderDB);
+    stock.prepare("CALL sys.ORDER_STOCK(:pk, :quantity)");
+    stock.bindValue(":pk", pk);
+    stock.bindValue(":quantity", quantity);
+    bool isStock = stock.exec();
+
+
+    if (isInput && isStock) {
+        clear();
+        qDebug() << "성공";
+        emit inputOrder(ck);
+    }
+    else {
+        if (inputQuery.lastError().text().contains("ORA-00001")) {
+            qDebug() << "유니크 에러";
+        } else if (inputQuery.lastError().text().contains("ORA-12899"))
+            qDebug() << "컬럼 데이터 초과 에러";
+    }
+}
+
+QString OrderInput::makeOrderNumber()
+{
+    QString ckIndex = QString::number(orderCkBox->currentText().toInt() / 1000);
+    QString pkIndex = QString::number(orderPkBox->currentText().toInt() / 100);
+
+    QString date = dateEdit->text().split("-")[0] + dateEdit->text().split("-")[1] +
+                            dateEdit->text().split("-")[2]; //YYYY-MM-DD -> YYYYMMDD
+    QString dateIndex = date.right(6);  //YYYYMMDD->YYMMDD
+    srand(QTime::currentTime().msecsSinceStartOfDay());     //시드를 주어 매번 랜덤한 값으로 나타냄
+    QString tmp = QString::number(rand() % 100);
+
+    QString orderNumber = dateIndex + ckIndex + pkIndex + tmp;
+
+    return orderNumber;
+}
+
+void OrderInput::getInfo(int idx)
+{
+    Q_UNUSED(idx);
+    QSqlDatabase orderDB = QSqlDatabase::database("OrderManager");
+    QSqlQuery getPrice(orderDB);
+    getPrice.prepare("SELECT sys.CHECK_PRICE(:pk) FROM dual");
+    getPrice.bindValue(":pk", orderPkBox->currentText().toInt());
+    getPrice.exec();
+    getPrice.first();
+    tmp_price = getPrice.value(0).toInt();
+    calTotal(quantityLine->text());
+
+    QSqlQuery getStock(orderDB);
+    getStock.prepare("SELECT sys.CHECK_STOCK(:pk) FROM dual");
+    getStock.bindValue(":pk", orderPkBox->currentText().toInt());
+    getStock.exec();
+    getStock.first();
+    tmp_stock = getStock.value(0).toInt();
+}
+
+void OrderInput::calTotal(QString quantity)
+{
+    if (quantity.isEmpty()) {
+        totalLine->setText("0");
+    }
+    else {
+        totalLine->setText(QString::number(tmp_price * quantity.toInt()));
+    }
+}
+
+void OrderInput::fillCombo()
+{
+    orderCkBox->clear();
+    orderPkBox->clear();
 
     QSqlDatabase orderDB = QSqlDatabase::database("OrderManager");
     //ck채우기
@@ -123,87 +234,5 @@ OrderInput::OrderInput(QWidget *parent)
         getPK.exec();
         getPK.first();
         orderPkBox->addItem(getPK.value(0).toString());
-    }
-}
-
-// Slot connected to Clicked() of ClearButton
-void OrderInput::clear()
-{
-    orderCkBox->setCurrentIndex(0);
-    orderPkBox->setCurrentIndex(0);
-    dateEdit->setDate(QDate::currentDate());
-    quantityLine->clear();
-    totalLine->clear();
-}
-
-void OrderInput::input()
-{
-    QString orderNumber = makeOrderNumber();
-    int ck = orderCkBox->currentText().toInt();
-    int pk = orderPkBox->currentText().toInt();
-    QString date = dateEdit->text();
-    int quantity = quantityLine->text().toInt();
-    int total = totalLine->text().toInt();
-
-    QSqlDatabase orderDB = QSqlDatabase::database("OrderManager");
-    QSqlQuery inputQuery(orderDB);
-    inputQuery.prepare("CALL sys.INPUT_ORDER(:orderNum, :ck, :pk, :date, :quantity, :total)");
-    inputQuery.bindValue(":orderNum", orderNumber);
-    inputQuery.bindValue(":ck", ck);
-    inputQuery.bindValue(":pk", pk);
-    inputQuery.bindValue(":date", date);
-    inputQuery.bindValue(":quantity", quantity);
-    inputQuery.bindValue(":total", total);
-    bool isExec = inputQuery.exec();
-
-    if (isExec) {
-        clear();
-        qDebug() << "성공";
-        emit inputOrder();
-    }
-    else {
-        if (inputQuery.lastError().text().contains("ORA-00001")) {
-            qDebug() << "유니크 에러";
-        } else if (inputQuery.lastError().text().contains("ORA-12899"))
-            qDebug() << "컬럼 데이터 초과 에러";
-    }
-}
-
-QString OrderInput::makeOrderNumber()
-{
-    QString ckIndex = QString::number(orderCkBox->currentText().toInt() / 1000);
-    QString pkIndex = QString::number(orderPkBox->currentText().toInt() / 100);
-
-    QString date = dateEdit->text().split("-")[0] + dateEdit->text().split("-")[1] +
-                            dateEdit->text().split("-")[2]; //YYYY-MM-DD -> YYYYMMDD
-    QString dateIndex = date.right(6);  //YYYYMMDD->YYMMDD
-    srand(QTime::currentTime().msecsSinceStartOfDay());     //시드를 주어 매번 랜덤한 값으로 나타냄
-    QString tmp = QString::number(rand() % 100);
-
-    QString orderNumber = dateIndex + ckIndex + pkIndex + tmp;
-
-    return orderNumber;
-}
-
-void OrderInput::getPrice(int idx)
-{
-    Q_UNUSED(idx);
-    QSqlDatabase orderDB = QSqlDatabase::database("OrderManager");
-    QSqlQuery getPrice(orderDB);
-    getPrice.prepare("SELECT sys.check_price(:pk) FROM dual");
-    getPrice.bindValue(":pk", orderPkBox->currentText().toInt());
-    getPrice.exec();
-    getPrice.first();
-    tmp_price = getPrice.value(0).toInt();
-    calTotal(quantityLine->text());
-}
-
-void OrderInput::calTotal(QString quantity)
-{
-    if (quantity.isEmpty()) {
-        totalLine->setText("0");
-    }
-    else {
-        totalLine->setText(QString::number(tmp_price * quantity.toInt()));
     }
 }

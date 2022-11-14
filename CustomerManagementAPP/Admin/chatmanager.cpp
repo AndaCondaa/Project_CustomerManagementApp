@@ -82,25 +82,6 @@ ChatManager::~ChatManager()
     logSaveThread->terminate();
 }
 
-// Receive CustomerKey and Name from CustomerManger
-void ChatManager::recvCustomerKey(QString ck, QString clinic, bool check)
-{
-    if (check) { // True means that Customer added
-        QTreeWidgetItem *customer = new QTreeWidgetItem;
-        customer->setText(0, ck);
-        customer->setText(1, clinic);
-        customer->setText(2, tr("Disconnected"));
-        ui->customerTreeWidget->addTopLevelItem(customer);
-        customerNameHash[ck] = clinic;
-    } else { // False means that Customer deleted
-        foreach(auto item, ui->customerTreeWidget->findItems(ck, Qt::MatchExactly, 0)) {
-            ui->customerTreeWidget->takeTopLevelItem(
-                        ui->customerTreeWidget->indexOfTopLevelItem(item));
-            customerNameHash.remove(ck);
-        }
-    }
-}
-
 // Save the Notice to file(.txt)
 void ChatManager::noticeSave()
 {
@@ -124,7 +105,6 @@ void ChatManager::noticeLoad()
 
     file.close( );
 }
-
 
 // New Connection with Client
 void ChatManager::clientConnect()

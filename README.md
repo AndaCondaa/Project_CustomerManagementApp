@@ -4,8 +4,7 @@ Customer Management System
 <h2> 진행중 </h2>
 <h4>
 -숫자 지수형태 해결 -> char형태로?
--재고처리 구현
--고객 쪽 총 주문금액 구현
+-채팅 IN
 </h4>
 
 

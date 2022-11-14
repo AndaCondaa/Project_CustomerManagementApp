@@ -24,6 +24,14 @@
 #include <QProgressDialog>
 #include <QTextEdit>
 
+#include <QApplication>
+#include <QTableView>
+#include <QSqlQueryModel>
+#include <QSqlDatabase>
+#include <QSqlQuery>
+#include <QSqlError>
+#include <QDebug>
+
 
 AdminChat::AdminChat(QWidget *parent)
     : QWidget(parent)
@@ -31,7 +39,6 @@ AdminChat::AdminChat(QWidget *parent)
 {
     ui->setupUi(this);
     ui->stackedWidget->setCurrentIndex(0);
-    noticeLoad();
 
     // PushButton connection for sign-in
     connect(ui->signInButton, &QPushButton::clicked,
@@ -51,10 +58,24 @@ AdminChat::AdminChat(QWidget *parent)
     // For file sending
     fileSocket = new QTcpSocket(this);
     connect(fileSocket, SIGNAL(bytesWritten(qint64)), SLOT(goOnSend(qint64)));
+    connect(ui->fileButton, SIGNAL(clicked()), SLOT(sendFile()));
 
     progressDialog = new QProgressDialog(0);
     progressDialog->setAutoClose(true);
     progressDialog->reset();
+
+
+    QSqlDatabase chatDB = QSqlDatabase::addDatabase("QODBC", "Chat_Admin");
+    chatDB.setDatabaseName("Oracle11gx64");
+    chatDB.setUserName("chat_admin");
+    chatDB.setPassword("admin");
+    if (!chatDB.open()) {
+        qDebug() << chatDB.lastError().text();
+    } else {
+        qDebug("Chat_Admin DB connect success");
+    }
+
+    noticeModel = new QSqlQueryModel(ui->noticeBoard);
 }
 
 AdminChat::~AdminChat()
@@ -97,6 +118,7 @@ void AdminChat::receiveData()
     switch(type) {
     case Admin_In:
         ui->stackedWidget->setCurrentIndex(1);
+        updateNotice();
         break;
     case Admin_In_Fail:
         QMessageBox::critical(this, tr("Fail!"), \
@@ -136,8 +158,6 @@ void AdminChat::receiveData()
         QMessageBox::critical(this, tr("Customer Out!"), \
                               tr("The customer (%1) has logged out").arg(data));
         break;
-    case Notice:
-        ui->noticeBoard->append(data);
     };
 }
 
@@ -249,8 +269,16 @@ void AdminChat::goOnSend(qint64 numBytes) // Start sending file content
     }
 }
 
-// File sending
-void AdminChat::sendFile() // Open the file and get the file name (including path)
+// Append new notice
+void AdminChat::on_noticeButton_clicked()
+{
+    if (!ui->noticeInput->text().length()) return;
+    insertNotice();
+    updateNotice();
+    ui->noticeInput->clear();
+}
+
+void AdminChat::sendFile()
 {
     loadSize = 0;
     byteToWrite = 0;
@@ -291,27 +319,27 @@ void AdminChat::sendFile() // Open the file and get the file name (including pat
     qDebug() << QString("Sending file %1").arg(filename);
 }
 
-// Append new notice
-void AdminChat::on_noticeButton_clicked()
+void AdminChat::updateNotice()
 {
-    if (!ui->noticeInput->text().length()) return;
+    QSqlDatabase chatDB = QSqlDatabase::database("Chat_Admin");
+    noticeModel->setQuery("SELECT * FROM sys.NOTICE_TABLE ORDER BY NOTICE_DATE", chatDB);
+    noticeModel->setHeaderData(0, Qt::Horizontal, tr("DATE"));
+    noticeModel->setHeaderData(1, Qt::Horizontal, tr("NOTICE"));
 
-    QString noticeMessage = ui->noticeInput->text();
-    ui->noticeBoard->append(noticeMessage);
-    ui->noticeInput->clear();
-    sendProtocol(Notice, noticeMessage);
+    ui->noticeBoard->setModel(noticeModel);
+    ui->noticeBoard->horizontalHeader()->setStretchLastSection(true);
+    ui->noticeBoard->horizontalHeader()->setStyleSheet(
+                "QHeaderView { font-size: 10pt; color: blue; }");
 }
 
-// Load previous notice
-void AdminChat::noticeLoad()
+void AdminChat::insertNotice()
 {
-    QFile file("../Admin/data/manage/notice.txt");
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-        return;
-    QByteArray notice = file.readAll();
-    ui->noticeBoard->setPlainText(notice);
+    QSqlDatabase chatDB = QSqlDatabase::database("Chat_Admin");
+    QSqlQuery input(chatDB);
+    input.prepare("INSERT INTO sys.NOTICE_TABLE(NOTICE_DATE, NOTICE_CONTENTS) VALUES (:date, :notice)");
+    input.bindValue(":date", QDate::currentDate());
+    input.bindValue(":notice", ui->noticeInput->text());
+    input.exec();
 
-    file.close( );
+    sendProtocol(Notice, "notice");
 }
-
-

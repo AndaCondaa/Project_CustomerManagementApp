@@ -27,6 +27,14 @@
 #include <QDebug>
 #include <QLineEdit>
 
+#include <QApplication>
+#include <QTableView>
+#include <QSqlQueryModel>
+#include <QSqlDatabase>
+#include <QSqlQuery>
+#include <QSqlError>
+#include <QDebug>
+
 ChatManager::ChatManager(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ChatManager)
@@ -66,45 +74,31 @@ ChatManager::ChatManager(QWidget *parent) :
     logSaveThread->start();
     connect(ui->logSaveButton, SIGNAL(clicked()), logSaveThread, SLOT(saveData()));
 
-    // Load the Previous Notice from file(.txt)
-    noticeLoad();
-
     qDebug() << tr("Server Open");
+
+
+    QSqlDatabase chatDB = QSqlDatabase::addDatabase("QODBC", "ChatManager");
+    chatDB.setDatabaseName("Oracle11gx64");
+    chatDB.setUserName("chat_manager");
+    chatDB.setPassword("chat");
+    if (!chatDB.open()) {
+        qDebug() << chatDB.lastError().text();
+    } else {
+        qDebug("Chat DB connect success");
+    }
+
+    customerModel = new QSqlQueryModel(ui->customerTableView);
+    noticeModel = new QSqlQueryModel(ui->noticeTableView);
 }
 
 ChatManager::~ChatManager()
 {
-    noticeSave();       // Save the Notice posted until now before crashing the ui
-
     delete ui;
     chatServer->close();
     fileServer->close();
     logSaveThread->terminate();
 }
 
-// Save the Notice to file(.txt)
-void ChatManager::noticeSave()
-{
-    QFile file("../Admin/data/manage/notice.txt");
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
-        return;
-    QByteArray notice;
-    notice.append(ui->noticeBoard->toPlainText().toStdString());
-    file.write(notice);
-    file.close( );
-}
-
-// Load the Previous Notice from file(.txt)
-void ChatManager::noticeLoad()
-{
-    QFile file("../Admin/data/manage/notice.txt");
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-        return;
-    QByteArray notice = file.readAll();
-    ui->noticeBoard->setPlainText(notice);
-
-    file.close( );
-}
 
 // New Connection with Client
 void ChatManager::clientConnect()
@@ -164,21 +158,30 @@ void ChatManager::receiveData()
     }
     case Sign_In: {
         //Verification of CustomerKey & Name inputted by customer
-        QList<QString> ckName = ((QString)data).split("|");
 
-        type = Sign_In_Fail;
-        foreach (auto item, ui->customerTreeWidget->findItems(ckName[0], Qt::MatchExactly, 0)) {
-            if (item->text(1) == ckName[1] && item->text(2) == "Disconnected") {
-                type = Sign_In;
-                item->setText(2, "Connected");
-                customerSocketHash[ckName[0]] = receiveSocket;             // CustomerKey : TcpSocket
-                customerSocketList.append(receiveSocket);                    // Insert socket into waiting_list
-                foreach (auto admin, adminSocketList) {
-                    sendProtocol(admin, Sign_In, (QString)data + "|Connected");
-                }
+        //customerModel에서 로그인요청한 ck|name 검증
+        QList<QString> ckName = ((QString)data).split("|"); // data = "customerKey|name"
+        QModelIndexList indexes = customerModel->match(customerModel->index(0, 0), Qt::EditRole, ckName[0], 1, Qt::MatchFlags(Qt::MatchExactly));
+
+        // 로그인 실패
+        foreach (auto idx, indexes) {
+            // ck는 맞지만, 이름이 틀린 경우
+            if (ckName[1] != customerModel->data(idx.siblingAtColumn(1)).toString()) {
+                sendProtocol(receiveSocket, Sign_In_Fail, "fail");
+                return;
             }
+            // 이름까지 맞는 경우 리스트 색상변경
+            ui->customerTableView->indexWidget(idx)->setStyleSheet("{background-color: yellow}");
         }
-        sendProtocol(receiveSocket, type, data);
+
+        // 로그인 성공 시
+        customerSocketHash[ckName[0]] = receiveSocket;             // CustomerKey : TcpSocket
+        customerSocketList.append(receiveSocket);                  // Insert socket into waiting_list
+
+        sendProtocol(receiveSocket, Sign_In, "success");        //로그인한 해당 고객에게 성공여부 전달
+        foreach (auto adminSock, adminSocketList)               //접속한 채팅관리자들에게 로그인한 고객정보 전송
+            sendProtocol(adminSock, Sign_In, data);
+
         break;
     }
     }
@@ -219,24 +222,30 @@ void ChatManager::receiveFromAdmin(QTcpSocket* receiveSocket)
         break;
     }
     case Invite: {
-        foreach (auto item, ui->customerTreeWidget->findItems(data, Qt::MatchExactly, 0)) {
-            item->setText(2, "Chatting...");
+        //초대한 고객 색상 변경
+        QModelIndexList indexes = customerModel->match(customerModel->index(0, 0), Qt::EditRole, data, 1, Qt::MatchFlags(Qt::MatchExactly));
+        foreach (auto idx, indexes) {
+            ui->customerTableView->indexWidget(idx)->setStyleSheet("{background-color: red}");
         }
+
         QString inviteMsg =
                 "<font color=orange><b> 안녕하세요. 오스템임플란트입니다. 상담원과 연결되었습니다! <b></font>";
         customerMatchingMap.insert(receiveSocket,customerSocketHash[data]);
         sendProtocol(customerSocketHash[data], Invite, inviteMsg);
         break;
     }
-    case Kick_Out:
-        foreach (auto item, ui->customerTreeWidget->findItems(data, Qt::MatchExactly, 0)) {
-            item->setText(2, "Connected");
+    case Kick_Out: {
+        //강퇴한 고객 색상 변경
+        QModelIndexList indexes = customerModel->match(customerModel->index(0, 0), Qt::EditRole, data, 1, Qt::MatchFlags(Qt::MatchExactly));
+        foreach (auto idx, indexes) {
+            ui->customerTableView->indexWidget(idx)->setStyleSheet("{background-color: yellow}");
         }
+
         sendProtocol(customerSocketHash[data], Kick_Out, data);
         customerMatchingMap.remove(receiveSocket, customerSocketHash[data]);
         break;
+    }
     case Notice:
-        ui->noticeBoard->append(data);
         foreach (auto customerSocket, customerSocketList) {
             sendProtocol(customerSocket, Notice, data);
         }
@@ -244,6 +253,7 @@ void ChatManager::receiveFromAdmin(QTcpSocket* receiveSocket)
             if (adminSocket != receiveSocket)
                 sendProtocol(adminSocket, Notice, data);
         }
+        updateNotice();
     }
 }
 
@@ -262,7 +272,6 @@ void ChatManager::receiveFromClient(QTcpSocket* receiveSocket)
 
     switch (type) {
     case In: {
-        QString adminMsg = (QString)data + "_" + customerNameHash[data];      // 채팅연결된 경우, Client와 연결된 Admin에게 CustomerKey 전송
         QString clientMsg;            // 채팅연결 시도한 Client에게 보내는 메세지
         bool op = false;
 
@@ -280,7 +289,7 @@ void ChatManager::receiveFromClient(QTcpSocket* receiveSocket)
             foreach (auto item, ui->customerTreeWidget->findItems(data, Qt::MatchExactly, 0)) {
                 item->setText(2, "Chatting...");
             }
-            sendProtocol(customerMatchingMap.key(receiveSocket), type, adminMsg);    //담당 Admin에게 전송
+            sendProtocol(customerMatchingMap.key(receiveSocket), type, data);    //담당 Admin에게 전송
         } else {
             type = In_Fail;
             clientMsg = "<font color=orange><b> 죄송합니다. 지금은 모든 상담원이 상담중입니다. <b></font>";
@@ -348,7 +357,6 @@ void ChatManager::readClient()
 
         progressDialog->setMaximum(totalSize);
 
-
         QList<QString> list = filename.split("/");      // To save only File name without path
 
         QTreeWidgetItem* fileLog = new QTreeWidgetItem;
@@ -356,9 +364,6 @@ void ChatManager::readClient()
         fileLog->setText(1, list[list.count()-1]);
         fileLog->setToolTip(1, filename);
 
-        // Resizing and Fixing ths siez of QTreeWidget
-        for(int i = 0; i < ui->fileTreeWidget->columnCount(); i++)
-            ui->fileTreeWidget->resizeColumnToContents(i);
 
         ui->fileTreeWidget->addTopLevelItem(fileLog);
         logSaveThread->appendData(fileLog);
@@ -388,8 +393,41 @@ void ChatManager::readClient()
     }
 }
 
-void ChatManager::on_logSaveButton_clicked()
+void ChatManager::updateNotice()
 {
+    QSqlDatabase chatDB = QSqlDatabase::database("ChatManager");
+    noticeModel->setQuery("SELECT * FROM sys.NOTICE_TABLE ORDER BY NOTICE_DATE", chatDB);
+    noticeModel->setHeaderData(0, Qt::Horizontal, tr("DATE"));
+    noticeModel->setHeaderData(1, Qt::Horizontal, tr("NOTICE"));
 
+    ui->noticeTableView->setModel(noticeModel);
+    ui->noticeTableView->horizontalHeader()->setStretchLastSection(true);
+    ui->noticeTableView->horizontalHeader()->setStyleSheet(
+                "QHeaderView { font-size: 10pt; color: blue; }");
 }
 
+void ChatManager::updateCustomerList()
+{
+    QSqlDatabase chatDB = QSqlDatabase::database("ChatManager");
+    customerModel->setQuery("SELECT CUSTOMER_KEY, CLINIC_NAME FROM sys.CUSTOMER_TABLE ORDER BY 1", chatDB);
+    customerModel->setHeaderData(0, Qt::Horizontal, tr("CUSTOMER_KEY"));
+    customerModel->setHeaderData(1, Qt::Horizontal, tr("CLINIC"));
+
+    ui->noticeTableView->setModel(customerModel);
+    ui->noticeTableView->horizontalHeader()->setStretchLastSection(true);
+    ui->noticeTableView->horizontalHeader()->setStyleSheet(
+                "QHeaderView { font-size: 10pt; color: blue; }");
+}
+
+void ChatManager::updateFileList()
+{
+    QSqlDatabase chatDB = QSqlDatabase::database("ChatManager");
+    fileModel->setQuery("SELECT * FROM sys.FILE_TABLE", chatDB);
+    fileModel->setHeaderData(0, Qt::Horizontal, tr("FROM"));
+    fileModel->setHeaderData(1, Qt::Horizontal, tr("FILE NAME"));
+
+    ui->noticeTableView->setModel(fileModel);
+    ui->noticeTableView->horizontalHeader()->setStretchLastSection(true);
+    ui->noticeTableView->horizontalHeader()->setStyleSheet(
+                "QHeaderView { font-size: 10pt; color: blue; }");
+}

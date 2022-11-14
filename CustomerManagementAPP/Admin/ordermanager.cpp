@@ -51,7 +51,7 @@ OrderManager::OrderManager(QWidget *parent) :
     ui->dateEdit->setDate(QDate::currentDate());
     ui->dateEdit->setMaximumDate(QDate::currentDate());
 
-    updateTable();
+//    updateTable();
 
     connect(orderInput, SIGNAL(inputOrder(int)), this, SLOT(update(int)));    //주문 인풋 후 메인테이블 업데이트하라고 알려주기
 }

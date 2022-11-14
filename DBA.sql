@@ -39,6 +39,16 @@ CREATE TABLE order_table (
     REFERENCES product_table(product_key)  
 );
 
+CREATE TABLE notice_table (
+    notice_date varchar2(10),
+    notice_contents varchar2(100)
+);
+
+CREATE TABLE file_table (
+    file_from varchar2(10),
+    file_name varchar2(30)
+);
+
 CREATE SEQUENCE seq_type_id
 INCREMENT BY 1
 START WITH 1 ;
@@ -65,11 +75,15 @@ from product_type order by type_id;
 --drop SEQUENCE seq_type_id;
 --commit;
 
-
 GRANT SELECT ON customer_table TO customer_manager;
 GRANT SELECT ON product_table TO product_manager;
 GRANT SELECT ON product_type TO product_manager;
 GRANT SELECT ON order_table TO order_manager;
+GRANT SELECT ON notice_table TO chat_manager;
+GRANT SELECT,INSERT ON notice_table TO chat_admin;
+GRANT SELECT ON notice_table TO client;
+GRANT SELECT ON customer_table TO chat_manager;
+GRANT SELECT, INSERT ON file_table TO chat_manager;
 commit;
 
 GRANT EXECUTE ON INPUT_CUSTOMER TO customer_manager;
@@ -86,6 +100,6 @@ GRANT EXECUTE ON check_price TO order_manager;
 GRANT EXECUTE ON order_count TO order_manager;
 GRANT EXECUTE ON check_stock TO order_manager;
 GRANT EXECUTE ON order_stock TO order_manager;
+GRANT EXECUTE ON input_notice TO chat_manager;
 commit;
-
 

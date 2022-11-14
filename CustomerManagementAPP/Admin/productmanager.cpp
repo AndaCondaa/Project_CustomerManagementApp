@@ -45,7 +45,7 @@ ProductManager::ProductManager(QWidget *parent) :
     productInput = new ProductInput;
     productQueryModel = new QSqlQueryModel(ui->productTableView);
 
-    updateTable();
+//    updateTable();
 
     connect(this, SIGNAL(sendCurrentPK(int)), productInput, SLOT(recvCurrentPK(int)));
     connect(productInput, SIGNAL(inputProduct()), this, SLOT(update()));

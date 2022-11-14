@@ -259,14 +259,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QTextEdit" name="noticeBoard">
-                 <property name="undoRedoEnabled">
-                  <bool>false</bool>
-                 </property>
-                 <property name="readOnly">
-                  <bool>true</bool>
-                 </property>
-                </widget>
+                <widget class="QTableView" name="noticeBoard"/>
                </item>
                <item>
                 <layout class="QHBoxLayout" name="horizontalLayout_3">

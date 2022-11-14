@@ -15,6 +15,7 @@
 class QTcpSocket;
 class QFile;
 class QProgressDialog;
+class QSqlQueryModel;
 
 typedef enum {          //Protocol Types for Chat
     Sign_In,
@@ -56,13 +57,16 @@ private slots:
 
     // File
     void goOnSend(qint64);              // Seperate file for sending
-    void sendFile();                    // File sending
 
     //Notice
     void on_noticeButton_clicked();     // Append new notice
-    void noticeLoad();                  // Load previous notice
+
+    void sendFile();
 
 private:
+    void updateNotice();
+    void insertNotice();
+
     Ui::AdminChat *ui;
 
     QTcpSocket *adminSocket;		// Socket for AdminChat
@@ -75,5 +79,8 @@ private:
     qint64 totalSize;               // Total File Size
     QByteArray outBlock;            // Block for sending
     bool isSent = false;            // Check connection to server
+
+
+    QSqlQueryModel *noticeModel;
 };
 #endif // ADMINCHAT_H

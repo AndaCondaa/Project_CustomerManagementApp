@@ -140,6 +140,7 @@ void Client::receiveData( )
                               tr("Please Check your CustomerKey and Clinic"));
         break;
     case In:
+        loadLog();
         ui->chatButton->setText(tr("Chat Out"));
         ui->sendButton->setEnabled(true);
         ui->fileButton->setEnabled(true);
@@ -255,7 +256,7 @@ void Client::sendFile()
 // Load previous notice
 void Client::noticeLoad()
 {
-    QFile file("../Admin/data/manage/notice.txt");
+    QFile file("../Admin/data/notice/notice.txt");
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
         return;
     QByteArray notice = file.readAll();
@@ -267,8 +268,32 @@ void Client::noticeLoad()
 // If Client Programs are closed, send data to server
 void Client::closeEvent(QCloseEvent*)
 {
+    saveLog();
     sendProtocol(Close, ui->customerKey->text().toStdString().data());
     while(clientSocket->waitForDisconnected(1000))
         QThread::usleep(10);
     clientSocket->disconnectFromHost();
+
+}
+
+void Client::saveLog()
+{
+    QFile file(QString("../Client/data/log_%1.txt").arg(ui->customerKey->text()));
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+        return;
+    QByteArray log;
+    log.append(ui->message->toPlainText().toStdString());
+    file.write(log);
+    file.close( );
+}
+
+void Client::loadLog()
+{
+    QFile file(QString("../Client/data/log_%1.txt").arg(ui->customerKey->text()));
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        return;
+    QByteArray log = file.readAll();
+    ui->message->setPlainText(log);
+
+    file.close( );
 }

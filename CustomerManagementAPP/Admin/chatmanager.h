@@ -19,6 +19,7 @@ class QTcpSocket;
 class LogSaveThread;
 class QFile;
 class QProgressDialog;
+class QSqlQueryModel;
 
 typedef enum {      //Protocol Types for Chat
     Sign_In,
@@ -48,10 +49,11 @@ public:
     explicit ChatManager(QWidget *parent = nullptr);
     ~ChatManager();
 
-private slots:
-    void noticeSave();                                      // Save the Notice to file(.txt)
-    void noticeLoad();                                      // Load the Previous Notice from file(.txt)
+    void updateCustomerList();
+    void updateNotice();
+    void updateFileList();
 
+private slots:
     //chat
     void clientConnect();                                                   // New Connection with Client
     void sendProtocol(QTcpSocket* ,Protocol_Type, QString, int = 1020);     // Send Socket To Client
@@ -62,10 +64,8 @@ private slots:
     //file
     void acceptConnection();         // Make Socket for FileSending and Connect signal/slot
     void readClient();               // Read Socket sent from Client and AdaminChat for saving file
-
-    void on_logSaveButton_clicked();
-
 private:
+
     Ui::ChatManager *ui;
 
     //Server
@@ -74,7 +74,6 @@ private:
 
     QList<QTcpSocket*> adminSocketList;                         // Connected AdminChat Programs List
     QList<QTcpSocket*> customerSocketList;                      // Connected Client Programs List
-    QHash<QString, QString> customerNameHash;                   // <CustomerKey : Name>
     QHash<QString, QTcpSocket*> customerSocketHash;             // <CustomerKey : CustomerSocket>
     QMultiMap<QTcpSocket*, QTcpSocket*> customerMatchingMap;    // <AdminSocket : CustomerKey>
                                                                 // Admin can be connected to maximum two clients
@@ -88,6 +87,9 @@ private:
     //Thread
     LogSaveThread* logSaveThread;            // Thread Object for saving the log(chat) by using multi-threading
 
+    QSqlQueryModel *customerModel;
+    QSqlQueryModel *fileModel;
+    QSqlQueryModel *noticeModel;
 };
 
 #endif // CHATMANAGER_H

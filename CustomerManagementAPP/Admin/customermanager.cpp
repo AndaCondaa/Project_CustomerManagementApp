@@ -35,14 +35,14 @@ CustomerManager::CustomerManager(QWidget *parent) :
     if (!customerDB.open()) {
         qDebug() << customerDB.lastError().text();
     } else {
-        qDebug("Customer DB success");
+        qDebug("Customer DB connect success");
     }
 
     ui->setupUi(this);
     customerInput = new CustomerInput;
     customerQueryModel = new QSqlQueryModel(ui->customerTableView);
 
-    updateTable();
+//    updateTable();
 
     connect(this, SIGNAL(sendCurrentCK(int)), customerInput, SLOT(recvCurrentCK(int)));
     connect(customerInput, SIGNAL(inputCustomer()), this, SLOT(update()));

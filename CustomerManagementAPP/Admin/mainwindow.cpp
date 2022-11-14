@@ -110,6 +110,9 @@ void MainWindow::on_action_Order_triggered()
 // Slot connected triggered() of Chat Action
 void MainWindow::on_action_Chat_triggered()
 {
+    chatManager->updateNotice();
+    chatManager->updateCustomerList();
+    chatManager->updateFileList();
     chatManager->showMaximized();
     ui->stackedWidget->setCurrentIndex(4);
     ui->action_Home->setChecked(false);

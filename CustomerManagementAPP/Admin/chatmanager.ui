@@ -55,32 +55,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QTextEdit" name="noticeBoard">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>12312312</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="undoRedoEnabled">
-            <bool>false</bool>
-           </property>
-           <property name="readOnly">
-            <bool>true</bool>
-           </property>
-          </widget>
+          <widget class="QTableView" name="noticeTableView"/>
          </item>
         </layout>
        </item>
@@ -121,7 +96,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QTreeWidget" name="customerTreeWidget">
+          <widget class="QTableView" name="customerTableView">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
              <horstretch>0</horstretch>
@@ -146,30 +121,6 @@
              <height>0</height>
             </size>
            </property>
-           <property name="indentation">
-            <number>0</number>
-           </property>
-           <column>
-            <property name="text">
-             <string>CK</string>
-            </property>
-            <property name="textAlignment">
-             <set>AlignLeading|AlignVCenter</set>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Clinic</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Connection</string>
-            </property>
-            <property name="textAlignment">
-             <set>AlignLeading|AlignVCenter</set>
-            </property>
-           </column>
           </widget>
          </item>
         </layout>
@@ -203,7 +154,7 @@
             </font>
            </property>
            <property name="text">
-            <string>File Cloud</string>
+            <string>File List</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
@@ -211,7 +162,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QTreeWidget" name="fileTreeWidget">
+          <widget class="QTableView" name="fileTableView">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
              <horstretch>0</horstretch>
@@ -230,19 +181,6 @@
              <height>16777215</height>
             </size>
            </property>
-           <property name="indentation">
-            <number>10</number>
-           </property>
-           <column>
-            <property name="text">
-             <string>From</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>File</string>
-            </property>
-           </column>
           </widget>
          </item>
         </layout>

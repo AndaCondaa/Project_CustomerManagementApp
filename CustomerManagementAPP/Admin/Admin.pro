@@ -46,11 +46,9 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-TRANSLATIONS += admintr_ko.ts
 RESOURCES += \
     resource.qrc
 
-DISTFILES += \
-    admintr_ko.ts
+DISTFILES +=
 
 

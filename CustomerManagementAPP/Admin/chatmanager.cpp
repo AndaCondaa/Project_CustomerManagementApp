@@ -283,17 +283,19 @@ void ChatManager::receiveFromClient(QTcpSocket* receiveSocket)
                 break;
             }
         }
-        if (op) {
+        if (op) {   // 연결가능한 AdminChat을 찾아 연결되었을 때,
             type = In;
             clientMsg = "<font color=orange><b> 안녕하세요. 오스템임플란트입니다. 상담원과 연결되었습니다! <b></font>";
-            foreach (auto item, ui->customerTreeWidget->findItems(data, Qt::MatchExactly, 0)) {
-                item->setText(2, "Chatting...");
+            QModelIndexList indexes = customerModel->match(customerModel->index(0, 0), Qt::EditRole, data, 1, Qt::MatchFlags(Qt::MatchExactly));
+            foreach (auto idx, indexes) {
+                ui->customerTableView->indexWidget(idx)->setStyleSheet("{background-color: red}");
             }
             sendProtocol(customerMatchingMap.key(receiveSocket), type, data);    //담당 Admin에게 전송
         } else {
             type = In_Fail;
             clientMsg = "<font color=orange><b> 죄송합니다. 지금은 모든 상담원이 상담중입니다. <b></font>";
         }
+
         sendProtocol(receiveSocket, type, clientMsg);                           //해당 Client에게 전송
         break;
     }
@@ -310,27 +312,33 @@ void ChatManager::receiveFromClient(QTcpSocket* receiveSocket)
         sendProtocol(customerMatchingMap.key(receiveSocket), Message, data);
         break;
     }
-    case Out:
-        foreach (auto item, ui->customerTreeWidget->findItems(data, Qt::MatchExactly, 0)) {
-            item->setText(2, "Connected");
+    case Out: {
+        QModelIndexList indexes = customerModel->match(customerModel->index(0, 0), Qt::EditRole, data, 1, Qt::MatchFlags(Qt::MatchExactly));
+        foreach (auto idx, indexes) {
+            ui->customerTableView->indexWidget(idx)->setStyleSheet("{background-color: yellow}");
         }
+
         sendProtocol(customerMatchingMap.key(receiveSocket), Out, data);
         customerMatchingMap.remove(customerMatchingMap.key(receiveSocket), receiveSocket);
         break;
-    case Close:
-        foreach (auto item, ui->customerTreeWidget->findItems(data, Qt::MatchExactly, 0)) {
-            item->setText(2, "Disconnected");
+    }
+    case Close: {
+        QModelIndexList indexes = customerModel->match(customerModel->index(0, 0), Qt::EditRole, data, 1, Qt::MatchFlags(Qt::MatchExactly));
+        foreach (auto idx, indexes) {
+            ui->customerTableView->indexWidget(idx)->setStyleSheet("{background-color: yellow}");
         }
+
         foreach (auto admin, adminSocketList) {
             sendProtocol(admin, Close, data);
         }
-
         customerMatchingMap.remove(customerMatchingMap.key(receiveSocket), receiveSocket);
         customerSocketHash.remove(data);
 
         customerSocketList.removeAll(receiveSocket);
         customerSocketList.squeeze();
         receiveSocket->deleteLater();
+        break;
+    }
     }
 }
 
@@ -364,8 +372,8 @@ void ChatManager::readClient()
         fileLog->setText(1, list[list.count()-1]);
         fileLog->setToolTip(1, filename);
 
-
-        ui->fileTreeWidget->addTopLevelItem(fileLog);
+        //파일 디비에 저장하는 코드 작성
+//        ui->fileTreeWidget->addTopLevelItem(fileLog);
         logSaveThread->appendData(fileLog);
 
         QFileInfo info(filename);

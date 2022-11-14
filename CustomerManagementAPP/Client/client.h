@@ -55,9 +55,6 @@ private slots:
 
     //Notice
     void noticeLoad();          // Load previous notice
-
-    void on_fileButton_clicked();
-
 private:
     void closeEvent(QCloseEvent*) override;     // If Client Programs are closed, send data to server
     void saveLog();

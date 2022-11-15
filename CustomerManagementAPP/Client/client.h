@@ -15,6 +15,7 @@
 class QTcpSocket;
 class QFile;
 class QProgressDialog;
+class QSqlQueryModel;
 
 typedef enum {       //Protocol Types for Chat
     Sign_In,
@@ -54,7 +55,7 @@ private slots:
     void sendFile();            // File sending
 
     //Notice
-    void noticeLoad();          // Load previous notice
+    void updateNotice();          //
 private:
     void closeEvent(QCloseEvent*) override;     // If Client Programs are closed, send data to server
     void saveLog();
@@ -70,5 +71,7 @@ private:
     qint64 totalSize;               // Total File Size
     QByteArray outBlock;            // Block for sending
     bool isSent = false;            // Check connection to server
+
+    QSqlQueryModel *noticeModel;
 };
 #endif // CLIENT_H

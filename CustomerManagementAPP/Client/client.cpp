@@ -23,6 +23,14 @@
 #include <QFileInfo>
 #include <QProgressDialog>
 
+#include <QApplication>
+#include <QTableView>
+#include <QSqlQueryModel>
+#include <QSqlDatabase>
+#include <QSqlQuery>
+#include <QSqlError>
+#include <QDebug>
+
 Client::Client(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Client)
@@ -31,7 +39,6 @@ Client::Client(QWidget *parent)
     setFixedSize(450, 335);
     ui->stackedWidget->showMaximized();
     ui->stackedWidget->setCurrentIndex(0);
-    noticeLoad();
 
 // 1. Sign_In & Chat_In
     // 1-1. Set Widgets for inputting Server-info
@@ -92,6 +99,18 @@ Client::Client(QWidget *parent)
     progressDialog = new QProgressDialog(0);
     progressDialog->setAutoClose(true);
     progressDialog->reset();
+
+    QSqlDatabase chatDB = QSqlDatabase::addDatabase("QODBC", "Client");
+    chatDB.setDatabaseName("Oracle11gx64");
+    chatDB.setUserName("client");
+    chatDB.setPassword("client");
+    if (!chatDB.open()) {
+        qDebug() << chatDB.lastError().text();
+    } else {
+        qDebug("Client DB connect success");
+    }
+    noticeModel = new QSqlQueryModel;
+
 }
 
 Client::~Client()
@@ -134,6 +153,7 @@ void Client::receiveData( )
     case Sign_In:
         ui->stackedWidget->setCurrentIndex(1);
         setWindowTitle(((QString)data).replace("|", "___"));
+        updateNotice();
         break;
     case Sign_In_Fail:
         QMessageBox::critical(this, tr("Fail!"), \
@@ -179,7 +199,7 @@ void Client::receiveData( )
         ui->fileButton->setEnabled(false);
         break;
     case Notice:
-        ui->noticeBoard->append(data);
+        updateNotice();
     };
 }
 
@@ -253,17 +273,20 @@ void Client::sendFile()
     qDebug() << QString("Sending file %1").arg(filename);
 }
 
-// Load previous notice
-void Client::noticeLoad()
-{
-    QFile file("../Admin/data/notice/notice.txt");
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-        return;
-    QByteArray notice = file.readAll();
-    ui->noticeBoard->setPlainText(notice);
 
-    file.close( );
+void Client::updateNotice()
+{
+    QSqlDatabase chatDB = QSqlDatabase::database("Client");
+    noticeModel->setQuery("SELECT * FROM sys.NOTICE_TABLE ORDER BY NOTICE_DATE", chatDB);
+    noticeModel->setHeaderData(0, Qt::Horizontal, tr("DATE"));
+    noticeModel->setHeaderData(1, Qt::Horizontal, tr("NOTICE"));
+
+    ui->noticeTableView->setModel(noticeModel);
+    ui->noticeTableView->horizontalHeader()->setStretchLastSection(true);
+    ui->noticeTableView->horizontalHeader()->setStyleSheet(
+                "QHeaderView { font-size: 10pt; color: blue; }");
 }
+
 
 // If Client Programs are closed, send data to server
 void Client::closeEvent(QCloseEvent*)

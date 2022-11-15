@@ -128,7 +128,7 @@ void AdminChat::receiveData()
         QTreeWidgetItem *item = new QTreeWidgetItem;
         item->setText(0, ((QString)data).split("|")[0]);
         item->setText(1, ((QString)data).split("|")[1]);
-        item->setText(2, ((QString)data).split("|")[2]);
+        item->setText(2, "Connected");
         ui->customerTreeWidget->addTopLevelItem(item);
         break;
     }
@@ -162,7 +162,7 @@ void AdminChat::receiveData()
 }
 
 // Append new Tab of chat when new admin sign-in
-void AdminChat::chatOpen(QString ckName)
+void AdminChat::chatOpen(QString ck)
 {
     int index = ui->chatArea->count();
 
@@ -179,10 +179,11 @@ void AdminChat::chatOpen(QString ckName)
     message->setReadOnly(true);
 
     chat->showMaximized();
-    ui->chatArea->insertTab(index, chat, ckName);
-    chatIndexHash[index] = ckName.split("_")[0];
-    message->append("<font color=green>***" + ckName + "님과 채팅을 시작했습니다.</font>");
-    foreach (auto item, ui->customerTreeWidget->findItems(ckName.split("_")[0], Qt::MatchExactly, 0)) {
+    ui->chatArea->insertTab(index, chat, ck);
+//    chatIndexHash[index] = ckName.split("_")[0];
+    chatIndexHash[index] = ck;
+    message->append("<font color=green>***" + ck + "님과 채팅을 시작했습니다.</font>");
+    foreach (auto item, ui->customerTreeWidget->findItems(ck, Qt::MatchExactly, 0)) {
         item->setText(2, "Chatting...");
     }
 

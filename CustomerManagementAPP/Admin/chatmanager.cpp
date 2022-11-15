@@ -35,6 +35,9 @@
 #include <QSqlError>
 #include <QDebug>
 
+#include <QColor>
+
+
 ChatManager::ChatManager(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ChatManager)
@@ -88,7 +91,9 @@ ChatManager::ChatManager(QWidget *parent) :
     }
 
     customerModel = new QSqlQueryModel(ui->customerTableView);
+    fileModel = new QSqlQueryModel(ui->fileTableView);
     noticeModel = new QSqlQueryModel(ui->noticeTableView);
+
 }
 
 ChatManager::~ChatManager()
@@ -162,7 +167,6 @@ void ChatManager::receiveData()
         //customerModel에서 로그인요청한 ck|name 검증
         QList<QString> ckName = ((QString)data).split("|"); // data = "customerKey|name"
         QModelIndexList indexes = customerModel->match(customerModel->index(0, 0), Qt::EditRole, ckName[0], 1, Qt::MatchFlags(Qt::MatchExactly));
-
         // 로그인 실패
         foreach (auto idx, indexes) {
             // ck는 맞지만, 이름이 틀린 경우
@@ -171,9 +175,9 @@ void ChatManager::receiveData()
                 return;
             }
             // 이름까지 맞는 경우 리스트 색상변경
-            ui->customerTableView->indexWidget(idx)->setStyleSheet("{background-color: yellow}");
+            QColor co(100,0,123);
+            customerModel->setData(idx, co, Qt::BackgroundRole);
         }
-
         // 로그인 성공 시
         customerSocketHash[ckName[0]] = receiveSocket;             // CustomerKey : TcpSocket
         customerSocketList.append(receiveSocket);                  // Insert socket into waiting_list
@@ -181,7 +185,6 @@ void ChatManager::receiveData()
         sendProtocol(receiveSocket, Sign_In, "success");        //로그인한 해당 고객에게 성공여부 전달
         foreach (auto adminSock, adminSocketList)               //접속한 채팅관리자들에게 로그인한 고객정보 전송
             sendProtocol(adminSock, Sign_In, data);
-
         break;
     }
     }
@@ -285,11 +288,11 @@ void ChatManager::receiveFromClient(QTcpSocket* receiveSocket)
         }
         if (op) {   // 연결가능한 AdminChat을 찾아 연결되었을 때,
             type = In;
-            clientMsg = "<font color=orange><b> 안녕하세요. 오스템임플란트입니다. 상담원과 연결되었습니다! <b></font>";
+            clientMsg = "<font color=orange><b>\n 안녕하세요. 오스템임플란트입니다. 상담원과 연결되었습니다! <b></font>";
             QModelIndexList indexes = customerModel->match(customerModel->index(0, 0), Qt::EditRole, data, 1, Qt::MatchFlags(Qt::MatchExactly));
-            foreach (auto idx, indexes) {
-                ui->customerTableView->indexWidget(idx)->setStyleSheet("{background-color: red}");
-            }
+//            foreach (auto idx, indexes) {
+//                ui->customerTableView->indexWidget(idx)->setStyleSheet("{background-color: red}");
+//            }
             sendProtocol(customerMatchingMap.key(receiveSocket), type, data);    //담당 Admin에게 전송
         } else {
             type = In_Fail;
@@ -305,18 +308,19 @@ void ChatManager::receiveFromClient(QTcpSocket* receiveSocket)
         log->setText(1, QString::number(receiveSocket->peerPort()));
         log->setText(2, customerSocketHash.key(receiveSocket));
         log->setText(3, "ADMIN");
-        log->setText(4, QDateTime::currentDateTime().toString());
+        log->setText(4, QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
         log->setText(5, ((QString)data).split("|")[1]);
         log->setToolTip(5, QString(data));
         ui->logTreeWidget->addTopLevelItem(log);
+        ui->logTreeWidget->resizeColumnToContents(4);
         sendProtocol(customerMatchingMap.key(receiveSocket), Message, data);
         break;
     }
     case Out: {
         QModelIndexList indexes = customerModel->match(customerModel->index(0, 0), Qt::EditRole, data, 1, Qt::MatchFlags(Qt::MatchExactly));
-        foreach (auto idx, indexes) {
-            ui->customerTableView->indexWidget(idx)->setStyleSheet("{background-color: yellow}");
-        }
+//        foreach (auto idx, indexes) {
+//            ui->customerTableView->indexWidget(idx)->setStyleSheet("{background-color: yellow}");
+//        }
 
         sendProtocol(customerMatchingMap.key(receiveSocket), Out, data);
         customerMatchingMap.remove(customerMatchingMap.key(receiveSocket), receiveSocket);
@@ -324,9 +328,9 @@ void ChatManager::receiveFromClient(QTcpSocket* receiveSocket)
     }
     case Close: {
         QModelIndexList indexes = customerModel->match(customerModel->index(0, 0), Qt::EditRole, data, 1, Qt::MatchFlags(Qt::MatchExactly));
-        foreach (auto idx, indexes) {
-            ui->customerTableView->indexWidget(idx)->setStyleSheet("{background-color: yellow}");
-        }
+//        foreach (auto idx, indexes) {
+//            ui->customerTableView->indexWidget(idx)->setStyleSheet("{background-color: yellow}");
+//        }
 
         foreach (auto admin, adminSocketList) {
             sendProtocol(admin, Close, data);
@@ -421,9 +425,9 @@ void ChatManager::updateCustomerList()
     customerModel->setHeaderData(0, Qt::Horizontal, tr("CUSTOMER_KEY"));
     customerModel->setHeaderData(1, Qt::Horizontal, tr("CLINIC"));
 
-    ui->noticeTableView->setModel(customerModel);
-    ui->noticeTableView->horizontalHeader()->setStretchLastSection(true);
-    ui->noticeTableView->horizontalHeader()->setStyleSheet(
+    ui->customerTableView->setModel(customerModel);
+    ui->customerTableView->horizontalHeader()->setStretchLastSection(true);
+    ui->customerTableView->horizontalHeader()->setStyleSheet(
                 "QHeaderView { font-size: 10pt; color: blue; }");
 }
 
@@ -433,9 +437,8 @@ void ChatManager::updateFileList()
     fileModel->setQuery("SELECT * FROM sys.FILE_TABLE", chatDB);
     fileModel->setHeaderData(0, Qt::Horizontal, tr("FROM"));
     fileModel->setHeaderData(1, Qt::Horizontal, tr("FILE NAME"));
-
-    ui->noticeTableView->setModel(fileModel);
-    ui->noticeTableView->horizontalHeader()->setStretchLastSection(true);
-    ui->noticeTableView->horizontalHeader()->setStyleSheet(
+    ui->fileTableView->setModel(fileModel);
+    ui->fileTableView->horizontalHeader()->setStretchLastSection(true);
+    ui->fileTableView->horizontalHeader()->setStyleSheet(
                 "QHeaderView { font-size: 10pt; color: blue; }");
 }

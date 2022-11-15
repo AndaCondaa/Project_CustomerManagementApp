@@ -1,4 +1,3 @@
---계정 생성 및 접속권한 부여
 CREATE USER customer_manager IDENTIFIED BY cm;
 CREATE USER product_manager IDENTIFIED BY pm;
 CREATE USER order_manager IDENTIFIED BY om;
@@ -13,7 +12,6 @@ GRANT CONNECT TO chat_admin;
 GRANT CONNECT TO client;
 commit;
 
---필요한 테이블 생성
 CREATE TABLE customer_table (
 	customer_key number(10) NOT NULL,
 	clinic_name varchar2(20) NOT NULL,

@@ -1,7 +1,5 @@
 #include "delegate.h"
-#include <QModelIndex>
-#include <QObject>
-#include <QPalette>
+
 
 Delegate::Delegate(QObject *parent, int row)
     : QStyledItemDelegate(parent)

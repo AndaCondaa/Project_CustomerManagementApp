@@ -1,18 +1,12 @@
 #ifndef DELEGATE_H
 #define DELEGATE_H
 
+#include <QObject>
 #include <QStyledItemDelegate>
 #include <QPainter>
-#include <QSpinBox>
+#include <QModelIndex>
 
-//class Delegate : public QItemDelegate
-//{
-//public:
-//    explicit Delegate(QWidget *parent = 0);
 
-//    void paint(QPainter *painter, const QStyleOptionViewItem &option,
-//                   const QModelIndex &index) const;
-//};
 
 class Delegate : public QStyledItemDelegate
 {

@@ -232,7 +232,7 @@ void AdminChat::chatOpen(QString ck)
 // Invite Customer
 void AdminChat::on_inviteButton_clicked()
 {
-    if (ui->chatArea->count() > 3) {
+    if (ui->chatArea->count() > 2) {
         QMessageBox::critical(this, tr("No More"), \
                               tr("Let's improve the quality of service by serving only two customers"));
         return;
@@ -342,7 +342,7 @@ void AdminChat::updateNotice()
 {
     QSqlDatabase chatDB = QSqlDatabase::database("Chat_Admin");
     noticeModel->setQuery("SELECT NOTICE_CONTENTS FROM sys.NOTICE_TABLE ORDER BY NOTICE_DATE", chatDB);
-    noticeModel->setHeaderData(0, Qt::Horizontal, tr("NOTICE"));
+    noticeModel->setHeaderData(0, Qt::Horizontal, tr("CONTENTS"));
 
     ui->noticeBoard->setModel(noticeModel);
     ui->noticeBoard->horizontalHeader()->setStretchLastSection(true);

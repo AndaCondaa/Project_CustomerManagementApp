@@ -54,9 +54,10 @@ CREATE TABLE order_table (
 );
 
 CREATE TABLE notice_table (
-    notice_date varchar2(10),
+    notice_date varchar2(20),
     notice_contents varchar2(100)
 );
+
 
 CREATE TABLE file_table (
     file_from varchar2(10),

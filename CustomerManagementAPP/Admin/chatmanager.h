@@ -13,7 +13,6 @@
 
 #include <QWidget>
 #include <QDataStream>
-#include "delegate.h"
 
 class QTcpServer;
 class QTcpSocket;

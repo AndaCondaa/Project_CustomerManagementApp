@@ -172,7 +172,7 @@ void Client::receiveData( )
         QMessageBox::critical(this, tr("Kick Out"), \
                               tr("Kick out from Server"));
         ui->chatButton->setText(tr("Chat In"));
-        ui->message->append("**************CHAT OFF**************");
+        ui->message->append("*************CHAT OFF*************");
         ui->message->setEnabled(false);
         ui->inputLine->setEnabled(false);
         ui->sendButton->setEnabled(false);
@@ -185,7 +185,7 @@ void Client::receiveData( )
         QMessageBox::critical(this, tr("Admin Out"), \
                               tr("Admin Out from Server"));
         ui->chatButton->setText(tr("Chat In"));
-        ui->message->append("*************CHAT OFF*************");
+        ui->message->append("************CHAT OFF************");
         ui->message->setEnabled(false);
         ui->inputLine->setEnabled(false);
         ui->sendButton->setEnabled(false);
@@ -269,7 +269,7 @@ void Client::updateNotice()
 {
     QSqlDatabase chatDB = QSqlDatabase::database("Client");
     noticeModel->setQuery("SELECT NOTICE_CONTENTS FROM sys.NOTICE_TABLE ORDER BY NOTICE_DATE", chatDB);
-    noticeModel->setHeaderData(0, Qt::Horizontal, tr("NOTICE"));
+    noticeModel->setHeaderData(0, Qt::Horizontal, tr("CONTENTS"));
 
     ui->noticeTableView->setModel(noticeModel);
     ui->noticeTableView->horizontalHeader()->setStretchLastSection(true);
@@ -333,7 +333,7 @@ void Client::on_chatButton_clicked()
         sendProtocol(In, ui->customerKey->text().toStdString().data());
     } else if (ui->chatButton->text() == "Chat Out") {
         sendProtocol(Out, ui->customerKey->text().toStdString().data());
-        ui->message->append("*************CHAT OFF*************");
+        ui->message->append("************CHAT OFF************");
         ui->chatButton->setText(tr("Chat In"));
         ui->sendButton->setEnabled(false);
         ui->fileButton->setEnabled(false);

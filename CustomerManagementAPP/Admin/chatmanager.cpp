@@ -12,6 +12,7 @@
 #include "ui_chatmanager.h"
 #include "logsavethread.h"
 #include "delegate.h"
+#include "delegate_two.h"
 
 #include <QTcpServer>
 #include <QTcpSocket>
@@ -404,7 +405,7 @@ void ChatManager::updateNotice()
 {
     QSqlDatabase chatDB = QSqlDatabase::database("ChatManager");
     noticeModel->setQuery("SELECT NOTICE_CONTENTS FROM sys.NOTICE_TABLE ORDER BY NOTICE_DATE", chatDB);
-    noticeModel->setHeaderData(0, Qt::Horizontal, tr("NOTICE"));
+    noticeModel->setHeaderData(0, Qt::Horizontal, tr("CONTENTS"));
 
     ui->noticeTableView->setModel(noticeModel);
     ui->noticeTableView->horizontalHeader()->setStretchLastSection(true);
@@ -423,8 +424,11 @@ void ChatManager::updateCustomerList()
     ui->customerTableView->horizontalHeader()->setStretchLastSection(true);
     ui->customerTableView->horizontalHeader()->setStyleSheet(
                 "QHeaderView { font-size: 10pt; color: blue; }");
-    Delegate *dele = new Delegate(ui->customerTableView, 2);
-    ui->customerTableView->setItemDelegateForColumn(0, dele);
+    ui->customerTableView->resizeColumnsToContents();
+//    Delegate *dele = new Delegate(ui->customerTableView, 2);
+    Delegate_two *dele_two = new Delegate_two(ui->customerTableView, 4);
+//    ui->customerTableView->setItemDelegateForColumn(0, dele);
+    ui->customerTableView->setItemDelegateForColumn(0, dele_two);
 }
 
 void ChatManager::updateFileList()
@@ -437,4 +441,5 @@ void ChatManager::updateFileList()
     ui->fileTableView->horizontalHeader()->setStretchLastSection(true);
     ui->fileTableView->horizontalHeader()->setStyleSheet(
                 "QHeaderView { font-size: 10pt; color: blue; }");
+    ui->fileTableView->resizeColumnsToContents();
 }

@@ -84,7 +84,7 @@
              <item>
               <widget class="QLineEdit" name="customerKey">
                <property name="text">
-                <string/>
+                <string>101632</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -97,7 +97,7 @@
              <item>
               <widget class="QLineEdit" name="clinic">
                <property name="text">
-                <string/>
+                <string>sadf</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -119,6 +119,12 @@
              </item>
              <item>
               <widget class="QLineEdit" name="serverPort">
+               <property name="inputMask">
+                <string>00000;_</string>
+               </property>
+               <property name="text">
+                <string>8000</string>
+               </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
@@ -175,121 +181,184 @@
       </layout>
      </widget>
      <widget class="QWidget" name="Chat">
-      <layout class="QVBoxLayout" name="verticalLayout_6">
-       <property name="spacing">
-        <number>10</number>
-       </property>
-       <item>
-        <widget class="QPushButton" name="chatButton">
-         <property name="text">
-          <string>Chat In</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="0" column="0">
+        <layout class="QVBoxLayout" name="verticalLayout_6">
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_5">
-           <property name="spacing">
-            <number>10</number>
-           </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
            <item>
-            <widget class="QTextEdit" name="message">
-             <property name="enabled">
-              <bool>false</bool>
+            <widget class="QPushButton" name="chatButton">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>30</height>
+              </size>
              </property>
-             <property name="undoRedoEnabled">
-              <bool>false</bool>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>30</height>
+              </size>
              </property>
-             <property name="readOnly">
-              <bool>true</bool>
-             </property>
-             <property name="placeholderText">
-              <string>WAITTING...</string>
+             <property name="text">
+              <string>Chat In</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="inputLine">
-             <property name="enabled">
-              <bool>false</bool>
+            <widget class="QPushButton" name="outButton">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>80</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>80</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>Log Out</string>
              </property>
             </widget>
            </item>
           </layout>
          </item>
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_4">
-           <property name="spacing">
-            <number>10</number>
-           </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
            <item>
-            <layout class="QVBoxLayout" name="verticalLayout_3">
+            <layout class="QVBoxLayout" name="verticalLayout_5">
+             <property name="spacing">
+              <number>10</number>
+             </property>
              <item>
-              <widget class="QLabel" name="noticeLabel">
-               <property name="font">
-                <font>
-                 <pointsize>13</pointsize>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>NOTICE</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QTableView" name="noticeTableView">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>190</width>
-                 <height>200</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>190</width>
-                 <height>200</height>
-                </size>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="fileButton">
+              <widget class="QTextEdit" name="message">
                <property name="enabled">
                 <bool>false</bool>
                </property>
-               <property name="text">
-                <string>File</string>
+               <property name="undoRedoEnabled">
+                <bool>false</bool>
+               </property>
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+               <property name="placeholderText">
+                <string>WAITTING...</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="inputLine">
+               <property name="enabled">
+                <bool>false</bool>
                </property>
               </widget>
              </item>
             </layout>
            </item>
            <item>
-            <widget class="QPushButton" name="sendButton">
-             <property name="enabled">
-              <bool>false</bool>
+            <layout class="QVBoxLayout" name="verticalLayout_4">
+             <property name="spacing">
+              <number>10</number>
              </property>
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>22</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>Send</string>
-             </property>
-            </widget>
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_3">
+               <property name="spacing">
+                <number>19</number>
+               </property>
+               <item>
+                <widget class="QLabel" name="noticeLabel">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>13</pointsize>
+                   <bold>true</bold>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>NOTICE</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QTableView" name="noticeTableView">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>190</width>
+                   <height>160</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>190</width>
+                   <height>160</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="fileButton">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="text">
+                  <string>File</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="QPushButton" name="sendButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>22</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Send</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
           </layout>
          </item>

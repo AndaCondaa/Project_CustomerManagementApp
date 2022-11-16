@@ -37,11 +37,10 @@ Client::Client(QWidget *parent)
 {
     ui->setupUi(this);
     setFixedSize(450, 335);
+    setWindowTitle("LOG IN");
     ui->stackedWidget->showMaximized();
     ui->stackedWidget->setCurrentIndex(0);
 
-// 1. Sign_In & Chat_In
-    // 1-1. Set Widgets for inputting Server-info
     ui->serverAddress->setText("127.0.0.1");
     QRegularExpression re("^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\."
                           "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\."
@@ -49,10 +48,7 @@ Client::Client(QWidget *parent)
                           "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$|");
     QRegularExpressionValidator validator(re);
     ui->serverAddress->setValidator(&validator);
-    ui->serverPort->setText("8000");
-    ui->serverPort->setInputMask("00000;_");
 
-    // 1-2. Sign_In
     connect(ui->signInButton, &QPushButton::clicked,
             [=]{
         clientSocket = new QTcpSocket(this);                                //Create socket
@@ -60,27 +56,12 @@ Client::Client(QWidget *parent)
         connect(clientSocket, &QAbstractSocket::errorOccurred,              //Print Debug message about error
                 [=]{ qDebug() << clientSocket->errorString(); });
         connect(clientSocket, SIGNAL(readyRead()), SLOT(receiveData()));    //Receive socket from Server
+        connect(clientSocket, SIGNAL(disconnected()), SLOT(disconnect()));
         clientSocket->connectToHost(ui->serverAddress->text(),              //Connect to Server
                                     ui->serverPort->text().toInt());
         clientSocket->waitForConnected();                   //Wait for few ms until client connects to server
         QString signInData = ui->customerKey->text() + "|" + ui->clinic->text();
         sendProtocol(Sign_In, signInData.toStdString().data());    //Write socket
-    } );
-
-    // 1-3. Chat_In
-    connect(ui->chatButton, &QPushButton::clicked,
-            [=]{
-        if (ui->chatButton->text() == "Chat In") {
-            sendProtocol(In, ui->customerKey->text().toStdString().data());
-        } else if (ui->chatButton->text() == "Chat Out") {
-            sendProtocol(Out, ui->customerKey->text().toStdString().data());
-            ui->message->append("*********채팅 종료*********");
-            ui->chatButton->setText(tr("Chat In"));
-            ui->sendButton->setEnabled(false);
-            ui->fileButton->setEnabled(false);
-            ui->inputLine->setEnabled(false);
-            ui->message->setEnabled(false);
-        }
     } );
 
     // Connection for sending data to server
@@ -109,12 +90,12 @@ Client::Client(QWidget *parent)
     } else {
         qDebug("Client DB connect success");
     }
-    noticeModel = new QSqlQueryModel;
-
+    noticeModel = new QSqlQueryModel(ui->noticeTableView);
 }
 
 Client::~Client()
 {
+    delete ui;
     clientSocket->close();
     fileSocket->close();
 }
@@ -152,7 +133,7 @@ void Client::receiveData( )
     switch(type) {
     case Sign_In:
         ui->stackedWidget->setCurrentIndex(1);
-        setWindowTitle(((QString)data).replace("|", "___"));
+        setWindowTitle(((QString)data).replace("|", "__"));
         updateNotice();
         break;
     case Sign_In_Fail:
@@ -167,18 +148,17 @@ void Client::receiveData( )
         ui->inputLine->setEnabled(true);
         ui->message->setEnabled(true);
         ui->message->setReadOnly(true);
+        ui->message->append("************************************");
         ui->message->append(QString(data));
         break;
     case In_Fail:
-        QMessageBox::critical(this, tr("Chat In Fail!"), \
-                              tr("Sorry, All admins are busy"));
-        ui->message->append(QString(data));
+        QMessageBox::critical(this, tr("Chat In Fail!"), tr("Sorry, All of Admins are busy!"));
         break;
     case Message:
         ui->message->append(QString(data));
         break;
     case Invite:
-        QMessageBox::critical(this, tr("Invite"), \
+        QMessageBox::information(this, tr("Invite"), \
                               tr("Invited from Server"));
         ui->chatButton->setText(tr("Chat Out"));
         ui->message->append(QString(data));
@@ -192,7 +172,7 @@ void Client::receiveData( )
         QMessageBox::critical(this, tr("Kick Out"), \
                               tr("Kick out from Server"));
         ui->chatButton->setText(tr("Chat In"));
-        ui->message->append("*********채팅 종료*********");
+        ui->message->append("**************CHAT OFF**************");
         ui->message->setEnabled(false);
         ui->inputLine->setEnabled(false);
         ui->sendButton->setEnabled(false);
@@ -200,15 +180,26 @@ void Client::receiveData( )
         break;
     case Notice:
         updateNotice();
+        break;
+    case Close:
+        QMessageBox::critical(this, tr("Admin Out"), \
+                              tr("Admin Out from Server"));
+        ui->chatButton->setText(tr("Chat In"));
+        ui->message->append("*************CHAT OFF*************");
+        ui->message->setEnabled(false);
+        ui->inputLine->setEnabled(false);
+        ui->sendButton->setEnabled(false);
+        ui->fileButton->setEnabled(false);
+        break;
     };
 }
 
 // Setting the data when send it to server
 void Client::sendData()
 {
-    QString msg = ui->customerKey->text() + "|" + ui->inputLine->text();
+    QString msg = ui->inputLine->text();
     if (!msg.length()) return;
-    ui->message->append("<font color=blue> ME : </font>" + msg.split("|")[1]);              // 보낸메세지 화면표시
+    ui->message->append("<font color=blue> ME : </font>" + msg);            // 보낸메세지 화면표시
     sendProtocol(Message, msg);
     ui->inputLine->clear();
     ui->inputLine->setFocus();
@@ -277,12 +268,12 @@ void Client::sendFile()
 void Client::updateNotice()
 {
     QSqlDatabase chatDB = QSqlDatabase::database("Client");
-    noticeModel->setQuery("SELECT * FROM sys.NOTICE_TABLE ORDER BY NOTICE_DATE", chatDB);
-    noticeModel->setHeaderData(0, Qt::Horizontal, tr("DATE"));
-    noticeModel->setHeaderData(1, Qt::Horizontal, tr("NOTICE"));
+    noticeModel->setQuery("SELECT NOTICE_CONTENTS FROM sys.NOTICE_TABLE ORDER BY NOTICE_DATE", chatDB);
+    noticeModel->setHeaderData(0, Qt::Horizontal, tr("NOTICE"));
 
     ui->noticeTableView->setModel(noticeModel);
     ui->noticeTableView->horizontalHeader()->setStretchLastSection(true);
+    ui->noticeTableView->resizeColumnsToContents();
     ui->noticeTableView->horizontalHeader()->setStyleSheet(
                 "QHeaderView { font-size: 10pt; color: blue; }");
 }
@@ -291,12 +282,7 @@ void Client::updateNotice()
 // If Client Programs are closed, send data to server
 void Client::closeEvent(QCloseEvent*)
 {
-    saveLog();
-    sendProtocol(Close, ui->customerKey->text().toStdString().data());
-    while(clientSocket->waitForDisconnected(1000))
-        QThread::usleep(10);
-    clientSocket->disconnectFromHost();
-
+    disconnect();
 }
 
 void Client::saveLog()
@@ -320,3 +306,39 @@ void Client::loadLog()
 
     file.close( );
 }
+
+void Client::disconnect()
+{
+    saveLog();
+    sendProtocol(Close, ui->customerKey->text().toStdString().data());
+    while(clientSocket->waitForDisconnected(1000)) {
+        QThread::usleep(10);
+    }
+    clientSocket->disconnectFromHost();
+    clientSocket->deleteLater();
+}
+
+void Client::on_outButton_clicked()
+{
+    disconnect();
+    ui->stackedWidget->setCurrentIndex(0);
+    ui->customerKey->clear();
+    ui->clinic->clear();
+    setWindowTitle("LOG IN");
+}
+
+void Client::on_chatButton_clicked()
+{
+    if (ui->chatButton->text() == "Chat In") {
+        sendProtocol(In, ui->customerKey->text().toStdString().data());
+    } else if (ui->chatButton->text() == "Chat Out") {
+        sendProtocol(Out, ui->customerKey->text().toStdString().data());
+        ui->message->append("*************CHAT OFF*************");
+        ui->chatButton->setText(tr("Chat In"));
+        ui->sendButton->setEnabled(false);
+        ui->fileButton->setEnabled(false);
+        ui->inputLine->setEnabled(false);
+        ui->message->setEnabled(false);
+    }
+}
+

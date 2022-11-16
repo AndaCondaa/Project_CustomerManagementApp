@@ -116,4 +116,3 @@ GRANT EXECUTE ON check_stock TO order_manager;
 GRANT EXECUTE ON order_stock TO order_manager;
 GRANT EXECUTE ON input_notice TO chat_manager;
 commit;
-

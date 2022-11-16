@@ -62,8 +62,10 @@ private slots:
     void on_noticeButton_clicked();     // Append new notice
 
     void sendFile();
+    void disconnect();
 
 private:
+    void closeEvent(QCloseEvent*) override;     // If Client Programs are closed, send data to server
     void updateNotice();
     void insertNotice();
 
@@ -71,7 +73,6 @@ private:
 
     QTcpSocket *adminSocket;		// Socket for AdminChat
     QTcpSocket *fileSocket;         // Socket for File sending
-    QHash<int, QString> chatIndexHash;  // <TabWidget Index : CustomerKey>
     QProgressDialog* progressDialog;    // Check File sending progress
     QFile* file;                    // File sending to server
     qint64 loadSize;                // File Size

@@ -13,6 +13,7 @@
 
 #include <QWidget>
 #include <QDataStream>
+#include "delegate.h"
 
 class QTcpServer;
 class QTcpSocket;
@@ -40,7 +41,6 @@ namespace Ui {
 class ChatManager;
 }
 
-
 class ChatManager : public QWidget
 {
     Q_OBJECT
@@ -55,7 +55,7 @@ public:
 
 private slots:
     //chat
-    void clientConnect();                                                   // New Connection with Client
+    void sockConnect();                                                   // New Connection with Client
     void sendProtocol(QTcpSocket* ,Protocol_Type, QString, int = 1020);     // Send Socket To Client
     void receiveData();              // Receive Data for Connection From AdminChat(Program) & Client(Program)
     void receiveFromAdmin(QTcpSocket*);                                     // Receive Data from AdminChat
@@ -64,18 +64,19 @@ private slots:
     //file
     void acceptConnection();         // Make Socket for FileSending and Connect signal/slot
     void readClient();               // Read Socket sent from Client and AdaminChat for saving file
-private:
 
+private:
     Ui::ChatManager *ui;
 
     //Server
     QTcpServer *chatServer;                                     // Server for Chat
     QTcpServer *fileServer;                                     // Server for FileSending
 
-    QList<QTcpSocket*> adminSocketList;                         // Connected AdminChat Programs List
-    QList<QTcpSocket*> customerSocketList;                      // Connected Client Programs List
-    QHash<QString, QTcpSocket*> customerSocketHash;             // <CustomerKey : CustomerSocket>
-    QMultiMap<QTcpSocket*, QTcpSocket*> customerMatchingMap;    // <AdminSocket : CustomerKey>
+    QTcpSocket *chatAdminSocket;                                // ChatAdmin Socket
+
+    QList<QTcpSocket*> customerSocketList;                      // CustomerSocketList
+    QHash<QString, QTcpSocket*> customerWaitSocketHash;         // <CustomerKey : CustomerSocket> -> Connected Socket List
+    QHash<QString, QTcpSocket*> customerChatSocketHash;         // <CustomerKey : CustomerSocket> -> Chatting Socket List
                                                                 // Admin can be connected to maximum two clients
     //File
     QFile* file;                                                // File Object for FileSending Protocol
@@ -90,6 +91,8 @@ private:
     QSqlQueryModel *customerModel;
     QSqlQueryModel *fileModel;
     QSqlQueryModel *noticeModel;
+
+
 };
 
 #endif // CHATMANAGER_H

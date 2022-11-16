@@ -12,6 +12,7 @@ SOURCES += \
     chatmanager.cpp \
     customerinput.cpp \
     customermanager.cpp \
+    delegate.cpp \
     home.cpp \
     logsavethread.cpp \
     main.cpp \
@@ -25,6 +26,7 @@ HEADERS += \
     chatmanager.h \
     customerinput.h \
     customermanager.h \
+    delegate.h \
     home.h \
     logsavethread.h \
     mainwindow.h \

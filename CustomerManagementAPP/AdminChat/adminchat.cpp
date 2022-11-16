@@ -138,26 +138,37 @@ void AdminChat::receiveData()
     case Message:
         emit message((QString)data);
         break;
-    case Out:
-        QMessageBox::critical(this, tr("Customer Out!"), \
-                              tr("The customer (%1)  has ended the chat.").arg(data));
-        ui->chatArea->removeTab(chatIndexHash.key(data));
-        chatIndexHash.remove(chatIndexHash.key(data));
+    case Out: {
+        int count = ui->chatArea->count();
+        for (int i = 0; i < count; i++) {
+            if (data == ui->chatArea->tabText(i)) {
+                ui->chatArea->removeTab(i);
+                break;
+            }
+        }
+
         foreach (auto item, ui->customerTreeWidget->findItems(data, Qt::MatchExactly, 0)) {
             item->setText(2, "Connected");
         }
+        QMessageBox::critical(this, tr("Customer Out!"), \
+                              tr("The customer (%1)  has ended the chat.").arg(data));
         break;
-    case Close:
+    }
+    case Close: {
+        int count = ui->chatArea->count();
+        for (int i = 0; i < count; i++) {
+            if (data == ui->chatArea->tabText(i)) {
+                ui->chatArea->removeTab(i);
+                break;
+            }
+        }
         foreach (auto item, ui->customerTreeWidget->findItems(data, Qt::MatchExactly, 0)) {
             ui->customerTreeWidget->takeTopLevelItem(ui->customerTreeWidget->indexOfTopLevelItem(item));
-        }
-        if (chatIndexHash.contains(chatIndexHash.key(data))) {
-            ui->chatArea->removeTab(chatIndexHash.key(data));
-            chatIndexHash.remove(chatIndexHash.key(data));
         }
         QMessageBox::critical(this, tr("Customer Out!"), \
                               tr("The customer (%1) has logged out").arg(data));
         break;
+    }
     };
 }
 
@@ -180,8 +191,6 @@ void AdminChat::chatOpen(QString ck)
 
     chat->showMaximized();
     ui->chatArea->insertTab(index, chat, ck);
-//    chatIndexHash[index] = ckName.split("_")[0];
-    chatIndexHash[index] = ck;
     message->append("<font color=green>***" + ck + "님과 채팅을 시작했습니다.</font>");
     foreach (auto item, ui->customerTreeWidget->findItems(ck, Qt::MatchExactly, 0)) {
         item->setText(2, "Chatting...");
@@ -202,7 +211,7 @@ void AdminChat::chatOpen(QString ck)
     connect(inputLine, &QLineEdit::returnPressed , [=]{
         if (!inputLine->text().length()) return;
         QString tabText = ui->chatArea->tabText(ui->chatArea->currentIndex());
-        QString msg = tabText.split("_")[0] + "||"           //CK_NAME형태(TabTitle)에서 CK만 보내기
+        QString msg = tabText + "||"
                 + "<font color=orange><b> OSSTEM IMPLANT : </b></font>" + inputLine->text();
         sendProtocol(Message, msg);
         message->append("<font color=orange><b> ME : </b></font>" + inputLine->text());
@@ -211,16 +220,19 @@ void AdminChat::chatOpen(QString ck)
     });
 
     connect(this, &AdminChat::message, this, [=](QString data){
-        if (index == chatIndexHash.key(data.split("|")[0]))
-            message->append("<font color=blue><b> " + data.split("|")[0]
-                    + " : </b></font>" + data.split("|")[1]);
+        int count = ui->chatArea->count();
+        for (int i = 0; i < count; i++) {
+            if (data.split("|")[0] == ui->chatArea->tabText(i))
+                message->append("<font color=blue><b> " + data.split("|")[0]
+                        + " : </b></font>" + data.split("|")[1]);
+        }
     });
 }
 
 // Invite Customer
 void AdminChat::on_inviteButton_clicked()
 {
-    if (ui->chatArea->count() > 2) {
+    if (ui->chatArea->count() > 3) {
         QMessageBox::critical(this, tr("No More"), \
                               tr("Let's improve the quality of service by serving only two customers"));
         return;
@@ -232,7 +244,7 @@ void AdminChat::on_inviteButton_clicked()
             return;
         } else {
             sendProtocol(Invite, item->text(0));
-            chatOpen(item->text(0) + "_" + item->text(1));
+            chatOpen(item->text(0));
         }
     }
 }
@@ -247,9 +259,15 @@ void AdminChat::on_kickButton_clicked()
             return;
         } else {
             sendProtocol(Kick_Out, item->text(0));
-            item->setText(2, "Connected");
-            ui->chatArea->removeTab(chatIndexHash.key(item->text(0)));
-            chatIndexHash.remove(chatIndexHash.key(item->text(0)));
+            int count = ui->chatArea->count();
+            for (int i = 0; i < count; i++) {
+                if (item->text(0) == ui->chatArea->tabText(i)) {
+                    ui->chatArea->removeTab(i);
+                    item->setText(2, "Connected");
+                    break;
+                }
+            }
+            break;
         }
     }
 }
@@ -323,9 +341,8 @@ void AdminChat::sendFile()
 void AdminChat::updateNotice()
 {
     QSqlDatabase chatDB = QSqlDatabase::database("Chat_Admin");
-    noticeModel->setQuery("SELECT * FROM sys.NOTICE_TABLE ORDER BY NOTICE_DATE", chatDB);
-    noticeModel->setHeaderData(0, Qt::Horizontal, tr("DATE"));
-    noticeModel->setHeaderData(1, Qt::Horizontal, tr("NOTICE"));
+    noticeModel->setQuery("SELECT NOTICE_CONTENTS FROM sys.NOTICE_TABLE ORDER BY NOTICE_DATE", chatDB);
+    noticeModel->setHeaderData(0, Qt::Horizontal, tr("NOTICE"));
 
     ui->noticeBoard->setModel(noticeModel);
     ui->noticeBoard->horizontalHeader()->setStretchLastSection(true);
@@ -338,9 +355,24 @@ void AdminChat::insertNotice()
     QSqlDatabase chatDB = QSqlDatabase::database("Chat_Admin");
     QSqlQuery input(chatDB);
     input.prepare("INSERT INTO sys.NOTICE_TABLE(NOTICE_DATE, NOTICE_CONTENTS) VALUES (:date, :notice)");
-    input.bindValue(":date", QDate::currentDate());
+    input.bindValue(":date", QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
     input.bindValue(":notice", ui->noticeInput->text());
     input.exec();
 
     sendProtocol(Notice, "notice");
+}
+
+void AdminChat::closeEvent(QCloseEvent*)
+{
+    disconnect();
+}
+
+void AdminChat::disconnect()
+{
+    sendProtocol(Close, ui->idLine->text().toStdString().data());
+    while(adminSocket->waitForDisconnected(1000)) {
+        QThread::usleep(10);
+    }
+    adminSocket->disconnectFromHost();
+    adminSocket->deleteLater();
 }

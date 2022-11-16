@@ -56,6 +56,11 @@ private slots:
 
     //Notice
     void updateNotice();          //
+    void disconnect();
+    void on_outButton_clicked();
+
+    void on_chatButton_clicked();
+
 private:
     void closeEvent(QCloseEvent*) override;     // If Client Programs are closed, send data to server
     void saveLog();

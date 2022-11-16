@@ -11,6 +11,7 @@
 #include "chatmanager.h"
 #include "ui_chatmanager.h"
 #include "logsavethread.h"
+#include "delegate.h"
 
 #include <QTcpServer>
 #include <QTcpSocket>
@@ -43,11 +44,12 @@ ChatManager::ChatManager(QWidget *parent) :
     ui(new Ui::ChatManager)
 {
     ui->setupUi(this);
+    chatAdminSocket = nullptr;
 
     // Open Server for chat and file transfer system
     // Chat Server
     chatServer = new QTcpServer(this);
-    connect(chatServer, SIGNAL(newConnection()), SLOT(clientConnect()));
+    connect(chatServer, SIGNAL(newConnection()), SLOT(sockConnect()));
     if (!chatServer->listen(QHostAddress::Any, 8000)) {    //Using 8000 as a fixed port for chat
         QMessageBox::critical(this, tr("Chatting Server"), \
                               tr("Unable to start the server: %1.") \
@@ -79,7 +81,6 @@ ChatManager::ChatManager(QWidget *parent) :
 
     qDebug() << tr("Server Open");
 
-
     QSqlDatabase chatDB = QSqlDatabase::addDatabase("QODBC", "ChatManager");
     chatDB.setDatabaseName("Oracle11gx64");
     chatDB.setUserName("chat_manager");
@@ -93,7 +94,6 @@ ChatManager::ChatManager(QWidget *parent) :
     customerModel = new QSqlQueryModel(ui->customerTableView);
     fileModel = new QSqlQueryModel(ui->fileTableView);
     noticeModel = new QSqlQueryModel(ui->noticeTableView);
-
 }
 
 ChatManager::~ChatManager()
@@ -106,10 +106,10 @@ ChatManager::~ChatManager()
 
 
 // New Connection with Client
-void ChatManager::clientConnect()
+void ChatManager::sockConnect()
 {
-    QTcpSocket *customerConnection = chatServer->nextPendingConnection();
-    connect(customerConnection, SIGNAL(readyRead()), SLOT(receiveData()));
+    QTcpSocket *sockConnection = chatServer->nextPendingConnection();
+    connect(sockConnection, SIGNAL(readyRead()), SLOT(receiveData()));
     qDebug() << "New Connection with Client";
 }
 
@@ -131,11 +131,10 @@ void ChatManager::receiveData()
 {
     QTcpSocket *receiveSocket = dynamic_cast<QTcpSocket *>(sender());
     if (receiveSocket->bytesAvailable() > 1024) return;
-    if (adminSocketList.contains(receiveSocket)) {
+    if (chatAdminSocket == receiveSocket) {
         receiveFromAdmin(receiveSocket);
         return;
-    }
-    else if (customerSocketList.contains(receiveSocket)) {
+    } else if (customerSocketList.contains(receiveSocket)) {
         receiveFromClient(receiveSocket);
         return;
     }
@@ -155,7 +154,8 @@ void ChatManager::receiveData()
         QList<QString> adminCheck = ((QString)data).split("|");
 
         if ((adminCheck[0] == "admin") && (adminCheck[1] == "admin")) {
-            adminSocketList.append(receiveSocket);
+            chatAdminSocket = new QTcpSocket;
+            chatAdminSocket = receiveSocket;
             sendProtocol(receiveSocket, Admin_In, data);
         } else
             sendProtocol(receiveSocket, Admin_In_Fail, data);
@@ -174,18 +174,16 @@ void ChatManager::receiveData()
                 sendProtocol(receiveSocket, Sign_In_Fail, "fail");
                 return;
             }
-            // 이름까지 맞는 경우 리스트 색상변경
-            QColor co(100,0,123);
-            customerModel->setData(idx, co, Qt::BackgroundRole);
+//            // 이름까지 맞는 경우 리스트 색상변경
+//            QColor co(100,0,123);
+//            customerModel->setData(idx, co, Qt::BackgroundRole);
         }
         // 로그인 성공 시
-        customerSocketHash[ckName[0]] = receiveSocket;             // CustomerKey : TcpSocket
         customerSocketList.append(receiveSocket);                  // Insert socket into waiting_list
-
-        sendProtocol(receiveSocket, Sign_In, "success");        //로그인한 해당 고객에게 성공여부 전달
-        foreach (auto adminSock, adminSocketList)               //접속한 채팅관리자들에게 로그인한 고객정보 전송
-            sendProtocol(adminSock, Sign_In, data);
-        break;
+        customerWaitSocketHash.insert(ckName[0], receiveSocket);
+        sendProtocol(receiveSocket, Sign_In, data);        //로그인한 해당 고객에게 성공여부 전달
+        if (chatAdminSocket != nullptr)
+            sendProtocol(chatAdminSocket, Sign_In, data);
     }
     }
 }
@@ -193,6 +191,7 @@ void ChatManager::receiveData()
 // Receive Data from AdminChat
 void ChatManager::receiveFromAdmin(QTcpSocket* receiveSocket)
 {
+
     Protocol_Type type;       // 채팅의 목적
     char data[1020];         // 전송되는 메시지/데이터
     memset(data, 0, 1020);
@@ -221,42 +220,50 @@ void ChatManager::receiveFromAdmin(QTcpSocket* receiveSocket)
             ui->logTreeWidget->resizeColumnToContents(i);
 
         logSaveThread->appendData(log);
-        sendProtocol(customerSocketHash[ck], Message, msg);
+        sendProtocol(customerChatSocketHash[ck], Message, msg);
         break;
     }
-    case Invite: {
-        //초대한 고객 색상 변경
-        QModelIndexList indexes = customerModel->match(customerModel->index(0, 0), Qt::EditRole, data, 1, Qt::MatchFlags(Qt::MatchExactly));
-        foreach (auto idx, indexes) {
-            ui->customerTableView->indexWidget(idx)->setStyleSheet("{background-color: red}");
-        }
+    case Invite: {  // data = customerKey
+
+//        QModelIndexList indexes = customerModel->match(customerModel->index(0, 0), Qt::EditRole, data, 1, Qt::MatchFlags(Qt::MatchExactly));
+//        foreach (auto idx, indexes) {
+//            ui->customerTableView->indexWidget(idx)->setStyleSheet("{background-color: red}");
+//        }
+        customerChatSocketHash.insert(data, customerWaitSocketHash.value(data));
+        customerWaitSocketHash.remove(data);
 
         QString inviteMsg =
                 "<font color=orange><b> 안녕하세요. 오스템임플란트입니다. 상담원과 연결되었습니다! <b></font>";
-        customerMatchingMap.insert(receiveSocket,customerSocketHash[data]);
-        sendProtocol(customerSocketHash[data], Invite, inviteMsg);
+        sendProtocol(customerChatSocketHash[data], Invite, inviteMsg);
         break;
     }
     case Kick_Out: {
-        //강퇴한 고객 색상 변경
-        QModelIndexList indexes = customerModel->match(customerModel->index(0, 0), Qt::EditRole, data, 1, Qt::MatchFlags(Qt::MatchExactly));
-        foreach (auto idx, indexes) {
-            ui->customerTableView->indexWidget(idx)->setStyleSheet("{background-color: yellow}");
-        }
+//        //강퇴한 고객 색상 변경
+//        QModelIndexList indexes = customerModel->match(customerModel->index(0, 0), Qt::EditRole, data, 1, Qt::MatchFlags(Qt::MatchExactly));
+//        foreach (auto idx, indexes) {
+//            ui->customerTableView->indexWidget(idx)->setStyleSheet("{background-color: yellow}");
+//        }
 
-        sendProtocol(customerSocketHash[data], Kick_Out, data);
-        customerMatchingMap.remove(receiveSocket, customerSocketHash[data]);
+        customerWaitSocketHash.insert(data, customerChatSocketHash.value(data));
+        customerChatSocketHash.remove(data);
+
+        sendProtocol(customerWaitSocketHash[data], Kick_Out, data);
         break;
     }
     case Notice:
         foreach (auto customerSocket, customerSocketList) {
             sendProtocol(customerSocket, Notice, data);
         }
-        foreach (auto adminSocket, adminSocketList) {
-            if (adminSocket != receiveSocket)
-                sendProtocol(adminSocket, Notice, data);
-        }
+        sendProtocol(chatAdminSocket, Notice, data);
         updateNotice();
+        break;
+    case Close:
+        for (auto i = customerChatSocketHash.begin(); i != customerChatSocketHash.end(); i++) {
+            sendProtocol(i.value(), Close, "Admin Close"); //채팅중이던 고객에게 Admin 종료 알려주기
+        }
+        receiveSocket->deleteLater();
+        chatAdminSocket = nullptr;
+        break;
     }
 }
 
@@ -275,71 +282,59 @@ void ChatManager::receiveFromClient(QTcpSocket* receiveSocket)
 
     switch (type) {
     case In: {
-        QString clientMsg;            // 채팅연결 시도한 Client에게 보내는 메세지
-        bool op = false;
-
-        // Admin Socket 중에서 고객과 연결할 수 있는 admin 검색해서 연결, 하나의 admin 소켓 당 2개의 고객 socket 연결 제한
-        foreach (auto admin, adminSocketList) {
-            if (customerMatchingMap.count(admin) < 2) {
-                customerMatchingMap.insert(admin, receiveSocket);
-                op = true;          // 연결가능한 AdminSocket 검색 성공
-                break;
+        bool isIn = false;
+        if (chatAdminSocket != nullptr) {
+            if (customerChatSocketHash.count() < 2) {
+                customerWaitSocketHash.remove(data);
+                customerChatSocketHash.insert(data, receiveSocket);
+                isIn = true;          // 연결가능한 AdminSocket 있을 경우
             }
         }
-        if (op) {   // 연결가능한 AdminChat을 찾아 연결되었을 때,
+
+        if (isIn) {   // 연결가능한 AdminChat이 있어서 연결된 경우
             type = In;
-            clientMsg = "<font color=orange><b>\n 안녕하세요. 오스템임플란트입니다. 상담원과 연결되었습니다! <b></font>";
-            QModelIndexList indexes = customerModel->match(customerModel->index(0, 0), Qt::EditRole, data, 1, Qt::MatchFlags(Qt::MatchExactly));
-//            foreach (auto idx, indexes) {
-//                ui->customerTableView->indexWidget(idx)->setStyleSheet("{background-color: red}");
-//            }
-            sendProtocol(customerMatchingMap.key(receiveSocket), type, data);    //담당 Admin에게 전송
+            QString clientMsg = "<font color=orange><b>\n Hello! This is OsstemImplant! <b></font>";
+            sendProtocol(chatAdminSocket, type, data);    //ChatAdmin에게 전송
+            sendProtocol(receiveSocket, type, clientMsg);
         } else {
             type = In_Fail;
-            clientMsg = "<font color=orange><b> 죄송합니다. 지금은 모든 상담원이 상담중입니다. <b></font>";
+            sendProtocol(receiveSocket, type, "Fail");
         }
+                                   //해당 Client에게 전송
 
-        sendProtocol(receiveSocket, type, clientMsg);                           //해당 Client에게 전송
         break;
     }
     case Message: {
+        QString from = customerChatSocketHash.key(receiveSocket);
+
         QTreeWidgetItem* log = new QTreeWidgetItem;
         log->setText(0, receiveSocket->peerAddress().toString());
         log->setText(1, QString::number(receiveSocket->peerPort()));
-        log->setText(2, customerSocketHash.key(receiveSocket));
+        log->setText(2, from);
         log->setText(3, "ADMIN");
         log->setText(4, QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
-        log->setText(5, ((QString)data).split("|")[1]);
-        log->setToolTip(5, QString(data));
+        log->setText(5, data);
+        log->setToolTip(5, data);
         ui->logTreeWidget->addTopLevelItem(log);
         ui->logTreeWidget->resizeColumnToContents(4);
-        sendProtocol(customerMatchingMap.key(receiveSocket), Message, data);
+        sendProtocol(chatAdminSocket, Message, from + "|" + data);
         break;
     }
-    case Out: {
-        QModelIndexList indexes = customerModel->match(customerModel->index(0, 0), Qt::EditRole, data, 1, Qt::MatchFlags(Qt::MatchExactly));
-//        foreach (auto idx, indexes) {
-//            ui->customerTableView->indexWidget(idx)->setStyleSheet("{background-color: yellow}");
-//        }
-
-        sendProtocol(customerMatchingMap.key(receiveSocket), Out, data);
-        customerMatchingMap.remove(customerMatchingMap.key(receiveSocket), receiveSocket);
+    case Out: { //data = CustomerKey
+        bool isIn = customerChatSocketHash.remove(data);
+        if (isIn) {
+            customerWaitSocketHash[data] = receiveSocket;
+        }
+        sendProtocol(chatAdminSocket, Out, data);
         break;
     }
     case Close: {
-        QModelIndexList indexes = customerModel->match(customerModel->index(0, 0), Qt::EditRole, data, 1, Qt::MatchFlags(Qt::MatchExactly));
-//        foreach (auto idx, indexes) {
-//            ui->customerTableView->indexWidget(idx)->setStyleSheet("{background-color: yellow}");
-//        }
-
-        foreach (auto admin, adminSocketList) {
-            sendProtocol(admin, Close, data);
-        }
-        customerMatchingMap.remove(customerMatchingMap.key(receiveSocket), receiveSocket);
-        customerSocketHash.remove(data);
-
+        if (chatAdminSocket == nullptr)
+            return;
+        sendProtocol(chatAdminSocket, Close, data);
         customerSocketList.removeAll(receiveSocket);
-        customerSocketList.squeeze();
+        customerChatSocketHash.remove(data);
+        customerWaitSocketHash.remove(data);
         receiveSocket->deleteLater();
         break;
     }
@@ -369,17 +364,6 @@ void ChatManager::readClient()
 
         progressDialog->setMaximum(totalSize);
 
-        QList<QString> list = filename.split("/");      // To save only File name without path
-
-        QTreeWidgetItem* fileLog = new QTreeWidgetItem;
-        fileLog->setText(0, fileSender);
-        fileLog->setText(1, list[list.count()-1]);
-        fileLog->setToolTip(1, filename);
-
-        //파일 디비에 저장하는 코드 작성
-//        ui->fileTreeWidget->addTopLevelItem(fileLog);
-        logSaveThread->appendData(fileLog);
-
         QFileInfo info(filename);
         QString currentFileName = info.fileName();
         file = new QFile("../Admin/data/file/" + currentFileName);
@@ -403,14 +387,24 @@ void ChatManager::readClient()
         file->close();
         delete file;
     }
+
+    //파일 디비에 저장하는 코드 작성
+    QList<QString> list = filename.split("/");      // To save only File name without path
+    QSqlDatabase chatDB = QSqlDatabase::database("ChatManager");
+    QSqlQuery inputFile(chatDB);
+    inputFile.prepare("INSERT INTO sys.FILE_TABLE VALUES(:sender, :filename)");
+    inputFile.bindValue(":sender", fileSender);
+    inputFile.bindValue(":filename", list[list.count()-1]);
+    bool isExec = inputFile.exec();
+    if (isExec)
+        updateFileList();
 }
 
 void ChatManager::updateNotice()
 {
     QSqlDatabase chatDB = QSqlDatabase::database("ChatManager");
-    noticeModel->setQuery("SELECT * FROM sys.NOTICE_TABLE ORDER BY NOTICE_DATE", chatDB);
-    noticeModel->setHeaderData(0, Qt::Horizontal, tr("DATE"));
-    noticeModel->setHeaderData(1, Qt::Horizontal, tr("NOTICE"));
+    noticeModel->setQuery("SELECT NOTICE_CONTENTS FROM sys.NOTICE_TABLE ORDER BY NOTICE_DATE", chatDB);
+    noticeModel->setHeaderData(0, Qt::Horizontal, tr("NOTICE"));
 
     ui->noticeTableView->setModel(noticeModel);
     ui->noticeTableView->horizontalHeader()->setStretchLastSection(true);
@@ -429,6 +423,8 @@ void ChatManager::updateCustomerList()
     ui->customerTableView->horizontalHeader()->setStretchLastSection(true);
     ui->customerTableView->horizontalHeader()->setStyleSheet(
                 "QHeaderView { font-size: 10pt; color: blue; }");
+    Delegate *dele = new Delegate(ui->customerTableView, 2);
+    ui->customerTableView->setItemDelegateForColumn(0, dele);
 }
 
 void ChatManager::updateFileList()

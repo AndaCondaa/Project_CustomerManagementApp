@@ -58,7 +58,6 @@ CREATE TABLE notice_table (
     notice_contents varchar2(100)
 );
 
-
 CREATE TABLE file_table (
     file_from varchar2(10),
     file_name varchar2(30)

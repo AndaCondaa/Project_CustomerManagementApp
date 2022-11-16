@@ -122,6 +122,13 @@ void OrderInput::input()
         overStock.setWindowTitle(tr("OVER STOCK!"));
         overStock.exec();
         return;
+    } else if (quantity == 0) {
+        QMessageBox zeroQuantity;
+        zeroQuantity.setIcon(QMessageBox::Warning);
+        zeroQuantity.setText(tr("Quantity should be more than ZERO"));
+        zeroQuantity.setWindowTitle(tr("Quantity is ZERO!"));
+        zeroQuantity.exec();
+        return;
     }
 
     QSqlDatabase orderDB = QSqlDatabase::database("OrderManager");
@@ -141,7 +148,6 @@ void OrderInput::input()
     stock.bindValue(":pk", pk);
     stock.bindValue(":quantity", quantity);
     bool isStock = stock.exec();
-
 
     if (isInput && isStock) {
         clear();

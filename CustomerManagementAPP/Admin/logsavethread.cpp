@@ -52,4 +52,5 @@ void LogSaveThread::saveData()
         }
         file.close();
     }
+    qDebug() << "LOG SAVED!";
 }

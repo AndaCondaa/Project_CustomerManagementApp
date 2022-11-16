@@ -92,6 +92,8 @@ private:
     QSqlQueryModel *noticeModel;
 
 
+    QVector<int> logInList;
+    QVector<int> chattingList;
 };
 
 #endif // CHATMANAGER_H

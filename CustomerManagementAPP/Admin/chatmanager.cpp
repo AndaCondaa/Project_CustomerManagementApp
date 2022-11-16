@@ -12,7 +12,6 @@
 #include "ui_chatmanager.h"
 #include "logsavethread.h"
 #include "delegate.h"
-#include "delegate_two.h"
 
 #include <QTcpServer>
 #include <QTcpSocket>
@@ -164,27 +163,31 @@ void ChatManager::receiveData()
     }
     case Sign_In: {
         //Verification of CustomerKey & Name inputted by customer
-
         //customerModel에서 로그인요청한 ck|name 검증
         QList<QString> ckName = ((QString)data).split("|"); // data = "customerKey|name"
-        QModelIndexList indexes = customerModel->match(customerModel->index(0, 0), Qt::EditRole, ckName[0], 1, Qt::MatchFlags(Qt::MatchExactly));
+        QModelIndexList indexes = customerModel->match(customerModel->index(0, 0), Qt::DisplayRole, ckName[0], -1, Qt::MatchFlags(Qt::MatchCaseSensitive));
+
         // 로그인 실패
+        if (indexes.empty()) {
+            sendProtocol(receiveSocket, Sign_In_Fail, "fail");
+            return;
+        }
         foreach (auto idx, indexes) {
             // ck는 맞지만, 이름이 틀린 경우
             if (ckName[1] != customerModel->data(idx.siblingAtColumn(1)).toString()) {
                 sendProtocol(receiveSocket, Sign_In_Fail, "fail");
                 return;
             }
-//            // 이름까지 맞는 경우 리스트 색상변경
-//            QColor co(100,0,123);
-//            customerModel->setData(idx, co, Qt::BackgroundRole);
         }
+
         // 로그인 성공 시
         customerSocketList.append(receiveSocket);                  // Insert socket into waiting_list
         customerWaitSocketHash.insert(ckName[0], receiveSocket);
         sendProtocol(receiveSocket, Sign_In, data);        //로그인한 해당 고객에게 성공여부 전달
         if (chatAdminSocket != nullptr)
             sendProtocol(chatAdminSocket, Sign_In, data);
+
+        break;
     }
     }
 }
@@ -234,7 +237,7 @@ void ChatManager::receiveFromAdmin(QTcpSocket* receiveSocket)
         customerWaitSocketHash.remove(data);
 
         QString inviteMsg =
-                "<font color=orange><b> 안녕하세요. 오스템임플란트입니다. 상담원과 연결되었습니다! <b></font>";
+                "<font color=orange><b>\n Hello! This is Osstem Implant! <b></font>";
         sendProtocol(customerChatSocketHash[data], Invite, inviteMsg);
         break;
     }
@@ -294,7 +297,7 @@ void ChatManager::receiveFromClient(QTcpSocket* receiveSocket)
 
         if (isIn) {   // 연결가능한 AdminChat이 있어서 연결된 경우
             type = In;
-            QString clientMsg = "<font color=orange><b>\n Hello! This is OsstemImplant! <b></font>";
+            QString clientMsg = "<font color=orange><b>\n Hello! This is Osstem Implant! <b></font>";
             sendProtocol(chatAdminSocket, type, data);    //ChatAdmin에게 전송
             sendProtocol(receiveSocket, type, clientMsg);
         } else {
@@ -425,10 +428,23 @@ void ChatManager::updateCustomerList()
     ui->customerTableView->horizontalHeader()->setStyleSheet(
                 "QHeaderView { font-size: 10pt; color: blue; }");
     ui->customerTableView->resizeColumnsToContents();
-//    Delegate *dele = new Delegate(ui->customerTableView, 2);
-    Delegate_two *dele_two = new Delegate_two(ui->customerTableView, 4);
-//    ui->customerTableView->setItemDelegateForColumn(0, dele);
-    ui->customerTableView->setItemDelegateForColumn(0, dele_two);
+
+
+    QModelIndexList indexes = customerModel->match(customerModel->index(0, 1), Qt::EditRole, "j", -1, Qt::MatchFlags(Qt::MatchContains));
+    foreach (auto idx, indexes) {
+        logInList.append(idx.row());
+    }
+
+    QModelIndexList indexes2 = customerModel->match(customerModel->index(0, 1), Qt::EditRole, "1", -1, Qt::MatchFlags(Qt::MatchContains));
+    foreach (auto idx, indexes2) {
+        chattingList.append(idx.row());
+    }
+
+    Delegate *dele = new Delegate(ui->customerTableView);
+    dele->setLogInVector(logInList);
+    dele->setChattingVector(chattingList);
+    ui->customerTableView->setItemDelegateForColumn(0, dele);
+    ui->customerTableView->setItemDelegateForColumn(1, dele);
 }
 
 void ChatManager::updateFileList()

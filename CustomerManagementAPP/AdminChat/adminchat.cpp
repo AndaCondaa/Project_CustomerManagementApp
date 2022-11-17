@@ -11,6 +11,7 @@
 
 #include "adminchat.h"
 #include "ui_adminchat.h"
+#include "delegate.h"
 
 #include <QDataStream>
 #include <QTcpSocket>
@@ -75,7 +76,10 @@ AdminChat::AdminChat(QWidget *parent)
         qDebug("Chat_Admin DB connect success");
     }
 
+    customerModel = new QSqlQueryModel(ui->customerTableView);
     noticeModel = new QSqlQueryModel(ui->noticeBoard);
+
+    updateCustomerList();
 }
 
 AdminChat::~AdminChat()
@@ -117,6 +121,7 @@ void AdminChat::receiveData()
 
     switch(type) {
     case Admin_In:
+        qDebug("%d", __LINE__);
         ui->stackedWidget->setCurrentIndex(1);
         updateNotice();
         break;
@@ -124,19 +129,23 @@ void AdminChat::receiveData()
         QMessageBox::critical(this, tr("Fail!"), \
                               tr("Please Check your AdminID and Password"));
         break;
-    case Sign_In: {
-        QTreeWidgetItem *item = new QTreeWidgetItem;
-        item->setText(0, ((QString)data).split("|")[0]);
-        item->setText(1, ((QString)data).split("|")[1]);
-        item->setText(2, "Connected");
-        ui->customerTreeWidget->addTopLevelItem(item);
+    case Sign_In: { //data = "customerkey | name"
+        qDebug("%d", __LINE__);
+        QString ck = ((QString)data).split("|")[0];
+        waitVector.append(ck);
+        updateCustomerList();
         break;
     }
-    case In:
-        chatOpen((QString)data);
+    case In: { //data = customerkey
+        int i = waitVector.removeAll(data);
+        qDebug("%d, %d", __LINE__, i);
+        chattingVector.append(data);
+        updateCustomerList();
+        chatOpen(data);
         break;
+    }
     case Message:
-        emit message((QString)data);
+        emit message(data);
         break;
     case Out: {
         int count = ui->chatArea->count();
@@ -146,10 +155,9 @@ void AdminChat::receiveData()
                 break;
             }
         }
-
-        foreach (auto item, ui->customerTreeWidget->findItems(data, Qt::MatchExactly, 0)) {
-            item->setText(2, "Connected");
-        }
+        chattingVector.removeAll(data);
+        waitVector.append(data);
+        updateCustomerList();
         QMessageBox::critical(this, tr("Customer Out!"), \
                               tr("The customer (%1)  has ended the chat.").arg(data));
         break;
@@ -162,9 +170,9 @@ void AdminChat::receiveData()
                 break;
             }
         }
-        foreach (auto item, ui->customerTreeWidget->findItems(data, Qt::MatchExactly, 0)) {
-            ui->customerTreeWidget->takeTopLevelItem(ui->customerTreeWidget->indexOfTopLevelItem(item));
-        }
+        chattingVector.removeAll(data);
+        waitVector.removeAll(data);
+        updateCustomerList();
         QMessageBox::critical(this, tr("Customer Out!"), \
                               tr("The customer (%1) has logged out").arg(data));
         break;
@@ -192,9 +200,6 @@ void AdminChat::chatOpen(QString ck)
     chat->showMaximized();
     ui->chatArea->insertTab(index, chat, ck);
     message->append("<font color=green>***" + ck + "님과 채팅을 시작했습니다.</font>");
-    foreach (auto item, ui->customerTreeWidget->findItems(ck, Qt::MatchExactly, 0)) {
-        item->setText(2, "Chatting...");
-    }
 
     connect(sendButton, &QPushButton::clicked ,
             [=]{
@@ -232,44 +237,49 @@ void AdminChat::chatOpen(QString ck)
 // Invite Customer
 void AdminChat::on_inviteButton_clicked()
 {
-    if (ui->chatArea->count() > 2) {
+    QString ck = customerModel->data(ui->customerTableView->currentIndex().siblingAtColumn(0)).toString();
+    if (chattingVector.contains(ck)) {
+        QMessageBox::critical(this, tr("Chatting!"), \
+                              tr("The customer is already chatting"));
+        return;
+    } else if (!(waitVector.contains(ck))) {
+        QMessageBox::critical(this, tr("Not In"), \
+                              tr("The customer isn't sign-in yet"));
+        return;
+    } else if (chattingVector.count() > 2) {
         QMessageBox::critical(this, tr("No More"), \
                               tr("Let's improve the quality of service by serving only two customers"));
         return;
-    }
-    foreach (auto item, ui->customerTreeWidget->selectedItems()) {
-        if (item->text(2) == "Chatting...") {
-            QMessageBox::critical(this, tr("Chatting!"), \
-                                  (tr("The customer (%1) is already chatting")).arg(item->text(0)));
-            return;
-        } else {
-            sendProtocol(Invite, item->text(0));
-            chatOpen(item->text(0));
-        }
+    } else {
+        waitVector.removeAll(ck);
+        chattingVector.append(ck);
+        updateCustomerList();
+        sendProtocol(Invite, ck);
+        chatOpen(ck);
     }
 }
 
 // Kick Out Customer
 void AdminChat::on_kickButton_clicked()
 {
-    foreach (auto item, ui->customerTreeWidget->selectedItems()) {
-        if (item->text(2) == "Connected") {
-            QMessageBox::critical(this, tr("Not Be chatting!"), \
-                                  (tr("The customer (%1) is not chatting")).arg(item->text(0)));
-            return;
-        } else {
-            sendProtocol(Kick_Out, item->text(0));
-            int count = ui->chatArea->count();
-            for (int i = 0; i < count; i++) {
-                if (item->text(0) == ui->chatArea->tabText(i)) {
-                    ui->chatArea->removeTab(i);
-                    item->setText(2, "Connected");
-                    break;
-                }
-            }
-            break;
-        }
+    QString ck = customerModel->data(ui->customerTableView->currentIndex().siblingAtColumn(0)).toString();
+    if (!(chattingVector.contains(ck))) {
+        QMessageBox::critical(this, tr("Not Chatting!"), \
+                              tr("The customer isn't chatting"));
+        return;
     }
+
+    chattingVector.removeAll(ck);
+    waitVector.append(ck);
+    updateCustomerList();
+    sendProtocol(Kick_Out, ck);
+
+    int count = ui->chatArea->count();
+    for (int i = 0; i < count; i++) {
+        if (ck == ui->chatArea->tabText(i))
+            ui->chatArea->removeTab(i);
+    }
+
 }
 
 // Seperate file for sending
@@ -375,4 +385,41 @@ void AdminChat::disconnect()
     }
     adminSocket->disconnectFromHost();
     adminSocket->deleteLater();
+}
+
+
+void AdminChat::updateCustomerList()
+{
+    QSqlDatabase chatAdminDB = QSqlDatabase::database("Chat_Admin");
+    customerModel->setQuery("SELECT CUSTOMER_KEY, CLINIC_NAME FROM sys.CUSTOMER_TABLE ORDER BY 1", chatAdminDB);
+    customerModel->setHeaderData(0, Qt::Horizontal, tr("CUSTOMER_KEY"));
+    customerModel->setHeaderData(1, Qt::Horizontal, tr("CLINIC"));
+
+    ui->customerTableView->setModel(customerModel);
+    ui->customerTableView->horizontalHeader()->setStretchLastSection(true);
+    ui->customerTableView->horizontalHeader()->setStyleSheet(
+                "QHeaderView { font-size: 10pt; color: blue; }");
+    ui->customerTableView->resizeColumnsToContents();
+
+    QVector<int> tmpWaitVector;
+    QVector<int> tmpChattingVector;
+
+    foreach (auto waitCk, waitVector) {
+        QModelIndexList indexes = customerModel->match(customerModel->index(0, 0), Qt::EditRole, waitCk, -1, Qt::MatchFlags(Qt::MatchExactly));
+        foreach (auto idx, indexes) {
+            tmpWaitVector.append(idx.row());
+        }
+    }
+    foreach (auto chatCk, chattingVector) {
+        QModelIndexList indexes = customerModel->match(customerModel->index(0, 0), Qt::EditRole, chatCk, -1, Qt::MatchFlags(Qt::MatchExactly));
+        foreach (auto idx, indexes) {
+            tmpChattingVector.append(idx.row());
+        }
+    }
+
+    Delegate *delegate = new Delegate(ui->customerTableView);
+    delegate->setWaitVector(tmpWaitVector);
+    delegate->setChattingVector(tmpChattingVector);
+    ui->customerTableView->setItemDelegateForColumn(0, delegate);
+    ui->customerTableView->setItemDelegateForColumn(1, delegate);
 }

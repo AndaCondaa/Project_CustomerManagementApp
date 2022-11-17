@@ -10,10 +10,12 @@ CONFIG += c++17
 
 SOURCES += \
     adminchat.cpp \
+    delegate.cpp \
     main.cpp
 
 HEADERS += \
-    adminchat.h
+    adminchat.h \
+    delegate.h
 
 FORMS += \
     adminchat.ui

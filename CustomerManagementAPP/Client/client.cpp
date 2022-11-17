@@ -320,6 +320,10 @@ void Client::disconnect()
 void Client::on_outButton_clicked()
 {
     disconnect();
+    ui->sendButton->setEnabled(false);
+    ui->fileButton->setEnabled(false);
+    ui->inputLine->setEnabled(false);
+    ui->message->setEnabled(false);
     ui->stackedWidget->setCurrentIndex(0);
     ui->customerKey->clear();
     ui->clinic->clear();

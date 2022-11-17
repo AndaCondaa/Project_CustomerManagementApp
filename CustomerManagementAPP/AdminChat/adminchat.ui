@@ -314,7 +314,7 @@
                   </font>
                  </property>
                  <property name="text">
-                  <string>Connectd CustomerList</string>
+                  <string>CustomerList</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -322,7 +322,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QTableView" name="tableView">
+                <widget class="QTableView" name="customerTableView">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                    <horstretch>0</horstretch>

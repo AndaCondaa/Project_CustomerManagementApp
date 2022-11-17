@@ -161,6 +161,13 @@ void ChatManager::receiveData()
             sendProtocol(receiveSocket, Admin_In, data);
         } else
             sendProtocol(receiveSocket, Admin_In_Fail, data);
+//        if (customerWaitSocketHash.count()) {
+//            foreach (auto ck, customerWaitSocketHash.keys()) {
+//                qDebug("%d", __LINE__);
+//                sendProtocol(chatAdminSocket, Sign_In, ck);
+//            }
+//        }
+
         break;
     }
     case Sign_In: {
@@ -188,7 +195,7 @@ void ChatManager::receiveData()
         sendProtocol(receiveSocket, Sign_In, data);        //로그인한 해당 고객에게 성공여부 전달
         if (chatAdminSocket != nullptr)
             sendProtocol(chatAdminSocket, Sign_In, data);
-
+        updateCustomerList();
         break;
     }
     }
@@ -230,30 +237,21 @@ void ChatManager::receiveFromAdmin(QTcpSocket* receiveSocket)
         break;
     }
     case Invite: {  // data = customerKey
-
-//        QModelIndexList indexes = customerModel->match(customerModel->index(0, 0), Qt::EditRole, data, 1, Qt::MatchFlags(Qt::MatchExactly));
-//        foreach (auto idx, indexes) {
-//            ui->customerTableView->indexWidget(idx)->setStyleSheet("{background-color: red}");
-//        }
         customerChatSocketHash.insert(data, customerWaitSocketHash.value(data));
         customerWaitSocketHash.remove(data);
 
         QString inviteMsg =
                 "<font color=orange><b>\n Hello! This is Osstem Implant! <b></font>";
         sendProtocol(customerChatSocketHash[data], Invite, inviteMsg);
+        updateCustomerList();
         break;
     }
     case Kick_Out: {
-//        //강퇴한 고객 색상 변경
-//        QModelIndexList indexes = customerModel->match(customerModel->index(0, 0), Qt::EditRole, data, 1, Qt::MatchFlags(Qt::MatchExactly));
-//        foreach (auto idx, indexes) {
-//            ui->customerTableView->indexWidget(idx)->setStyleSheet("{background-color: yellow}");
-//        }
-
         customerWaitSocketHash.insert(data, customerChatSocketHash.value(data));
         customerChatSocketHash.remove(data);
 
         sendProtocol(customerWaitSocketHash[data], Kick_Out, data);
+        updateCustomerList();
         break;
     }
     case Notice:
@@ -302,12 +300,12 @@ void ChatManager::receiveFromClient(QTcpSocket* receiveSocket)
             QString clientMsg = "<font color=orange><b>\n Hello! This is Osstem Implant! <b></font>";
             sendProtocol(chatAdminSocket, type, data);    //ChatAdmin에게 전송
             sendProtocol(receiveSocket, type, clientMsg);
+            updateCustomerList();
         } else {
             type = In_Fail;
             sendProtocol(receiveSocket, type, "Fail");
         }
                                    //해당 Client에게 전송
-
         break;
     }
     case Message: {
@@ -332,6 +330,7 @@ void ChatManager::receiveFromClient(QTcpSocket* receiveSocket)
             customerWaitSocketHash[data] = receiveSocket;
         }
         sendProtocol(chatAdminSocket, Out, data);
+        updateCustomerList();
         break;
     }
     case Close: {
@@ -342,6 +341,7 @@ void ChatManager::receiveFromClient(QTcpSocket* receiveSocket)
         customerChatSocketHash.remove(data);
         customerWaitSocketHash.remove(data);
         receiveSocket->deleteLater();
+        updateCustomerList();
         break;
     }
     }
@@ -429,24 +429,28 @@ void ChatManager::updateCustomerList()
     ui->customerTableView->horizontalHeader()->setStretchLastSection(true);
     ui->customerTableView->horizontalHeader()->setStyleSheet(
                 "QHeaderView { font-size: 10pt; color: blue; }");
-    ui->customerTableView->resizeColumnsToContents();
+//    ui->customerTableView->resizeColumnsToContents();
 
-
-    QModelIndexList indexes = customerModel->match(customerModel->index(0, 1), Qt::EditRole, "j", -1, Qt::MatchFlags(Qt::MatchContains));
-    foreach (auto idx, indexes) {
-        logInList.append(idx.row());
+    waitVector.clear();
+    chattingVector.clear();
+    foreach(auto waitCk, customerWaitSocketHash.keys()) {
+        QModelIndexList indexes = customerModel->match(customerModel->index(0, 0), Qt::EditRole, waitCk, -1, Qt::MatchFlags(Qt::MatchExactly));
+        foreach (auto idx, indexes) {
+            waitVector.append(idx.row());
+        }
+    }
+    foreach(auto chatCk, customerChatSocketHash.keys()) {
+        QModelIndexList indexes = customerModel->match(customerModel->index(0, 0), Qt::EditRole, chatCk, -1, Qt::MatchFlags(Qt::MatchExactly));
+        foreach (auto idx, indexes) {
+            chattingVector.append(idx.row());
+        }
     }
 
-    QModelIndexList indexes2 = customerModel->match(customerModel->index(0, 1), Qt::EditRole, "1", -1, Qt::MatchFlags(Qt::MatchContains));
-    foreach (auto idx, indexes2) {
-        chattingList.append(idx.row());
-    }
-
-    Delegate *dele = new Delegate(ui->customerTableView);
-    dele->setLogInVector(logInList);
-    dele->setChattingVector(chattingList);
-    ui->customerTableView->setItemDelegateForColumn(0, dele);
-    ui->customerTableView->setItemDelegateForColumn(1, dele);
+    Delegate *delegate = new Delegate(ui->customerTableView);
+    delegate->setWaitVector(waitVector);
+    delegate->setChattingVector(chattingVector);
+    ui->customerTableView->setItemDelegateForColumn(0, delegate);
+    ui->customerTableView->setItemDelegateForColumn(1, delegate);
 }
 
 void ChatManager::updateFileList()
@@ -461,3 +465,4 @@ void ChatManager::updateFileList()
                 "QHeaderView { font-size: 10pt; color: blue; }");
     ui->fileTableView->resizeColumnsToContents();
 }
+

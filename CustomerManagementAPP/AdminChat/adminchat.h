@@ -45,7 +45,7 @@ public:
     ~AdminChat();
 
 signals:
-    void message(QString);      // Receive the message from server and Send to Tab of Chat
+    void message(QString);      // Receive the message from server and Open the Chat(new Tab) to the QTabWidget
 
 private slots:
     // Chat
@@ -66,6 +66,7 @@ private slots:
 
 private:
     void closeEvent(QCloseEvent*) override;     // If Client Programs are closed, send data to server
+    void updateCustomerList();
     void updateNotice();
     void insertNotice();
 
@@ -81,7 +82,10 @@ private:
     QByteArray outBlock;            // Block for sending
     bool isSent = false;            // Check connection to server
 
-
+    QSqlQueryModel *customerModel;
     QSqlQueryModel *noticeModel;
+
+    QVector<QString> waitVector;
+    QVector<QString> chattingVector;
 };
 #endif // ADMINCHAT_H

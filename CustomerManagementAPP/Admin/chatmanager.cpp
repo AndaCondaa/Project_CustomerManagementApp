@@ -120,7 +120,7 @@ void ChatManager::sendProtocol(QTcpSocket* sock, Protocol_Type type, QString dat
 {
     QByteArray dataArray;
     QDataStream out(&dataArray, QIODevice::WriteOnly);
-    out.device()->seek(0);
+//    out.device()->seek(0);
     out << type;
     out.writeRawData(data.toStdString().data(), size);
     sock->write(dataArray);
@@ -159,8 +159,10 @@ void ChatManager::receiveData()
             chatAdminSocket = new QTcpSocket;
             chatAdminSocket = receiveSocket;
             sendProtocol(receiveSocket, Admin_In, data);
-        } else
+        } else {
             sendProtocol(receiveSocket, Admin_In_Fail, data);
+        }
+
 //        if (customerWaitSocketHash.count()) {
 //            foreach (auto ck, customerWaitSocketHash.keys()) {
 //                qDebug("%d", __LINE__);
@@ -177,15 +179,18 @@ void ChatManager::receiveData()
         QModelIndexList indexes = customerModel->match(customerModel->index(0, 0), Qt::DisplayRole, ckName[0], -1, Qt::MatchFlags(Qt::MatchCaseSensitive));
 
         // 로그인 실패
-        if (indexes.empty()) {
+        // 이미 접속한 사람인 경우
+        if (customerChatSocketHash.contains(ckName[0]) || customerWaitSocketHash.contains(ckName[0])) {
+            sendProtocol(receiveSocket, Sign_In_Fail, data);
+        } else if (indexes.empty()) {   //ck가 없는 경우
             sendProtocol(receiveSocket, Sign_In_Fail, "fail");
             return;
-        }
-        foreach (auto idx, indexes) {
-            // ck는 맞지만, 이름이 틀린 경우
-            if (ckName[1] != customerModel->data(idx.siblingAtColumn(1)).toString()) {
-                sendProtocol(receiveSocket, Sign_In_Fail, "fail");
-                return;
+        } else {    // ck는 맞지만,이름이 틀린 경우
+            foreach (auto idx, indexes) {
+                if (ckName[1] != customerModel->data(idx.siblingAtColumn(1)).toString()) {
+                    sendProtocol(receiveSocket, Sign_In_Fail, "fail");
+                    return;
+                }
             }
         }
 
@@ -310,7 +315,6 @@ void ChatManager::receiveFromClient(QTcpSocket* receiveSocket)
     }
     case Message: {
         QString from = customerChatSocketHash.key(receiveSocket);
-
         QTreeWidgetItem* log = new QTreeWidgetItem;
         log->setText(0, receiveSocket->peerAddress().toString());
         log->setText(1, QString::number(receiveSocket->peerPort()));

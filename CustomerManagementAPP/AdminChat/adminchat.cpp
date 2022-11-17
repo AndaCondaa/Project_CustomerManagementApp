@@ -121,7 +121,6 @@ void AdminChat::receiveData()
 
     switch(type) {
     case Admin_In:
-        qDebug("%d", __LINE__);
         ui->stackedWidget->setCurrentIndex(1);
         updateNotice();
         break;
@@ -130,15 +129,13 @@ void AdminChat::receiveData()
                               tr("Please Check your AdminID and Password"));
         break;
     case Sign_In: { //data = "customerkey | name"
-        qDebug("%d", __LINE__);
         QString ck = ((QString)data).split("|")[0];
         waitVector.append(ck);
         updateCustomerList();
         break;
     }
     case In: { //data = customerkey
-        int i = waitVector.removeAll(data);
-        qDebug("%d, %d", __LINE__, i);
+        waitVector.removeAll(data);
         chattingVector.append(data);
         updateCustomerList();
         chatOpen(data);
@@ -225,11 +222,9 @@ void AdminChat::chatOpen(QString ck)
     });
 
     connect(this, &AdminChat::message, this, [=](QString data){
-        int count = ui->chatArea->count();
-        for (int i = 0; i < count; i++) {
-            if (data.split("|")[0] == ui->chatArea->tabText(i))
-                message->append("<font color=blue><b> " + data.split("|")[0]
-                        + " : </b></font>" + data.split("|")[1]);
+        if (data.split("|")[0] == ui->chatArea->tabText(index)) {
+            message->append("<font color=blue><b> " + data.split("|")[0]
+                    + " : </b></font>" + data.split("|")[1]);
         }
     });
 }

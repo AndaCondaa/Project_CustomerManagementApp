@@ -116,8 +116,12 @@ void Client::sendProtocol(Protocol_Type type, QString data, int size)
 // Receive the data from server
 void Client::receiveData( )
 {
+    qDebug("%d", __LINE__);
     QTcpSocket *clientSocket = dynamic_cast<QTcpSocket *>(sender());
-    if (clientSocket->bytesAvailable() > 1024) return;
+    qDebug("%d", __LINE__);
+    qDebug("%d", clientSocket->bytesAvailable());
+//    if (clientSocket->bytesAvailable() > 1024) return;
+    qDebug("%d", __LINE__);
     QByteArray bytearray = clientSocket->read(1024);
 
     // Data for sending
@@ -137,6 +141,7 @@ void Client::receiveData( )
         updateNotice();
         break;
     case Sign_In_Fail:
+        qDebug("%d", __LINE__);
         QMessageBox::critical(this, tr("Fail!"), \
                               tr("Please Check your CustomerKey and Clinic"));
         break;
@@ -333,9 +338,9 @@ void Client::on_outButton_clicked()
 void Client::on_chatButton_clicked()
 {
     if (ui->chatButton->text() == "Chat In") {
-        sendProtocol(In, ui->customerKey->text().toStdString().data());
+        sendProtocol(In, ui->customerKey->text());
     } else if (ui->chatButton->text() == "Chat Out") {
-        sendProtocol(Out, ui->customerKey->text().toStdString().data());
+        sendProtocol(Out, ui->customerKey->text());
         ui->message->append("************CHAT OFF************");
         ui->chatButton->setText(tr("Chat In"));
         ui->sendButton->setEnabled(false);

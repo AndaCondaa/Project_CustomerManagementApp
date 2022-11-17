@@ -97,6 +97,7 @@ GRANT SELECT ON notice_table TO chat_manager;
 GRANT SELECT,INSERT ON notice_table TO chat_admin;
 GRANT SELECT ON notice_table TO client;
 GRANT SELECT ON customer_table TO chat_manager;
+GRANT SELECT ON customer_table TO chat_admin;
 GRANT SELECT, INSERT ON file_table TO chat_manager;
 commit;
 

@@ -94,6 +94,8 @@ ChatManager::ChatManager(QWidget *parent) :
     customerModel = new QSqlQueryModel(ui->customerTableView);
     fileModel = new QSqlQueryModel(ui->fileTableView);
     noticeModel = new QSqlQueryModel(ui->noticeTableView);
+
+    updateCustomerList();
 }
 
 ChatManager::~ChatManager()

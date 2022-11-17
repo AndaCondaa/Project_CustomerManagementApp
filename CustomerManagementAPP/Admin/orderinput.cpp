@@ -81,7 +81,7 @@ OrderInput::OrderInput(QWidget *parent)
     quantityLine->setAlignment(Qt::AlignRight);
     totalLine->setAlignment(Qt::AlignRight);
 
-    quantityLine->setInputMask("000");
+    quantityLine->setInputMask("000;_");
 
     clearButton = new QPushButton("&CLEAR", this);
     inputButton = new QPushButton("&INPUT", this);

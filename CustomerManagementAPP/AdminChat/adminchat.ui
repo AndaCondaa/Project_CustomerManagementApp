@@ -240,10 +240,19 @@
           <layout class="QGridLayout" name="gridLayout_4">
            <item row="0" column="0">
             <layout class="QHBoxLayout" name="horizontalLayout_4">
+             <property name="spacing">
+              <number>5</number>
+             </property>
              <item>
               <layout class="QVBoxLayout" name="verticalLayout_5">
                <item>
                 <widget class="QLabel" name="noticeLabel">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>20</height>
+                  </size>
+                 </property>
                  <property name="font">
                   <font>
                    <pointsize>12</pointsize>
@@ -259,7 +268,14 @@
                 </widget>
                </item>
                <item>
-                <widget class="QTableView" name="noticeBoard"/>
+                <widget class="QTableView" name="noticeBoard">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>250</height>
+                  </size>
+                 </property>
+                </widget>
                </item>
                <item>
                 <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -286,8 +302,11 @@
              </item>
              <item>
               <layout class="QVBoxLayout" name="verticalLayout_4">
+               <property name="spacing">
+                <number>5</number>
+               </property>
                <item>
-                <widget class="QLabel" name="label_2">
+                <widget class="QLabel" name="customerListLabel">
                  <property name="font">
                   <font>
                    <pointsize>12</pointsize>
@@ -303,9 +322,9 @@
                 </widget>
                </item>
                <item>
-                <widget class="QTreeWidget" name="customerTreeWidget">
+                <widget class="QTableView" name="tableView">
                  <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
@@ -313,42 +332,21 @@
                  <property name="minimumSize">
                   <size>
                    <width>250</width>
-                   <height>0</height>
+                   <height>250</height>
                   </size>
                  </property>
                  <property name="maximumSize">
                   <size>
-                   <width>190</width>
-                   <height>16777215</height>
+                   <width>250</width>
+                   <height>250</height>
                   </size>
                  </property>
                  <property name="baseSize">
                   <size>
-                   <width>180</width>
-                   <height>0</height>
+                   <width>0</width>
+                   <height>250</height>
                   </size>
                  </property>
-                 <property name="indentation">
-                  <number>0</number>
-                 </property>
-                 <column>
-                  <property name="text">
-                   <string>CK</string>
-                  </property>
-                  <property name="textAlignment">
-                   <set>AlignLeading|AlignVCenter</set>
-                  </property>
-                 </column>
-                 <column>
-                  <property name="text">
-                   <string>Name</string>
-                  </property>
-                 </column>
-                 <column>
-                  <property name="text">
-                   <string>Status</string>
-                  </property>
-                 </column>
                 </widget>
                </item>
                <item>

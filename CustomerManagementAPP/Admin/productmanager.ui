@@ -516,7 +516,7 @@
                     </size>
                    </property>
                    <property name="inputMask">
-                    <string>NNNNNNNNNN</string>
+                    <string>NNNNNNNNNN;_</string>
                    </property>
                    <property name="alignment">
                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -573,7 +573,7 @@
                     </size>
                    </property>
                    <property name="inputMask">
-                    <string>000000</string>
+                    <string>000000;_</string>
                    </property>
                    <property name="alignment">
                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -637,7 +637,7 @@
                     </size>
                    </property>
                    <property name="inputMask">
-                    <string>00000</string>
+                    <string>00000;_</string>
                    </property>
                    <property name="alignment">
                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

@@ -59,9 +59,9 @@ ProductInput::ProductInput(QWidget *parent) :
     priceLine->setAlignment(Qt::AlignRight);
     stockLine->setAlignment(Qt::AlignRight);
 
-    nameLine->setInputMask("NNNNNNNNNN");
-    priceLine->setInputMask("000000");
-    stockLine->setInputMask("00000");
+    nameLine->setInputMask("NNNNNNNNNN;_");
+    priceLine->setInputMask("000000;_");
+    stockLine->setInputMask("00000;_");
 
     clearButton = new QPushButton(tr("CLEAR"), this);
     inputButton = new QPushButton(tr("INPUT"), this);

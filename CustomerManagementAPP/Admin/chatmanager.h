@@ -91,7 +91,6 @@ private:
     QSqlQueryModel *fileModel;
     QSqlQueryModel *noticeModel;
 
-
     QVector<int> logInList;
     QVector<int> chattingList;
 };

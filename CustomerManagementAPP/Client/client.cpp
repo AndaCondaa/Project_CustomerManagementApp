@@ -148,7 +148,6 @@ void Client::receiveData( )
         ui->inputLine->setEnabled(true);
         ui->message->setEnabled(true);
         ui->message->setReadOnly(true);
-        ui->message->append("************************************");
         ui->message->append(QString(data));
         break;
     case In_Fail:

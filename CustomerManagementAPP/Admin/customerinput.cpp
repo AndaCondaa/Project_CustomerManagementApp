@@ -61,10 +61,10 @@ CustomerInput::CustomerInput(QWidget *parent)
     dentistLine->setAlignment(Qt::AlignRight);
     numberLine->setAlignment(Qt::AlignRight);
 
-    clinicLine->setInputMask("NNNNNNNNNN");
-    licenseLine->setInputMask("00-0000-00");
-    dentistLine->setInputMask("NNNNNNNNNN");
-    numberLine->setInputMask("000-0000-0000");
+    clinicLine->setInputMask("NNNNNNNNNN;_");
+    licenseLine->setInputMask("00-0000-00;_");
+    dentistLine->setInputMask("NNNNNNNNNN;_");
+    numberLine->setInputMask("000-0000-0000;_");
 
     clearButton = new QPushButton(tr("CLEAR"), this);
     inputButton = new QPushButton(tr("INPUT"), this);

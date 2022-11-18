@@ -116,12 +116,8 @@ void Client::sendProtocol(Protocol_Type type, QString data, int size)
 // Receive the data from server
 void Client::receiveData( )
 {
-    qDebug("%d", __LINE__);
     QTcpSocket *clientSocket = dynamic_cast<QTcpSocket *>(sender());
-    qDebug("%d", __LINE__);
-    qDebug("%d", clientSocket->bytesAvailable());
 //    if (clientSocket->bytesAvailable() > 1024) return;
-    qDebug("%d", __LINE__);
     QByteArray bytearray = clientSocket->read(1024);
 
     // Data for sending

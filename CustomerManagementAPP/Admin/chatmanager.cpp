@@ -38,7 +38,6 @@
 
 #include <QColor>
 
-
 ChatManager::ChatManager(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ChatManager)

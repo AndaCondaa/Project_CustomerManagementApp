@@ -119,7 +119,7 @@ void ChatManager::sendProtocol(QTcpSocket* sock, Protocol_Type type, QString dat
 {
     QByteArray dataArray;
     QDataStream out(&dataArray, QIODevice::WriteOnly);
-//    out.device()->seek(0);
+    out.device()->seek(0);
     out << type;
     out.writeRawData(data.toStdString().data(), size);
     sock->write(dataArray);
@@ -157,18 +157,17 @@ void ChatManager::receiveData()
         if ((adminCheck[0] == "admin") && (adminCheck[1] == "admin")) {
             chatAdminSocket = new QTcpSocket;
             chatAdminSocket = receiveSocket;
-            sendProtocol(receiveSocket, Admin_In, data);
+            QString sendData;
+            if(int count = customerWaitSocketHash.count()) {
+                sendData.append(QString::number(count)+"||");
+                foreach (auto ck, customerWaitSocketHash.keys()) {
+                    sendData.append(ck+"|");
+                }
+            }
+            sendProtocol(receiveSocket, Admin_In, sendData);
         } else {
             sendProtocol(receiveSocket, Admin_In_Fail, data);
         }
-
-//        if (customerWaitSocketHash.count()) {
-//            foreach (auto ck, customerWaitSocketHash.keys()) {
-//                qDebug("%d", __LINE__);
-//                sendProtocol(chatAdminSocket, Sign_In, ck);
-//            }
-//        }
-
         break;
     }
     case Sign_In: {
@@ -233,8 +232,9 @@ void ChatManager::receiveFromAdmin(QTcpSocket* receiveSocket)
         log->setText(5, msg.split("</font>")[1]);
         log->setToolTip(5, QString(data));
         ui->logTreeWidget->addTopLevelItem(log);
-        for(int i = 0; i < ui->logTreeWidget->columnCount(); i++)
+        for(int i = 0; i < ui->logTreeWidget->columnCount(); i++) {
             ui->logTreeWidget->resizeColumnToContents(i);
+        }
 
         logSaveThread->appendData(log);
         sendProtocol(customerChatSocketHash[ck], Message, msg);
@@ -258,21 +258,23 @@ void ChatManager::receiveFromAdmin(QTcpSocket* receiveSocket)
         updateCustomerList();
         break;
     }
-    case Notice:
+    case Notice: {
         foreach (auto customerSocket, customerSocketList) {
             sendProtocol(customerSocket, Notice, data);
         }
         sendProtocol(chatAdminSocket, Notice, data);
         updateNotice();
         break;
-    case Close:
+    }
+    case Close: {
         for (auto i = customerChatSocketHash.begin(); i != customerChatSocketHash.end(); i++) {
             sendProtocol(i.value(), Close, "Admin Close"); //채팅중이던 고객에게 Admin 종료 알려주기
         }
         receiveSocket->deleteLater();
         chatAdminSocket = nullptr;
         break;
-    }
+    }   //case Close
+    }   //switch
 }
 
 // Receive Data from Client

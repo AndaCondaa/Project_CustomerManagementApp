@@ -41,7 +41,7 @@ class Client : public QWidget
     Q_OBJECT
 
 public:
-    Client(QWidget *parent = nullptr);
+    Client(QWidget *parent = nullptr, QString ck = "", QString clinic = "");
     ~Client();
 
 private slots:

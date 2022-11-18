@@ -106,7 +106,6 @@ void AdminChat::sendProtocol(Protocol_Type type, QString msg, int size)
 void AdminChat::receiveData()
 {
     QTcpSocket *receiveSocket = dynamic_cast<QTcpSocket *>(sender());
-    if (receiveSocket->bytesAvailable() > 1024) return;
     QByteArray bytearray = receiveSocket->read(1024);
 
     // Data for sending
@@ -122,7 +121,19 @@ void AdminChat::receiveData()
     switch(type) {
     case Admin_In:
         ui->stackedWidget->setCurrentIndex(1);
+
+        // data = "count || ck1 | ck2 | ck3 | ck4 | ......|"
+        if (((QString)data).split("||")[0].toInt() > 0) {
+            int count = ((QString)data).split("||")[0].toInt();
+            QString ckList = ((QString)data).split("||")[1];
+
+            for (int i = 0; i < count; i++) {
+                waitVector.append(ckList.split("|")[i]);
+            }
+
+        }
         updateNotice();
+        updateCustomerList();
         break;
     case Admin_In_Fail:
         QMessageBox::critical(this, tr("Fail!"), \
@@ -130,6 +141,7 @@ void AdminChat::receiveData()
         break;
     case Sign_In: { //data = "customerkey | name"
         QString ck = ((QString)data).split("|")[0];
+        qDebug() << ck;
         waitVector.append(ck);
         updateCustomerList();
         break;

@@ -2,7 +2,7 @@
  *  Program Name    :  Admin
  *  File Name       :  chatmanager.h
  *  Description     :  채팅관리 클래스
- *                      -> 서버 구성
+ *                      -> 채팅 및 파일 서버 구성
  *                      -> 로그 기록 출력
  *                      -> 공지사항 저장
  *                      -> 고객의 서버 접속상태 출력

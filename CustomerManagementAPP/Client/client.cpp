@@ -31,11 +31,16 @@
 #include <QSqlError>
 #include <QDebug>
 
-Client::Client(QWidget *parent)
+Client::Client(QWidget *parent, QString ck, QString clinic)
     : QWidget(parent)
     , ui(new Ui::Client)
 {
     ui->setupUi(this);
+
+    ui->customerKey->setText(ck);
+    ui->clinic->setText(clinic);
+
+
     setFixedSize(450, 335);
     setWindowTitle("LOG IN");
     ui->stackedWidget->showMaximized();

@@ -406,7 +406,6 @@ void AdminChat::updateCustomerList()
     ui->customerTableView->horizontalHeader()->setStretchLastSection(true);
     ui->customerTableView->horizontalHeader()->setStyleSheet(
                 "QHeaderView { font-size: 10pt; color: blue; }");
-    ui->customerTableView->resizeColumnsToContents();
 
     QVector<int> tmpWaitVector;
     QVector<int> tmpChattingVector;

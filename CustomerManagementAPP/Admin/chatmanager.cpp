@@ -239,7 +239,7 @@ void ChatManager::receiveFromAdmin(QTcpSocket* receiveSocket)
         logSaveThread->appendData(log);
         sendProtocol(customerChatSocketHash[ck], Message, msg);
         break;
-    }
+    } //case Message
     case Invite: {  // data = customerKey
         customerChatSocketHash.insert(data, customerWaitSocketHash.value(data));
         customerWaitSocketHash.remove(data);
@@ -249,7 +249,7 @@ void ChatManager::receiveFromAdmin(QTcpSocket* receiveSocket)
         sendProtocol(customerChatSocketHash[data], Invite, inviteMsg);
         updateCustomerList();
         break;
-    }
+    } //case Invite
     case Kick_Out: {
         customerWaitSocketHash.insert(data, customerChatSocketHash.value(data));
         customerChatSocketHash.remove(data);
@@ -257,7 +257,7 @@ void ChatManager::receiveFromAdmin(QTcpSocket* receiveSocket)
         sendProtocol(customerWaitSocketHash[data], Kick_Out, data);
         updateCustomerList();
         break;
-    }
+    } //case Kick_Out
     case Notice: {
         foreach (auto customerSocket, customerSocketList) {
             sendProtocol(customerSocket, Notice, data);
@@ -265,7 +265,7 @@ void ChatManager::receiveFromAdmin(QTcpSocket* receiveSocket)
         sendProtocol(chatAdminSocket, Notice, data);
         updateNotice();
         break;
-    }
+    } // case Notice
     case Close: {
         for (auto i = customerChatSocketHash.begin(); i != customerChatSocketHash.end(); i++) {
             sendProtocol(i.value(), Close, "Admin Close"); //채팅중이던 고객에게 Admin 종료 알려주기
@@ -273,8 +273,8 @@ void ChatManager::receiveFromAdmin(QTcpSocket* receiveSocket)
         receiveSocket->deleteLater();
         chatAdminSocket = nullptr;
         break;
-    }   //case Close
-    }   //switch
+    } //case Close
+    } //switch
 }
 
 // Receive Data from Client
@@ -399,6 +399,7 @@ void ChatManager::readClient()
         delete file;
     }
 
+    qDebug("%d", __LINE__);
     //파일 디비에 저장하는 코드 작성
     QList<QString> list = filename.split("/");      // To save only File name without path
     QSqlDatabase chatDB = QSqlDatabase::database("ChatManager");
@@ -434,7 +435,6 @@ void ChatManager::updateCustomerList()
     ui->customerTableView->horizontalHeader()->setStretchLastSection(true);
     ui->customerTableView->horizontalHeader()->setStyleSheet(
                 "QHeaderView { font-size: 10pt; color: blue; }");
-//    ui->customerTableView->resizeColumnsToContents();
 
     waitVector.clear();
     chattingVector.clear();
@@ -460,6 +460,7 @@ void ChatManager::updateCustomerList()
 
 void ChatManager::updateFileList()
 {
+    qDebug("%d", __LINE__);
     QSqlDatabase chatDB = QSqlDatabase::database("ChatManager");
     fileModel->setQuery("SELECT * FROM sys.FILE_TABLE", chatDB);
     fileModel->setHeaderData(0, Qt::Horizontal, tr("FROM"));
@@ -468,6 +469,6 @@ void ChatManager::updateFileList()
     ui->fileTableView->horizontalHeader()->setStretchLastSection(true);
     ui->fileTableView->horizontalHeader()->setStyleSheet(
                 "QHeaderView { font-size: 10pt; color: blue; }");
-    ui->fileTableView->resizeColumnsToContents();
+
 }
 

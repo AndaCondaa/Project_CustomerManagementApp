@@ -338,7 +338,7 @@ void AdminChat::sendFile()
         loadSize = 1024; // Size of data per a block
 
         QDataStream out(&outBlock, QIODevice::WriteOnly);
-        out << qint64(0) << qint64(0) << filename << ui->idLine->text();
+        out << qint64(0) << qint64(0) << filename << "Admin";
 
         totalSize += outBlock.size();
         byteToWrite += outBlock.size();

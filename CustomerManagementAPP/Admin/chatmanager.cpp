@@ -105,7 +105,6 @@ ChatManager::~ChatManager()
     logSaveThread->terminate();
 }
 
-
 // New Connection with Client
 void ChatManager::sockConnect()
 {
@@ -408,8 +407,12 @@ void ChatManager::readClient()
     inputFile.bindValue(":sender", fileSender);
     inputFile.bindValue(":filename", list[list.count()-1]);
     bool isExec = inputFile.exec();
-    if (isExec)
+    qDebug("%d", __LINE__);
+    if (isExec) {
+        qDebug("%d", __LINE__);
         updateFileList();
+        qDebug("%d", __LINE__);
+    }
 }
 
 void ChatManager::updateNotice()
@@ -460,7 +463,6 @@ void ChatManager::updateCustomerList()
 
 void ChatManager::updateFileList()
 {
-    qDebug("%d", __LINE__);
     QSqlDatabase chatDB = QSqlDatabase::database("ChatManager");
     fileModel->setQuery("SELECT * FROM sys.FILE_TABLE", chatDB);
     fileModel->setHeaderData(0, Qt::Horizontal, tr("FROM"));

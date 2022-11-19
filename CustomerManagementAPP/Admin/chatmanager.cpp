@@ -73,7 +73,7 @@ ChatManager::ChatManager(QWidget *parent) :
     // Thread Object for saving the log(chat) by using multi-threading
     logSaveThread = new LogSaveThread(this);
     logSaveThread->start();
-    connect(ui->logSaveButton, SIGNAL(clicked()), logSaveThread, SLOT(saveData()));
+    connect(ui->logSaveButton, SIGNAL(clicked()), logSaveThread, SLOT(saveData()), Qt::QueuedConnection);
 
     qDebug() << tr("Server Open");
 

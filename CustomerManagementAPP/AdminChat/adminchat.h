@@ -46,6 +46,7 @@ public:
 
 signals:
     void message(QString);      // Receive the message from server and Open the Chat(new Tab) to the QTabWidget
+    void tabClose();
 
 private slots:
     // Chat
@@ -69,6 +70,8 @@ private:
     void updateCustomerList();
     void updateNotice();
     void insertNotice();
+    void saveLog();
+    void loadLog();
 
     Ui::AdminChat *ui;
 

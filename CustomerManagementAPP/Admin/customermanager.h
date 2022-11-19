@@ -12,7 +12,11 @@
 #ifndef CUSTOMERMANAGER_H
 #define CUSTOMERMANAGER_H
 
-#include <QWidget>
+
+#include <QObject>
+#include <QStyledItemDelegate>
+#include <QPainter>
+#include <QModelIndex>
 
 class CustomerInput;
 class QSqlQueryModel;

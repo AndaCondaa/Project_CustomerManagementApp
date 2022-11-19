@@ -39,17 +39,11 @@ signals:
 private slots:
     void on_inputButton_clicked();              // Show the ProductInput Widget
     void update();
-
     void on_totalButton_clicked();
-
     void on_searchComboBox_currentIndexChanged(int index);
-
     void on_productTableView_clicked(const QModelIndex &index);
-
     void on_searchButton_clicked();
-
     void on_clearButton_clicked();
-
     void on_editButton_clicked();
     void recvPk(QString);           //가격 체크할 pk받기 from order
 

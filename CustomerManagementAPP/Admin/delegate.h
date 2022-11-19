@@ -6,8 +6,6 @@
 #include <QPainter>
 #include <QModelIndex>
 
-
-
 class Delegate : public QStyledItemDelegate
 {
     Q_OBJECT
@@ -16,7 +14,6 @@ public:
 
     // background color manipulation
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-    void connect(QModelIndex &index);
     void setWaitVector(QVector<int>);
     void setChattingVector(QVector<int>);
 

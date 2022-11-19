@@ -54,7 +54,7 @@ public:
 
 private slots:
     //chat
-    void sockConnect();                                                   // New Connection with Client
+    void sockConnect();                                                     // New Connection with Client
     void sendProtocol(QTcpSocket* ,Protocol_Type, QString, int = 1020);     // Send Socket To Client
     void receiveData();              // Receive Data for Connection From AdminChat(Program) & Client(Program)
     void receiveFromAdmin(QTcpSocket*);                                     // Receive Data from AdminChat
@@ -72,11 +72,10 @@ private:
     QTcpServer *fileServer;                                     // Server for FileSending
 
     QTcpSocket *chatAdminSocket;                                // ChatAdmin Socket
-
     QList<QTcpSocket*> customerSocketList;                      // CustomerSocketList
     QHash<QString, QTcpSocket*> customerWaitSocketHash;         // <CustomerKey : CustomerSocket> -> Connected Socket List
     QHash<QString, QTcpSocket*> customerChatSocketHash;         // <CustomerKey : CustomerSocket> -> Chatting Socket List
-                                                                // Admin can be connected to maximum two clients
+
     //File
     QFile* file;                                                // File Object for FileSending Protocol
     QProgressDialog* progressDialog;                            // Object for Showing Progress

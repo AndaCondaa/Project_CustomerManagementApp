@@ -141,7 +141,6 @@ void AdminChat::receiveData()
         break;
     case Sign_In: { //data = "customerkey | name"
         QString ck = ((QString)data).split("|")[0];
-        qDebug() << ck;
         waitVector.append(ck);
         updateCustomerList();
         break;
@@ -160,6 +159,8 @@ void AdminChat::receiveData()
         int count = ui->chatArea->count();
         for (int i = 0; i < count; i++) {
             if (data == ui->chatArea->tabText(i)) {
+                emit tabClose();
+                ui->chatArea->widget(i)->deleteLater();
                 ui->chatArea->removeTab(i);
                 break;
             }
@@ -175,6 +176,8 @@ void AdminChat::receiveData()
         int count = ui->chatArea->count();
         for (int i = 0; i < count; i++) {
             if (data == ui->chatArea->tabText(i)) {
+                emit tabClose();
+                ui->chatArea->widget(i)->deleteLater();
                 ui->chatArea->removeTab(i);
                 break;
             }
@@ -210,9 +213,19 @@ void AdminChat::chatOpen(QString ck)
     ui->chatArea->insertTab(index, chat, ck);
     message->append("<font color=green>***" + ck + "님과 채팅을 시작했습니다.</font>");
 
-    connect(sendButton, &QPushButton::clicked ,
-            [=]{
+
+    //Load LogData
+    QFile file(QString("../AdminChat/Log/log_%1.txt").arg(ck));
+    file.open(QIODevice::ReadOnly | QIODevice::Text);
+    QByteArray log = file.readAll();
+    message->setPlainText(log);
+    file.close( );
+
+    connect(sendButton, &QPushButton::clicked, chat,
+            [=](){
+        qDebug("%d",__LINE__);
         if (!inputLine->text().length()) return;
+        qDebug("%d",__LINE__);
         QString tabText = ui->chatArea->tabText(ui->chatArea->currentIndex());
         QString msg = tabText.split("_")[0] + "||" +        //CK_NAME형태(TabTitle)에서 CK만 보내기
                 "<font color=orange><b> OSSTEM IMPLANT : </b></font>" + inputLine->text();
@@ -222,7 +235,8 @@ void AdminChat::chatOpen(QString ck)
         inputLine->setFocus();
     });
 
-    connect(inputLine, &QLineEdit::returnPressed , [=]{
+    connect(inputLine, &QLineEdit::returnPressed, chat,
+            [=](){
         if (!inputLine->text().length()) return;
         QString tabText = ui->chatArea->tabText(ui->chatArea->currentIndex());
         QString msg = tabText + "||"
@@ -233,11 +247,22 @@ void AdminChat::chatOpen(QString ck)
         inputLine->setFocus();
     });
 
-    connect(this, &AdminChat::message, this, [=](QString data){
+    connect(this, &AdminChat::message, chat,
+            [=](QString data){
         if (data.split("|")[0] == ui->chatArea->tabText(index)) {
             message->append("<font color=blue><b> " + data.split("|")[0]
                     + " : </b></font>" + data.split("|")[1]);
         }
+    });
+
+    connect(this, &AdminChat::tabClose, chat,
+            [=](){
+        QFile file(QString("../AdminChat/Log/log_%1.txt").arg(ck));
+        file.open(QIODevice::WriteOnly | QIODevice::Text);
+        QByteArray log;
+        log.append(message->toPlainText().toStdString());
+        file.write(log);
+        file.close( );
     });
 }
 

@@ -171,11 +171,10 @@ void ChatManager::receiveData()
     }
     case Sign_In: {
         //Verification of CustomerKey & Name inputted by customer
-        //customerModel에서 로그인요청한 ck|name 검증
-        QList<QString> ckName = ((QString)data).split("|"); // data = "customerKey|name"
-        QModelIndexList indexes = customerModel->match(customerModel->index(0, 0), Qt::DisplayRole, ckName[0], -1, Qt::MatchFlags(Qt::MatchCaseSensitive));
+        QList<QString> ckName = ((QString)data).split("|");  // In case, data = "customerKey|name"
+        QModelIndexList indexes = customerModel->match(customerModel->index(0, 0), Qt::DisplayRole, ckName[0], 1, Qt::MatchFlags(Qt::MatchCaseSensitive));
 
-        // 로그인 실패
+        // Case of fail
         // 이미 접속한 사람인 경우
         if (customerChatSocketHash.contains(ckName[0]) || customerWaitSocketHash.contains(ckName[0])) {
             sendProtocol(receiveSocket, Sign_In_Fail, data);
@@ -395,6 +394,16 @@ void ChatManager::readClient()
     if (byteReceived == totalSize) {        /* 파일의 다 읽으면 QFile 객체를 닫고 삭제 */
         qDebug() << QString("%1 receive completed").arg(fileName);
 
+        //파일 디비에 저장하는 코드 작성
+        QList<QString> list = fileName.split("/");      // To save only File name without path
+        QSqlDatabase chatDB = QSqlDatabase::database("ChatManager");
+        QSqlQuery inputFile(chatDB);
+        inputFile.prepare("INSERT INTO sys.FILE_TABLE VALUES(:sender, :filename)");
+        inputFile.bindValue(":sender", fileSender);
+        inputFile.bindValue(":filename", list[list.count()-1]);
+        bool isExec = inputFile.exec();
+        if (isExec) updateFileList();
+
         inBlock.clear();
         byteReceived = 0;
         totalSize = 0;
@@ -403,17 +412,6 @@ void ChatManager::readClient()
         file->close();
         delete file;
     }
-
-    //파일 디비에 저장하는 코드 작성
-    QList<QString> list = fileName.split("/");      // To save only File name without path
-    QSqlDatabase chatDB = QSqlDatabase::database("ChatManager");
-    QSqlQuery inputFile(chatDB);
-    inputFile.prepare("INSERT INTO sys.FILE_TABLE VALUES(:sender, :filename)");
-    inputFile.bindValue(":sender", fileSender);
-    inputFile.bindValue(":filename", list[list.count()-1]);
-    bool isExec = inputFile.exec();
-    qDebug("%d", __LINE__);
-    if (isExec) updateFileList();
 }
 
 void ChatManager::updateNotice()

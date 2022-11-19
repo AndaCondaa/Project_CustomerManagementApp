@@ -294,7 +294,7 @@ void Client::closeEvent(QCloseEvent*)
 
 void Client::saveLog()
 {
-    QFile file(QString("../Client/data/log_%1.txt").arg(ui->customerKey->text()));
+    QFile file(QString("../Client/Log/log_%1.txt").arg(ui->customerKey->text()));
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
         return;
     QByteArray log;
@@ -305,7 +305,7 @@ void Client::saveLog()
 
 void Client::loadLog()
 {
-    QFile file(QString("../Client/data/log_%1.txt").arg(ui->customerKey->text()));
+    QFile file(QString("../Client/Log/log_%1.txt").arg(ui->customerKey->text()));
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
         return;
     QByteArray log = file.readAll();

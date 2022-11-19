@@ -362,23 +362,29 @@ void ChatManager::acceptConnection()
 void ChatManager::readClient()
 {
     QTcpSocket* receivedSocket = dynamic_cast<QTcpSocket *>(sender());
-    QString filename, fileSender;
 
     // Beginning File Transfer
     if (byteReceived == 0) {        // First Time(Block) , var byteReceived is always zero
         progressDialog->reset();
         progressDialog->show();
 
+        checkFileName = fileName;
+
         QDataStream in(receivedSocket);
-        in >> totalSize >> byteReceived >> filename >> fileSender;
+        in.device()->seek(0);
+        in >> totalSize >> byteReceived >> fileName >> fileSender;
+
+        if(checkFileName == fileName) return;
 
         progressDialog->setMaximum(totalSize);
 
-        QFileInfo info(filename);
+        QFileInfo info(fileName);
         QString currentFileName = info.fileName();
         file = new QFile("../Admin/data/file/" + currentFileName);
         file->open(QFile::WriteOnly);
     } else {                    // 파일 데이터를 읽어서 저장
+        if(checkFileName == fileName) return;
+
         inBlock = receivedSocket->readAll();
 
         byteReceived += inBlock.size();
@@ -387,7 +393,7 @@ void ChatManager::readClient()
     }
     progressDialog->setValue(byteReceived);
     if (byteReceived == totalSize) {        /* 파일의 다 읽으면 QFile 객체를 닫고 삭제 */
-        qDebug() << QString("%1 receive completed").arg(filename);
+        qDebug() << QString("%1 receive completed").arg(fileName);
 
         inBlock.clear();
         byteReceived = 0;
@@ -398,9 +404,8 @@ void ChatManager::readClient()
         delete file;
     }
 
-    qDebug("%d", __LINE__);
     //파일 디비에 저장하는 코드 작성
-    QList<QString> list = filename.split("/");      // To save only File name without path
+    QList<QString> list = fileName.split("/");      // To save only File name without path
     QSqlDatabase chatDB = QSqlDatabase::database("ChatManager");
     QSqlQuery inputFile(chatDB);
     inputFile.prepare("INSERT INTO sys.FILE_TABLE VALUES(:sender, :filename)");
@@ -408,11 +413,7 @@ void ChatManager::readClient()
     inputFile.bindValue(":filename", list[list.count()-1]);
     bool isExec = inputFile.exec();
     qDebug("%d", __LINE__);
-    if (isExec) {
-        qDebug("%d", __LINE__);
-        updateFileList();
-        qDebug("%d", __LINE__);
-    }
+    if (isExec) updateFileList();
 }
 
 void ChatManager::updateNotice()

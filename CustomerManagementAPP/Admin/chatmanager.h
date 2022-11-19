@@ -83,6 +83,10 @@ private:
     qint64 totalSize;                                           // Total size of File that clients are sending
     qint64 byteReceived = 0;                                    // size of File read currently
     QByteArray inBlock;                                         // Units divided to transfer files
+    QString fileName;
+    QString fileSender;
+    QString checkFileName;
+
 
     //Thread
     LogSaveThread* logSaveThread;            // Thread Object for saving the log(chat) by using multi-threading

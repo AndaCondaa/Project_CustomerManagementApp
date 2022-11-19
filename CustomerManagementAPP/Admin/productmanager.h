@@ -54,6 +54,8 @@ private:
     ProductInput *productInput;             // Objects of Class ProductInput for function what input
 
     QSqlQueryModel *productQueryModel;
+
+    QVector<int> stockOutVector;
 };
 
 #endif // PRODUCTMANAGER_H

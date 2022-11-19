@@ -9,29 +9,31 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    chatdelegate.cpp \
     chatmanager.cpp \
     customerinput.cpp \
     customermanager.cpp \
-    delegate.cpp \
     home.cpp \
     logsavethread.cpp \
     main.cpp \
     mainwindow.cpp \
     orderinput.cpp \
     ordermanager.cpp \
+    productdelegate.cpp \
     productinput.cpp \
     productmanager.cpp
 
 HEADERS += \
+    chatdelegate.h \
     chatmanager.h \
     customerinput.h \
     customermanager.h \
-    delegate.h \
     home.h \
     logsavethread.h \
     mainwindow.h \
     orderinput.h \
     ordermanager.h \
+    productdelegate.h \
     productinput.h \
     productmanager.h
 

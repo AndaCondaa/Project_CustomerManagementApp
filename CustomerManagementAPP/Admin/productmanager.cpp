@@ -13,6 +13,7 @@
 #include "productmanager.h"
 #include "ui_productmanager.h"
 #include "productinput.h"
+#include "productdelegate.h"
 
 #include <QMessageBox>
 #include <QSqlQuery>
@@ -90,6 +91,17 @@ void ProductManager::updateTable()
     ui->productTableView->horizontalHeader()->setStretchLastSection(true);
     ui->productTableView->horizontalHeader()->setStyleSheet(
                 "QHeaderView { font-size: 10pt; color: blue; }");
+
+    stockOutVector.clear();
+
+    QModelIndexList indexes = productQueryModel->match(productQueryModel->index(0, 4), Qt::EditRole, 0, -1, Qt::MatchFlags(Qt::MatchExactly));
+    foreach (auto idx, indexes) {
+        stockOutVector.append(idx.row());
+    }
+
+    ProductDelegate *delegate = new ProductDelegate(ui->productTableView);
+    delegate->setOutVector(stockOutVector);
+    ui->productTableView->setItemDelegateForColumn(4, delegate);
 }
 
 void ProductManager::update()

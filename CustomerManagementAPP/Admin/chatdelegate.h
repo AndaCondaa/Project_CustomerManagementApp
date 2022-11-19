@@ -1,16 +1,16 @@
-#ifndef DELEGATE_H
-#define DELEGATE_H
+#ifndef CHATDELEGATE_H
+#define CHATDELEGATE_H
 
 #include <QObject>
 #include <QStyledItemDelegate>
 #include <QPainter>
 #include <QModelIndex>
 
-class Delegate : public QStyledItemDelegate
+class ChatDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
 public:
-    explicit Delegate(QObject *parent = 0);
+    explicit ChatDelegate(QObject *parent = 0);
 
     // background color manipulation
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
@@ -21,4 +21,4 @@ public:
     QVector<int> chattingVector;
 };
 
-#endif // DELEGATE_H
+#endif // CHATDELEGATE_H

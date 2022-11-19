@@ -1,22 +1,22 @@
-#include "delegate.h"
+#include "chatdelegate.h"
 
 
-Delegate::Delegate(QObject *parent)
+ChatDelegate::ChatDelegate(QObject *parent)
     : QStyledItemDelegate(parent)
 {
 }
 
-void Delegate::setWaitVector(QVector<int> vector)
+void ChatDelegate::setWaitVector(QVector<int> vector)
 {
     waitVector = vector;
 }
 
-void Delegate::setChattingVector(QVector<int> vector)
+void ChatDelegate::setChattingVector(QVector<int> vector)
 {
     chattingVector = vector;
 }
 
-void Delegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+void ChatDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     QStyleOptionViewItem op(option);
 

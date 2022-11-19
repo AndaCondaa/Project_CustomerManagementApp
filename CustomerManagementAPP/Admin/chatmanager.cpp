@@ -11,7 +11,7 @@
 #include "chatmanager.h"
 #include "ui_chatmanager.h"
 #include "logsavethread.h"
-#include "delegate.h"
+#include "chatdelegate.h"
 
 #include <QTcpServer>
 #include <QTcpSocket>
@@ -453,7 +453,7 @@ void ChatManager::updateCustomerList()
         }
     }
 
-    Delegate *delegate = new Delegate(ui->customerTableView);
+    ChatDelegate *delegate = new ChatDelegate(ui->customerTableView);
     delegate->setWaitVector(waitVector);
     delegate->setChattingVector(chattingVector);
     ui->customerTableView->setItemDelegateForColumn(0, delegate);

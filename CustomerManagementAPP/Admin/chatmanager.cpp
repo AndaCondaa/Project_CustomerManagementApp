@@ -28,15 +28,12 @@
 #include <QDebug>
 #include <QLineEdit>
 
-#include <QApplication>
 #include <QTableView>
 #include <QSqlQueryModel>
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QSqlError>
-#include <QDebug>
 
-#include <QColor>
 
 ChatManager::ChatManager(QWidget *parent) :
     QWidget(parent),

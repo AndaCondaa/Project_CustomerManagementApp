@@ -2,17 +2,12 @@
  *  Program Name    :  Admin
  *  File Name       :  chatmanager.h
  *  Description     :  채팅관리 클래스
- *                      -> 채팅 및 파일 서버 구성
- *                      -> 로그 기록 출력
- *                      -> 공지사항 저장
- *                      -> 고객의 서버 접속상태 출력
 */
 
 #ifndef CHATMANAGER_H
 #define CHATMANAGER_H
 
 #include <QWidget>
-#include <QDataStream>
 
 class QTcpServer;
 class QTcpSocket;
@@ -48,9 +43,9 @@ public:
     explicit ChatManager(QWidget *parent = nullptr);
     ~ChatManager();
 
-    void updateCustomerList();
-    void updateNotice();
-    void updateFileList();
+    void updateCustomerList();                                              // Update CustomerTableView
+    void updateNotice();                                                    // Update NoticeTableView
+    void updateFileList();                                                  // Update FileTableView
 
 private slots:
     //chat
@@ -86,14 +81,15 @@ private:
     QString fileSender;
     QString checkFileName;
 
-
     //Thread
     LogSaveThread* logSaveThread;            // Thread Object for saving the log(chat) by using multi-threading
 
+    //
     QSqlQueryModel *customerModel;
     QSqlQueryModel *fileModel;
     QSqlQueryModel *noticeModel;
 
+    //Vectors for Delegate
     QVector<int> waitVector;
     QVector<int> chattingVector;
 };

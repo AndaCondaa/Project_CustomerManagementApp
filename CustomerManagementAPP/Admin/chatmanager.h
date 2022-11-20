@@ -1,7 +1,7 @@
 /*
  *  Program Name    :  Admin
  *  File Name       :  chatmanager.h
- *  Description     :  채팅관리 클래스
+ *  Description     :  Management for Chat
 */
 
 #ifndef CHATMANAGER_H
@@ -43,9 +43,9 @@ public:
     explicit ChatManager(QWidget *parent = nullptr);
     ~ChatManager();
 
-    void updateCustomerList();                                              // Update CustomerTableView
-    void updateNotice();                                                    // Update NoticeTableView
-    void updateFileList();                                                  // Update FileTableView
+    void updateCustomerList();                                  // Update CustomerTableView
+    void updateNotice();                                        // Update NoticeTableView
+    void updateFileList();                                      // Update FileTableView
 
 private slots:
     //chat
@@ -63,35 +63,35 @@ private:
     Ui::ChatManager *ui;
 
     //Server
-    QTcpServer *chatServer;                                     // Server for Chat
-    QTcpServer *fileServer;                                     // Server for FileSending
+    QTcpServer *chatServer;                                 // Server for Chat
+    QTcpServer *fileServer;                                 // Server for FileSending
 
-    QTcpSocket *chatAdminSocket;                                // ChatAdmin Socket
-    QList<QTcpSocket*> customerSocketList;                      // CustomerSocketList
-    QHash<QString, QTcpSocket*> customerWaitSocketHash;         // <CustomerKey : CustomerSocket> -> Connected Socket List
-    QHash<QString, QTcpSocket*> customerChatSocketHash;         // <CustomerKey : CustomerSocket> -> Chatting Socket List
+    QTcpSocket *chatAdminSocket;                            // ChatAdmin Socket
+    QList<QTcpSocket*> customerSocketList;                  // CustomerSocketList
+    QHash<QString, QTcpSocket*> customerWaitSocketHash;     // <CustomerKey : CustomerSocket> -> Connected Socket List
+    QHash<QString, QTcpSocket*> customerChatSocketHash;     // <CustomerKey : CustomerSocket> -> Chatting Socket List
 
     //File
-    QFile* file;                                                // File Object for FileSending Protocol
-    QProgressDialog* progressDialog;                            // Object for Showing Progress
-    qint64 totalSize;                                           // Total size of File that clients are sending
-    qint64 byteReceived = 0;                                    // size of File read currently
-    QByteArray inBlock;                                         // Units divided to transfer files
-    QString fileName;
-    QString fileSender;
-    QString checkFileName;
+    QFile* file;                                // File Object for FileSending Protocol
+    QProgressDialog* progressDialog;            // Object for Showing Progress
+    qint64 totalSize;                           // Total size of File that clients are sending
+    qint64 byteReceived = 0;                    // size of File read currently
+    QByteArray inBlock;                         // Units divided to transfer files
+    QString fileName;                           // Receiving FileName
+    QString fileSender;                         // Receiving File's Sender
+    QString checkFileName;                      // Previous File Name for checking new file
 
     //Thread
     LogSaveThread* logSaveThread;            // Thread Object for saving the log(chat) by using multi-threading
 
-    //
-    QSqlQueryModel *customerModel;
-    QSqlQueryModel *fileModel;
-    QSqlQueryModel *noticeModel;
+    //Model
+    QSqlQueryModel *customerModel;           // Model for CustomerTableView
+    QSqlQueryModel *fileModel;               // Model for FileListView
+    QSqlQueryModel *noticeModel;             // Modle for NoticeListView
 
     //Vectors for Delegate
-    QVector<int> waitVector;
-    QVector<int> chattingVector;
+    QVector<int> waitVector;                 // Waitting Customer's row number List in Model
+    QVector<int> chattingVector;             // Chatting Customer's row number List in Model
 };
 
 #endif // CHATMANAGER_H

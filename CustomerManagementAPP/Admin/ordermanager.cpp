@@ -36,7 +36,7 @@ OrderManager::OrderManager(QWidget *parent) :
     ui->setupUi(this);
 
     QSqlDatabase orderDB = QSqlDatabase::addDatabase("QODBC", "OrderManager");
-    orderDB.setDatabaseName("Oracle11gx64");
+    orderDB.setDatabaseName("Oracle11g");
     orderDB.setUserName("ORDER_MANAGER");
     orderDB.setPassword("om");
     if (!orderDB.open()) {
@@ -50,8 +50,6 @@ OrderManager::OrderManager(QWidget *parent) :
 
     ui->dateEdit->setDate(QDate::currentDate());
     ui->dateEdit->setMaximumDate(QDate::currentDate());
-
-//    updateTable();
 
     connect(orderInput, SIGNAL(inputOrder(int)), this, SLOT(update(int)));    //주문 인풋 후 메인테이블 업데이트하라고 알려주기
 }

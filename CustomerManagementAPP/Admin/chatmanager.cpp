@@ -73,12 +73,13 @@ ChatManager::ChatManager(QWidget *parent) :
     // Thread Object for saving the log(chat) by using multi-threading
     logSaveThread = new LogSaveThread(this);
     logSaveThread->start();
-    connect(ui->logSaveButton, SIGNAL(clicked()), logSaveThread, SLOT(saveData()), Qt::QueuedConnection);
+    connect(ui->logSaveButton, SIGNAL(clicked()),
+            logSaveThread, SLOT(saveData()), Qt::QueuedConnection);
 
     qDebug() << tr("Server Open");
 
     QSqlDatabase chatDB = QSqlDatabase::addDatabase("QODBC", "ChatManager");
-    chatDB.setDatabaseName("Oracle11gx64");
+    chatDB.setDatabaseName("Oracle11g");
     chatDB.setUserName("chat_manager");
     chatDB.setPassword("chat");
     if (!chatDB.open()) {

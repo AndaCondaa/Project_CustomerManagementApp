@@ -1,7 +1,7 @@
 /*
  *  Program Name    :  Admin
  *  File Name       :  mainwindow.h
- *  Description     :  프로그램 전체 MainWindow
+ *  Description     :  Mainwindow of Program
 */
 
 #ifndef MAINWINDOW_H

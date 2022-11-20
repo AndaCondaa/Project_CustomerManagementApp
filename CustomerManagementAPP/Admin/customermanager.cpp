@@ -29,7 +29,7 @@ CustomerManager::CustomerManager(QWidget *parent) :
     ui(new Ui::CustomerManager)
 {
     QSqlDatabase customerDB = QSqlDatabase::addDatabase("QODBC", "CustomerManager");
-    customerDB.setDatabaseName("Oracle11gx64");
+    customerDB.setDatabaseName("Oracle11g");
     customerDB.setUserName("customer_manager");
     customerDB.setPassword("cm");
     if (!customerDB.open()) {

@@ -1,8 +1,8 @@
 /*
  *  Program Name    :  Admin
  *  File Name       :  productinput.h
- *  Description     :  신규 상품을 입력하는 위젯
- *                      -> ProductManager위젯으로 정보를 전달하여, 새로운 상품객체 생성
+ *  Description     :  Widget for Inputting order
+
 */
 
 #ifndef PRODUCTINPUT_H

@@ -4,7 +4,6 @@
  *  Description     :  Delegate for CustomerTableView in Class ChatManager
 */
 
-
 #ifndef CHATDELEGATE_H
 #define CHATDELEGATE_H
 
@@ -20,13 +19,13 @@ public:
     explicit ChatDelegate(QObject *parent = 0);
 
     // background color manipulation
-    void setWaitVector(QVector<int>);
-    void setChattingVector(QVector<int>);
+    void setWaitVector(QVector<int>);               // Set new Waitting List
+    void setChattingVector(QVector<int>);           // Set new Chatting List
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-
+                                                    // Virtual Function for painting background
 private:
-    QVector<int> waitVector;
-    QVector<int> chattingVector;
+    QVector<int> waitVector;                // Waitting Customer's row number List in Model
+    QVector<int> chattingVector;            // Chatting Customer's row number List in Model
 };
 
 #endif // CHATDELEGATE_H

@@ -1,7 +1,7 @@
 /*
  *  Program Name    :  Admin
  *  File Name       :  logsavethread.h
- *  Description     :  채팅 로그 기록을 주기적으로 저장하는 쓰레드
+ *  Description     :  Thread for saving Log
 */
 
 #ifndef LOGSAVETHREAD_H

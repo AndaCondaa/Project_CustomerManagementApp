@@ -1,3 +1,9 @@
+/*
+ *  Program Name    :  Admin
+ *  File Name       :  chatdelegate.h
+ *  Description     :  Delegate for ProductTableView in Class ProductManager
+*/
+
 #ifndef PRODUCTDELEGATE_H
 #define PRODUCTDELEGATE_H
 

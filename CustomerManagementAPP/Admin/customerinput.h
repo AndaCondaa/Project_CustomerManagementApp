@@ -1,8 +1,7 @@
 /*
  *  Program Name    :  Admin
  *  File Name       :  customerinput.h
- *  Description     :  새로운 고객을 입력하는 위젯
- *                      -> CustomerManager위젯으로 정보를 전달하여, 새로운 고객객체 생성
+ *  Description     :  Widget for Inputting customer
 */
 
 #ifndef CUSTOMERINPUT_H
@@ -22,15 +21,15 @@ public:
     explicit CustomerInput(QWidget *parent = nullptr);
 
 signals:
-    void inputCustomer();
+    void inputCustomer();       // Signal for notifying CustomerManager that should update TableView
 
 private slots:
-    void recvCurrentCK(int);
-    void input();
-    void clear();          // Slot connected to Clicked() of ClearButton
+    void recvCurrentCK(int);    // Receive current customerKey for setting new CustomerKey
+    void input();               // Slot connected to Clicked() of InputButton
+    void clear();               // Slot connected to Clicked() of ClearButton
 
 private:
-    int makeCustomerKey();
+    int makeCustomerKey();      // Making new CustomerKey by combining license_number & time & index
 
     // Variables for setting GUI
     QLabel *ckLabel;

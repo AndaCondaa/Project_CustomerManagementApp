@@ -1,8 +1,7 @@
 /*
  *  Program Name    :  Admin
  *  File Name       :  orderinput.h
- *  Description     :  신규 주문을 입력하는 위젯
- *                      -> OrderManager위젯으로 정보를 전달하여, 새로운 주문객체 생성
+ *  Description     :  Widget for Inputting order
 */
 
 #ifndef ORDERINPUT_H

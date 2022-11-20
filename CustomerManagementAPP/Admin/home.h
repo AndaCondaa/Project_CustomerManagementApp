@@ -1,8 +1,7 @@
 /*
  *  Program Name    :  Admin
  *  File Name       :  home.h
- *  Description     :  프로그램의 메인을 구성하는 위젯
- *                      -> 고객, 상품, 주문, 채팅 매니저의 네 가지 세션으로 이동할 수 있는 버튼으로 구성
+ *  Description     :  The main of Program
 */
 
 #ifndef HOME_H

@@ -87,7 +87,7 @@ Client::Client(QWidget *parent, QString ck, QString clinic)
     progressDialog->reset();
 
     QSqlDatabase chatDB = QSqlDatabase::addDatabase("QODBC", "Client");
-    chatDB.setDatabaseName("Oracle11gx64");
+    chatDB.setDatabaseName("Oracle11g");
     chatDB.setUserName("client");
     chatDB.setPassword("client");
     if (!chatDB.open()) {

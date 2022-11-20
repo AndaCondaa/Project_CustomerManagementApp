@@ -1,11 +1,7 @@
 /*
  *  Program Name    :  Admin
  *  File Name       :  ordermanager.h
- *  Description     :  주문관리 위젯
- *                      -> 등록된 주문 목록 출력
- *                      -> 신규주문 요청 수행
- *                      -> 검색 요청 결과 전송
- *                      -> 정보수정 요청 수행
+ *  Description     :  Management for order
 */
 
 #ifndef ORDERMANAGER_H

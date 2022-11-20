@@ -1,12 +1,7 @@
 /*
  *  Program Name    :  Admin
  *  File Name       :  productmanager.h
- *  Description     :  상품관리 위젯
- *                      -> 등록된 상품 목록 출력
- *                      -> 신규등록 요청 수행
- *                      -> 검색 요청 결과 전송
- *                      -> 정보수정 요청 수행
- *                      -> 주문클래스로 상품정보 전송
+ *  Description     :  Management for product
 */
 
 #ifndef PRODUCTMANAGER_H

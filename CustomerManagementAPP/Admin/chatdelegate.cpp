@@ -1,6 +1,5 @@
 #include "chatdelegate.h"
 
-
 ChatDelegate::ChatDelegate(QObject *parent)
     : QStyledItemDelegate(parent)
 {

@@ -34,8 +34,8 @@ ProductManager::ProductManager(QWidget *parent) :
     ui->setupUi(this);
 
     QSqlDatabase productDB = QSqlDatabase::addDatabase("QODBC", "ProductManager");
-    productDB.setDatabaseName("Oracle11gx64");
-    productDB.setUserName("PRODUCT_MANAGER");
+    productDB.setDatabaseName("oracle11g");
+    productDB.setUserName("product_manager");
     productDB.setPassword("pm");
     if (!productDB.open()) {
         qDebug() << productDB.lastError().text();

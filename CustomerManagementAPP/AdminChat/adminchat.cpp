@@ -67,7 +67,7 @@ AdminChat::AdminChat(QWidget *parent)
 
 
     QSqlDatabase chatDB = QSqlDatabase::addDatabase("QODBC", "Chat_Admin");
-    chatDB.setDatabaseName("Oracle11gx64");
+    chatDB.setDatabaseName("Oracle11g");
     chatDB.setUserName("chat_admin");
     chatDB.setPassword("admin");
     if (!chatDB.open()) {
@@ -278,7 +278,7 @@ void AdminChat::on_inviteButton_clicked()
         QMessageBox::critical(this, tr("Not In"), \
                               tr("The customer isn't sign-in yet"));
         return;
-    } else if (chattingVector.count() > 2) {
+    } else if (chattingVector.count() > 1) {
         QMessageBox::critical(this, tr("No More"), \
                               tr("Let's improve the quality of service by serving only two customers"));
         return;

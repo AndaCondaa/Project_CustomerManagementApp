@@ -1,25 +1,8 @@
-/*
- *  Program Name    :  Admin
- *  File Name       :  ordermanager.cpp
- *  Description     :  주문관리 위젯
- *                      -> 등록된 주문 목록 출력
- *                      -> 신규주문 요청 수행
- *                      -> 검색 요청 결과 전송
- *                      -> 정보수정 요청 수행
-*/
-
-
 #include "ordermanager.h"
 #include "ui_ordermanager.h"
 #include "orderinput.h"
 
-#include <QFile>
 #include <QMessageBox>
-#include <QSqlQuery>
-#include <QSqlQueryModel>
-#include <QStandardItemModel>
-
-
 #include <QApplication>
 #include <QTableView>
 #include <QSqlQueryModel>
@@ -36,7 +19,7 @@ OrderManager::OrderManager(QWidget *parent) :
     ui->setupUi(this);
 
     QSqlDatabase orderDB = QSqlDatabase::addDatabase("QODBC", "OrderManager");
-    orderDB.setDatabaseName("Oracle11g");
+    orderDB.setDatabaseName("Oracle11gx64");
     orderDB.setUserName("ORDER_MANAGER");
     orderDB.setPassword("om");
     if (!orderDB.open()) {
@@ -74,12 +57,14 @@ int OrderManager::makeTotal(int price, int quantity)
     return total;
 }
 
+// SLot Connected to Clicked() of InputButton
 void OrderManager::on_inputButton_clicked()
 {
     orderInput->fillCombo();
     orderInput->show();
 }
 
+// Update OrderTableView
 void OrderManager::updateTable()
 {
     QSqlDatabase orderDB = QSqlDatabase::database("OrderManager");
@@ -97,6 +82,7 @@ void OrderManager::updateTable()
                 "QHeaderView { font-size: 10pt; color: blue; }");
 }
 
+// Updating Table when receive signal from OrderInput
 void OrderManager::update(int ck)
 {
     updateTable();
@@ -108,6 +94,7 @@ void OrderManager::update(int ck)
     countUp.exec();
 }
 
+// SLot Connected to Clicked() of TotalButton
 void OrderManager::on_totalButton_clicked()
 {
     updateTable();
@@ -115,6 +102,7 @@ void OrderManager::on_totalButton_clicked()
     ui->searchLine->clear();
 }
 
+// SLot Connected to Clicked() of SearchButton
 void OrderManager::on_searchButton_clicked()
 {
     if (!ui->searchLine->text().length()) {
@@ -135,7 +123,7 @@ void OrderManager::on_searchButton_clicked()
                                         .arg(searchColumn, searchWord), orderDB);
 }
 
-
+// Changing InputMask
 void OrderManager::on_searchComboBox_currentIndexChanged(int index)
 {
     switch (index) {
@@ -162,6 +150,7 @@ void OrderManager::on_searchComboBox_currentIndexChanged(int index)
     }
 }
 
+// SLot Connected to Clicked() of ClearButton
 void OrderManager::on_clearButton_clicked()
 {
     ui->orderNumLine->clear();
@@ -172,6 +161,7 @@ void OrderManager::on_clearButton_clicked()
     ui->totalLine->clear();
 }
 
+// SLot Connected to Clicked() of EditButton
 void OrderManager::on_editButton_clicked()
 {
     QSqlDatabase orderDB = QSqlDatabase::database("OrderManager");
@@ -198,6 +188,7 @@ void OrderManager::on_editButton_clicked()
         qDebug() << tr("EDTI fail!");
 }
 
+// Checking Information for Edit
 void OrderManager::on_orderTableView_clicked(const QModelIndex &index)
 {
     QString orderNum = orderQueryModel->data(index.siblingAtColumn(0)).toString();
@@ -215,6 +206,7 @@ void OrderManager::on_orderTableView_clicked(const QModelIndex &index)
     ui->totalLine->setText(total);
 }
 
+// Checking Price of selected product
 void OrderManager::on_pkLine_textChanged(const QString &pk)
 {
     QSqlDatabase orderDB = QSqlDatabase::database("OrderManager");
@@ -226,6 +218,7 @@ void OrderManager::on_pkLine_textChanged(const QString &pk)
     tmp_price = getPrice.value(0).toInt();
 }
 
+// Checking the number of stock
 void OrderManager::on_quantityLine_textChanged(const QString &quantity)
 {
     if (quantity.isEmpty()) {

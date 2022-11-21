@@ -5,11 +5,13 @@ ProductDelegate::ProductDelegate(QObject *parent)
 {
 }
 
+// Set new 'Out of Stock' List
 void ProductDelegate::setOutVector(QVector<int> vector)
 {
     stockOutVector = vector;
 }
 
+// Virtual Function for painting background
 void ProductDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     QStyleOptionViewItem op(option);

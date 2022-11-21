@@ -23,15 +23,15 @@ public:
     explicit ProductInput(QWidget *parent = nullptr);
 
 signals:
-    void inputProduct();
+    void inputProduct();        // Signal for notifying ProductManager that should update TableView
 
 private slots:
-    void recvCurrentPK(int);
-    void input();
+    void recvCurrentPK(int);    // Receive current ProductKey for setting new ProductKey
+    void input();               // Slot connected to Clicked() of InputButton
     void clear();               // Slot connected to Clicked() of ClearButton
 
 private:
-    int makeProductKey();
+    int makeProductKey();       // Making new ProductKey by combining TypeID & Time & Index
 
     // Variables for setting GUI
     QLabel *pk;

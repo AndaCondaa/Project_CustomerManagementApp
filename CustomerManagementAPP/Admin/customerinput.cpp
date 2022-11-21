@@ -1,10 +1,3 @@
-/*
- *  Program Name    :  Admin
- *  File Name       :  customerinput.cpp
- *  Description     :  새로운 고객을 입력하는 위젯
- *                      -> CustomerManager위젯으로 정보를 전달하여, 새로운 고객객체 생성
-*/
-
 
 #include "customerinput.h"
 
@@ -77,6 +70,7 @@ CustomerInput::CustomerInput(QWidget *parent)
     connect(inputButton, SIGNAL(clicked()), SLOT(input()));
 }
 
+// Receive current customerKey for setting new CustomerKey
 void CustomerInput::recvCurrentCK(int ck)
 {
     index = ck / 1000;
@@ -90,7 +84,7 @@ int CustomerInput::makeCustomerKey()
     int license = (licenseLine->text().split("-")[0] +
             licenseLine->text().split("-")[1] + licenseLine->text().split("-")[2]).toInt();
 
-    srand(QTime::currentTime().msecsSinceStartOfDay());  //시드를 주어 매번 랜덤한 값으로 나타냄
+    srand(QTime::currentTime().msecsSinceStartOfDay());  // making random values every times
     int tmp = (rand() % 9) * 100;
     int tmp_license = (license * 111) % 100;
 
@@ -109,6 +103,7 @@ void CustomerInput::clear()
     numberLine->clear();
 }
 
+// Slot connected to Clicked() of InputButton
 void CustomerInput::input()
 {
     int ck = makeCustomerKey();

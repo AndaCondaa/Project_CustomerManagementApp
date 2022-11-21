@@ -1,21 +1,8 @@
-/*
- *  Program Name    :  Admin
- *  File Name       :  customermanager.cpp
- *  Description     :  고객관리 위젯
- *                      -> 등록된 고객 목록 출력
- *                      -> 신규등록 요청 수행
- *                      -> 검색 요청 결과 전송
- *                      -> 정보수정 요청 수행
- *                      -> 주문클래스로 고객정보 전송
-*/
 #include "customermanager.h"
 #include "ui_customermanager.h"
 #include "customerinput.h"
 
 #include <QMessageBox>
-#include <QSqlQuery>
-#include <QSqlQueryModel>
-
 #include <QApplication>
 #include <QTableView>
 #include <QSqlQueryModel>
@@ -29,7 +16,7 @@ CustomerManager::CustomerManager(QWidget *parent) :
     ui(new Ui::CustomerManager)
 {
     QSqlDatabase customerDB = QSqlDatabase::addDatabase("QODBC", "CustomerManager");
-    customerDB.setDatabaseName("Oracle11g");
+    customerDB.setDatabaseName("Oracle11gx64");
     customerDB.setUserName("customer_manager");
     customerDB.setPassword("cm");
     if (!customerDB.open()) {
@@ -41,8 +28,6 @@ CustomerManager::CustomerManager(QWidget *parent) :
     ui->setupUi(this);
     customerInput = new CustomerInput;
     customerQueryModel = new QSqlQueryModel(ui->customerTableView);
-
-//    updateTable();
 
     connect(this, SIGNAL(sendCurrentCK(int)), customerInput, SLOT(recvCurrentCK(int)));
     connect(customerInput, SIGNAL(inputCustomer()), this, SLOT(update()));
@@ -67,11 +52,13 @@ void CustomerManager::on_inputButton_clicked()
     emit sendCurrentCK(currentCK);
 }
 
+// Updating Table when receive signal from CustomerInput
 void CustomerManager::update()
 {
     updateTable();
 }
 
+// Checking Information for Edit
 void CustomerManager::on_customerTableView_clicked(const QModelIndex &index)
 {
     QString ck = customerQueryModel->data(index.siblingAtColumn(0)).toString();
@@ -89,6 +76,7 @@ void CustomerManager::on_customerTableView_clicked(const QModelIndex &index)
     ui->amountEditLine->setText(amount);
 }
 
+// SLot Connected to Clicked() of searchButton
 void CustomerManager::on_searchButton_clicked()
 {
     QSqlDatabase customerDB = QSqlDatabase::database("CustomerManager");
@@ -110,6 +98,7 @@ void CustomerManager::on_searchButton_clicked()
     ui->customerTableView->horizontalHeader()->setStretchLastSection(true);
 }
 
+// Updating CustomerTableView
 void CustomerManager::updateTable()
 {
     QSqlDatabase customerDB = QSqlDatabase::database("CustomerManager");
@@ -127,6 +116,7 @@ void CustomerManager::updateTable()
                 "QHeaderView { font-size: 10pt; color: blue; }");
 }
 
+// SLot Connected to Clicked() of totalButton
 void CustomerManager::on_totalButton_clicked()
 {
     updateTable();
@@ -134,6 +124,7 @@ void CustomerManager::on_totalButton_clicked()
     ui->searchLine->clear();
 }
 
+// SLot Connected to Clicked() of editButton
 void CustomerManager::on_editButton_clicked()
 {
     QSqlDatabase customerDB = QSqlDatabase::database("CustomerManager");
@@ -159,6 +150,7 @@ void CustomerManager::on_editButton_clicked()
         qDebug() << tr("EDTI fail!");
 }
 
+// SLot Connected to Clicked() of clearButton
 void CustomerManager::on_clearButton_clicked()
 {
     ui->ckEditLine->clear();
@@ -169,6 +161,7 @@ void CustomerManager::on_clearButton_clicked()
     ui->amountEditLine->clear();
 }
 
+// SLot Connected to Clicked() of searchButton
 void CustomerManager::on_searchComboBox_currentIndexChanged(int index)
 {
     switch (index) {

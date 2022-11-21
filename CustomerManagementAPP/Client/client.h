@@ -1,9 +1,7 @@
 /*
  *  Program Name    :  Client
  *  File Name       :  client.h
- *  Description     :  고객용 채팅 프로그램
- *                      -> 채팅 기능
- *                      -> 파일 전송 기능
+ *  Description     :  ChatProgram for Cusotmers
 */
 
 
@@ -55,16 +53,16 @@ private slots:
     void sendFile();            // File sending
 
     //Notice
-    void updateNotice();          //
-    void disconnect();
-    void on_outButton_clicked();
+    void updateNotice();        // Updating NoticeTabelView
+    void disconnect();          // Call this function when disconnected from server
 
-    void on_chatButton_clicked();
+    void on_outButton_clicked();        // SLot Connected to Clicked() of OutButton
+    void on_chatButton_clicked();       // SLot Connected to Clicked() of ChatButton
 
 private:
     void closeEvent(QCloseEvent*) override;     // If Client Programs are closed, send data to server
-    void saveLog();
-    void loadLog();
+    void saveLog();                     // Save the log when Chatting is closed
+    void loadLog();                     // Save the log when Chatting is opend
 
     Ui::Client *ui;
     QTcpSocket *clientSocket;		// Socket for Client
@@ -75,8 +73,9 @@ private:
     qint64 byteToWrite;             // File Size per a block
     qint64 totalSize;               // Total File Size
     QByteArray outBlock;            // Block for sending
+
     bool isSent = false;            // Check connection to server
 
-    QSqlQueryModel *noticeModel;
+    QSqlQueryModel *noticeModel;    // Model for NoticeTableView
 };
 #endif // CLIENT_H

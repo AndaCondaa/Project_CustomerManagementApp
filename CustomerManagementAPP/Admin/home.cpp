@@ -1,11 +1,3 @@
-/*
- *  Program Name    :  Admin
- *  File Name       :  home.cpp
- *  Description     :  프로그램의 메인을 구성하는 위젯
- *                      -> 고객, 상품, 주문, 채팅 매니저의 네 가지 세션으로 이동할 수 있는 버튼으로 구성
-*/
-
-
 #include "home.h"
 #include "ui_home.h"
 
@@ -22,20 +14,25 @@ Home::~Home()
     delete ui;
 }
 
+// Change the page of StackedWidget to CustomerManager
 void Home::on_customerButton_clicked()
 {
     emit gotoCutomer();
 }
 
+// Change the page of StackedWidget to ProductManager
 void Home::on_productButton_clicked()
 {
     emit gotoProduct();
 }
 
+// Change the page of StackedWidget to OrderManager
 void Home::on_orderButton_clicked()
 {
     emit gotoOrder();
 }
+
+// Change the page of StackedWidget to ChatManager
 
 void Home::on_chatButton_clicked()
 {

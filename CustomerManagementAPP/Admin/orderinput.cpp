@@ -1,11 +1,3 @@
-/*
- *  Program Name    :  Admin
- *  File Name       :  orderinput.cpp
- *  Description     :  신규 주문을 입력하는 위젯
- *                      -> OrderManager위젯으로 정보를 전달하여, 새로운 주문객체 생성
-*/
-
-
 #include "orderinput.h"
 
 #include <QLabel>
@@ -16,9 +8,6 @@
 #include <QDateEdit>
 #include <QTime>
 #include <QRandomGenerator>
-#include <QSqlQuery>
-#include <QSqlError>
-
 
 #include <QApplication>
 #include <QTableView>
@@ -106,6 +95,7 @@ void OrderInput::clear()
     totalLine->clear();
 }
 
+// Slot connected to Clicked() of InputButton
 void OrderInput::input()
 {
     QString orderNumber = makeOrderNumber();
@@ -142,7 +132,7 @@ void OrderInput::input()
     inputQuery.bindValue(":total", total);
     bool isInput = inputQuery.exec();
 
-    //재고수량 빼기
+    // Updating the number of stocks
     QSqlQuery stock(orderDB);
     stock.prepare("CALL sys.ORDER_STOCK(:pk, :quantity)");
     stock.bindValue(":pk", pk);
@@ -162,6 +152,7 @@ void OrderInput::input()
     }
 }
 
+// Making Unique OrderNumber
 QString OrderInput::makeOrderNumber()
 {
     QString ckIndex = QString::number(orderCkBox->currentText().toInt() / 1000);
@@ -178,6 +169,7 @@ QString OrderInput::makeOrderNumber()
     return orderNumber;
 }
 
+// Get Stock Information from ProductTable
 void OrderInput::getInfo(int idx)
 {
     Q_UNUSED(idx);
@@ -198,6 +190,7 @@ void OrderInput::getInfo(int idx)
     tmp_stock = getStock.value(0).toInt();
 }
 
+// Calculate total price
 void OrderInput::calTotal(QString quantity)
 {
     if (quantity.isEmpty()) {
@@ -208,13 +201,15 @@ void OrderInput::calTotal(QString quantity)
     }
 }
 
+// Fill ComboBox for input
 void OrderInput::fillCombo()
 {
     orderCkBox->clear();
     orderPkBox->clear();
 
     QSqlDatabase orderDB = QSqlDatabase::database("OrderManager");
-    //ck채우기
+
+    // Filling CustomerKey
     QSqlQuery countCK(orderDB);
     countCK.exec("SELECT sys.count_customer FROM dual");
     countCK.first();
@@ -228,7 +223,7 @@ void OrderInput::fillCombo()
         orderCkBox->addItem(getCK.value(0).toString());
     }
 
-    //pk채우기
+    // Filling ProductKey
     QSqlQuery countPK(orderDB);
     countPK.exec("SELECT sys.count_product FROM dual");
     countPK.first();

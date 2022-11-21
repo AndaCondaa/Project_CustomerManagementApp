@@ -1,10 +1,7 @@
 /*
  *  Program Name    :  AdminChat
  *  File Name       :  adminchat.h
- *  Description     :  관리자용 채팅 프로그램
- *                      -> 채팅 기능
- *                      -> 파일 전송 기능
- *                      -> 공지사항 등록 기능
+ *  Description     :  ChatProgram for Admin
 */
 
 #ifndef ADMINCHAT_H
@@ -46,7 +43,7 @@ public:
 
 signals:
     void message(QString);      // Receive the message from server and Open the Chat(new Tab) to the QTabWidget
-    void tabClose();
+    void tabClose();            // Signal for TabClose when Customer disconnected from server
 
 private slots:
     // Chat
@@ -58,20 +55,19 @@ private slots:
 
     // File
     void goOnSend(qint64);              // Seperate file for sending
+    void sendFile();                    // File Sending
+    void disconnect();                  // Call this function when disconnected from server
 
     //Notice
     void on_noticeButton_clicked();     // Append new notice
 
-    void sendFile();
-    void disconnect();
-
 private:
     void closeEvent(QCloseEvent*) override;     // If Client Programs are closed, send data to server
-    void updateCustomerList();
-    void updateNotice();
-    void insertNotice();
-    void saveLog();
-    void loadLog();
+    void updateCustomerList();          // Updating CustomerTableView
+    void updateNotice();                // Updating NoticeTableView
+    void insertNotice();                // Inserting new Notice
+    void saveLog();                     // Save the log when Chatting is closed
+    void loadLog();                     // Load the log when Chatting is opend
 
     Ui::AdminChat *ui;
 
@@ -85,10 +81,10 @@ private:
     QByteArray outBlock;            // Block for sending
     bool isSent = false;            // Check connection to server
 
-    QSqlQueryModel *customerModel;
-    QSqlQueryModel *noticeModel;
+    QSqlQueryModel *customerModel;      // Model for CustomerTableView
+    QSqlQueryModel *noticeModel;        // Model for NoticeTableView
 
-    QVector<QString> waitVector;
-    QVector<QString> chattingVector;
+    QVector<QString> waitVector;        // Waitting Customer's row number List in Model
+    QVector<QString> chattingVector;    // Chatting Customer's row number List in Model
 };
 #endif // ADMINCHAT_H

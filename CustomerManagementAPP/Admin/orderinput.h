@@ -14,7 +14,6 @@ class QLineEdit;
 class QPushButton;
 class QComboBox;
 class QDateEdit;
-class QStandardItemModel;
 
 class OrderInput : public QWidget
 {
@@ -22,19 +21,19 @@ class OrderInput : public QWidget
 public:
     explicit OrderInput(QWidget *parent = nullptr);
 
-    void fillCombo();
+    void fillCombo();           // Fill ComboBox for input
 
 signals:
-    void inputOrder(int);
+    void inputOrder(int);       // Send Signal to CustomerManager when suceed inputting
 
 private slots:
     void clear();               // Slot connected to Clicked() of ClearButton
-    void input();
-    void getInfo(int);
-    void calTotal(QString);
+    void input();               // Slot connected to Clicked() of InputButton
+    void getInfo(int);          // Get Stock Information from ProductTable
+    void calTotal(QString);     // Calculate total price
 
 private:
-    QString makeOrderNumber();
+    QString makeOrderNumber();      // Making Unique OrderNumber
 
     // Variables for setting GUI
     QLabel *orderNum;
@@ -54,8 +53,8 @@ private:
     QPushButton *clearButton;
     QPushButton *inputButton;
 
-    int tmp_price;
-    int tmp_stock;
+    int tmp_price;            // Price of selected product
+    int tmp_stock;            // Stocks of selected product
 };
 
 #endif // ORDERINPUT_H

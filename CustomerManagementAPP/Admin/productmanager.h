@@ -24,23 +24,22 @@ public:
     explicit ProductManager(QWidget *parent = nullptr);
     ~ProductManager();
 
-    void updateTable();
+    void updateTable();                     // Updating ProductTableView
 
 signals:
-    void sendCurrentPK(int);
-    void sendProductKey(QVector<int>);
-    void sendResultPrice(QStringList);
+    void sendCurrentPK(int);                // Sending Current ProductKey to ProductInpute
+    void sendResultPrice(QStringList);      // Sending Price to OrderManager
 
 private slots:
-    void on_inputButton_clicked();              // Show the ProductInput Widget
-    void update();
-    void on_totalButton_clicked();
-    void on_searchComboBox_currentIndexChanged(int index);
-    void on_productTableView_clicked(const QModelIndex &index);
-    void on_searchButton_clicked();
-    void on_clearButton_clicked();
-    void on_editButton_clicked();
-    void recvPk(QString);           //가격 체크할 pk받기 from order
+    void on_inputButton_clicked();          // Show the ProductInput Widget
+    void update();                          // Updating Table when receive signal from ProductInput
+    void on_totalButton_clicked();          // SLot Connected to Clicked() of TotalButton
+    void on_searchComboBox_currentIndexChanged(int index);          // Changing InputMasks
+    void on_productTableView_clicked(const QModelIndex &index);     // Checking Information for Edit
+    void on_searchButton_clicked();         // SLot Connected to Clicked() of SearchButton
+    void on_clearButton_clicked();          // SLot Connected to Clicked() of ClearButton
+    void on_editButton_clicked();           // SLot Connected to Clicked() of EditButton
+    void recvPk(QString);                   // Receive ProductKey from Order for checking price
 
 private:
 
@@ -48,9 +47,9 @@ private:
 
     ProductInput *productInput;             // Objects of Class ProductInput for function what input
 
-    QSqlQueryModel *productQueryModel;
+    QSqlQueryModel *productQueryModel;      // Model for ProductTableView
 
-    QVector<int> stockOutVector;
+    QVector<int> stockOutVector;            // Products' row number List in Model
 };
 
 #endif // PRODUCTMANAGER_H

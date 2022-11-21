@@ -1,10 +1,3 @@
-/*
- *  Program Name    :  Admin
- *  File Name       :  mainwindow.cpp
- *  Description     :  프로그램 전체 MainWindow
-*/
-
-
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -13,16 +6,6 @@
 #include "productmanager.h"
 #include "ordermanager.h"
 #include "chatmanager.h"
-
-//For SQL
-#include <QApplication>
-#include <QTableView>
-#include <QSqlQueryModel>
-#include <QSqlDatabase>
-#include <QSqlQuery>
-#include <QSqlError>
-#include <QDebug>
-
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)

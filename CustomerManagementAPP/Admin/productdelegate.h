@@ -15,14 +15,17 @@
 class ProductDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
+
 public:
     explicit ProductDelegate(QObject *parent = 0);
 
     // background color manipulation
+    void setOutVector(QVector<int>);            // Set new 'Out of Stock' List
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-    void setOutVector(QVector<int>);
+                                                // Virtual Function for painting background
 
-    QVector<int> stockOutVector;
+private:
+    QVector<int> stockOutVector;                // Products' row number List in Model
 };
 
 #endif // PRODUCTDELEGATE_H

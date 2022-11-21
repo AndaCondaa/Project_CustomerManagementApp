@@ -1,12 +1,3 @@
-/*
- *  Program Name    :  Client
- *  File Name       :  client.cpp
- *  Description     :  고객용 채팅 프로그램
- *                      -> 채팅 기능
- *                      -> 파일 전송 기능
-*/
-
-
 #include "client.h"
 #include "ui_client.h"
 
@@ -23,7 +14,6 @@
 #include <QFileInfo>
 #include <QProgressDialog>
 
-#include <QApplication>
 #include <QTableView>
 #include <QSqlQueryModel>
 #include <QSqlDatabase>
@@ -251,8 +241,6 @@ void Client::sendFile()
         byteToWrite = totalSize = file->size(); // Data remained yet
         loadSize = 1024; // Size of data per a block
 
-
-
         QDataStream out(&outBlock, QIODevice::WriteOnly);
         out << qint64(0) << qint64(0) << filename << ui->customerKey->text();
 
@@ -271,7 +259,7 @@ void Client::sendFile()
     qDebug() << QString("Sending file %1").arg(filename);
 }
 
-
+// Updating NoticeTabelView
 void Client::updateNotice()
 {
     QSqlDatabase chatDB = QSqlDatabase::database("Client");
@@ -292,6 +280,7 @@ void Client::closeEvent(QCloseEvent*)
     disconnect();
 }
 
+// Save the log when Chatting is closed
 void Client::saveLog()
 {
     QFile file(QString("../Client/Log/log_%1.txt").arg(ui->customerKey->text()));
@@ -303,6 +292,7 @@ void Client::saveLog()
     file.close( );
 }
 
+// Save the log when Chatting is opend
 void Client::loadLog()
 {
     QFile file(QString("../Client/Log/log_%1.txt").arg(ui->customerKey->text()));
@@ -314,6 +304,7 @@ void Client::loadLog()
     file.close( );
 }
 
+// Call this function when disconnected from server
 void Client::disconnect()
 {
     saveLog();
@@ -325,6 +316,7 @@ void Client::disconnect()
     clientSocket->deleteLater();
 }
 
+// SLot Connected to Clicked() of OutButton
 void Client::on_outButton_clicked()
 {
     disconnect();
@@ -338,6 +330,7 @@ void Client::on_outButton_clicked()
     setWindowTitle("LOG IN");
 }
 
+// SLot Connected to Clicked() of ChatButton
 void Client::on_chatButton_clicked()
 {
     if (ui->chatButton->text() == "Chat In") {

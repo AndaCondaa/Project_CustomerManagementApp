@@ -1,10 +1,3 @@
-/*
- *  Program Name    :  Admin
- *  File Name       :  logsavethread.cpp
- *  Description     :  채팅 로그 기록을 주기적으로 저장하는 쓰레드
-*/
-
-
 #include "logsavethread.h"
 
 #include <QTreeWidgetItem>
@@ -23,7 +16,7 @@ void LogSaveThread::run()
 {
     Q_FOREVER {
         saveData();
-        sleep(60);      // 1분마다 저장
+        sleep(60);      // 60senconds
     }
 }
 

@@ -15,13 +15,13 @@ public:
     explicit Delegate(QObject *parent = 0);
 
     // background color manipulation
+    void setWaitVector(QVector<int>);               // Set new Waitting List
+    void setChattingVector(QVector<int>);           // Set new Chatting List
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-    void connect(QModelIndex &index);
-    void setWaitVector(QVector<int>);
-    void setChattingVector(QVector<int>);
+                                                    // Virtual Function for painting background
 
-    QVector<int> waitVector;
-    QVector<int> chattingVector;
+    QVector<int> waitVector;                // Waitting Customer's row number List in Model
+    QVector<int> chattingVector;            // Chatting Customer's row number List in Model
 };
 
 #endif // DELEGATE_H

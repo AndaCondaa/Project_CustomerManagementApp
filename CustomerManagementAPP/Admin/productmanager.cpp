@@ -1,24 +1,9 @@
-/*
- *  Program Name    :  Admin
- *  File Name       :  productmanager.cpp
- *  Description     :  상품관리 위젯
- *                      -> 등록된 상품 목록 출력
- *                      -> 신규등록 요청 수행
- *                      -> 검색 요청 결과 전송
- *                      -> 정보수정 요청 수행
- *                      -> 주문클래스로 상품정보 전송
-*/
-
-
 #include "productmanager.h"
 #include "ui_productmanager.h"
 #include "productinput.h"
 #include "productdelegate.h"
 
 #include <QMessageBox>
-#include <QSqlQuery>
-#include <QSqlQueryModel>
-
 #include <QApplication>
 #include <QTableView>
 #include <QSqlQueryModel>
@@ -34,7 +19,7 @@ ProductManager::ProductManager(QWidget *parent) :
     ui->setupUi(this);
 
     QSqlDatabase productDB = QSqlDatabase::addDatabase("QODBC", "ProductManager");
-    productDB.setDatabaseName("oracle11g");
+    productDB.setDatabaseName("Oracle11gx64");
     productDB.setUserName("product_manager");
     productDB.setPassword("pm");
     if (!productDB.open()) {
@@ -46,12 +31,10 @@ ProductManager::ProductManager(QWidget *parent) :
     productInput = new ProductInput;
     productQueryModel = new QSqlQueryModel(ui->productTableView);
 
-//    updateTable();
-
     connect(this, SIGNAL(sendCurrentPK(int)), productInput, SLOT(recvCurrentPK(int)));
     connect(productInput, SIGNAL(inputProduct()), this, SLOT(update()));
 
-    // 타입콤보박스 세팅 -> 타입테이블에서 가져오기
+    // Setting the TypeComboBox by getting information from product_type(table)
     QSqlQuery query(productDB);
     query.exec("SELECT * FROM sys.PRODUCT_TYPE ORDER BY TYPE_ID");
     while (query.next())
@@ -69,14 +52,7 @@ ProductManager::~ProductManager()
     }
 }
 
-// Show the ProductInput Widget
-void ProductManager::on_inputButton_clicked()
-{
-    productInput->show();
-    int currentPK = productQueryModel->index(productQueryModel->rowCount() - 1, 0).data().toInt();
-    emit sendCurrentPK(currentPK);
-}
-
+// Updating ProductTableView
 void ProductManager::updateTable()
 {
     QSqlDatabase productDB = QSqlDatabase::database("ProductManager");
@@ -104,11 +80,21 @@ void ProductManager::updateTable()
     ui->productTableView->setItemDelegateForColumn(4, delegate);
 }
 
+// Show the ProductInput Widget
+void ProductManager::on_inputButton_clicked()
+{
+    productInput->show();
+    int currentPK = productQueryModel->index(productQueryModel->rowCount() - 1, 0).data().toInt();
+    emit sendCurrentPK(currentPK);
+}
+
+// Updating Table when receive signal from ProductInput
 void ProductManager::update()
 {
     updateTable();
 }
 
+// SLot Connected to Clicked() of TotalButton
 void ProductManager::on_totalButton_clicked()
 {
     updateTable();
@@ -116,6 +102,7 @@ void ProductManager::on_totalButton_clicked()
     ui->searchLine->clear();
 }
 
+// Changing InputMasks
 void ProductManager::on_searchComboBox_currentIndexChanged(int index)
 {
     switch (index) {
@@ -142,6 +129,7 @@ void ProductManager::on_searchComboBox_currentIndexChanged(int index)
     }
 }
 
+// Checking Information for Edit
 void ProductManager::on_productTableView_clicked(const QModelIndex &index)
 {
     QString pk = productQueryModel->data(index.siblingAtColumn(0)).toString();
@@ -157,6 +145,7 @@ void ProductManager::on_productTableView_clicked(const QModelIndex &index)
     ui->stockEditLine->setText(stock);
 }
 
+// SLot Connected to Clicked() of SearchButton
 void ProductManager::on_searchButton_clicked()
 {
     if (!ui->searchLine->text().length()) {
@@ -179,6 +168,7 @@ void ProductManager::on_searchButton_clicked()
 
 }
 
+// SLot Connected to Clicked() of ClearButton
 void ProductManager::on_clearButton_clicked()
 {
     ui->pkEditLine->clear();
@@ -188,6 +178,7 @@ void ProductManager::on_clearButton_clicked()
     ui->stockEditLine->clear();
 }
 
+// SLot Connected to Clicked() of EditButton
 void ProductManager::on_editButton_clicked()
 {
     QSqlDatabase productDB = QSqlDatabase::database("ProductManager");
@@ -212,6 +203,7 @@ void ProductManager::on_editButton_clicked()
         qDebug() << tr("EDTI fail!");
 }
 
+// Receive ProductKey from Order for checking price
 void ProductManager::recvPk(QString pk)
 {
     QModelIndexList index = productQueryModel->match(productQueryModel->index(0, 0), Qt::EditRole, pk, 1, Qt::MatchFlag(Qt::MatchCaseSensitive));

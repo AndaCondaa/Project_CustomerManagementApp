@@ -5,16 +5,19 @@ ChatDelegate::ChatDelegate(QObject *parent)
 {
 }
 
+// Set new Waitting List
 void ChatDelegate::setWaitVector(QVector<int> vector)
 {
     waitVector = vector;
 }
 
+// Set new Chatting List
 void ChatDelegate::setChattingVector(QVector<int> vector)
 {
     chattingVector = vector;
 }
 
+// Virtual Function for painting background
 void ChatDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     QStyleOptionViewItem op(option);

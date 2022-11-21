@@ -1,10 +1,3 @@
-/*
- *  Program Name    :  Admin
- *  File Name       :  productinput.cpp
- *  Description     :  신규 상품을 입력하는 위젯
- *                      -> ProductManager위젯으로 정보를 전달하여, 새로운 상품객체 생성
-*/
-
 #include "productinput.h"
 
 #include <QLabel>
@@ -14,7 +7,6 @@
 #include <QTime>
 #include <QRandomGenerator>
 #include <QSqlQuery>
-#include <QSqlRecord>
 #include <QSqlError>
 
 ProductInput::ProductInput(QWidget *parent) :
@@ -73,7 +65,7 @@ ProductInput::ProductInput(QWidget *parent) :
     connect(clearButton, SIGNAL(clicked()), SLOT(clear()));
     connect(inputButton, SIGNAL(clicked()), SLOT(input()));
 
-    // 타입콤보박스 세팅 -> 타입테이블에서 가져오기
+    // Setting the TypeComboBox by getting information from product_type(table)
     QSqlDatabase productDB = QSqlDatabase::database("ProductManager");
     QSqlQuery query(productDB);
     query.exec("SELECT * FROM sys.PRODUCT_TYPE ORDER BY TYPE_ID");
@@ -81,15 +73,7 @@ ProductInput::ProductInput(QWidget *parent) :
          typeBox->addItem(query.value(1).toString());
 }
 
-// Slot connected to Clicked() of ClearButton
-void ProductInput::clear()
-{
-    typeBox->setCurrentIndex(0);
-    nameLine->clear();
-    priceLine->clear();
-    stockLine->clear();
-}
-
+// Receive current ProductKey for setting new ProductKey
 void ProductInput::recvCurrentPK(int pk)
 {
     index = pk / 100;
@@ -97,11 +81,12 @@ void ProductInput::recvCurrentPK(int pk)
         index = 9;
 }
 
+// Making new ProductKey by combining TypeID & Time & Index
 int ProductInput::makeProductKey()
 {
     int typeID = typeBox->currentIndex() + 1;
 
-    srand(QTime::currentTime().msecsSinceStartOfDay());     //시드를 주어 매번 랜덤한 값으로 나타냄
+    srand(QTime::currentTime().msecsSinceStartOfDay());     // Making random values every times
     int tmp = rand() % 9;
 
     index ++;
@@ -110,6 +95,7 @@ int ProductInput::makeProductKey()
     return PK;
 }
 
+// Slot connected to Clicked() of InputButton
 void ProductInput::input()
 {
     int pk = makeProductKey();
@@ -140,3 +126,13 @@ void ProductInput::input()
             qDebug() << "컬럼 데이터 초과 에러";
     }
 }
+
+// Slot connected to Clicked() of ClearButton
+void ProductInput::clear()
+{
+    typeBox->setCurrentIndex(0);
+    nameLine->clear();
+    priceLine->clear();
+    stockLine->clear();
+}
+

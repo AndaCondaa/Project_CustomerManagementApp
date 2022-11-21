@@ -1,13 +1,3 @@
-/*
- *  Program Name    :  Admin
- *  File Name       :  chatmanager.cpp
- *  Description     :  채팅관리 클래스
- *                      -> 서버 구성
- *                      -> 로그 기록 출력
- *                      -> 공지사항 저장
- *                      -> 고객의 서버 접속상태 출력
-*/
-
 #include "chatmanager.h"
 #include "ui_chatmanager.h"
 #include "logsavethread.h"
@@ -79,7 +69,7 @@ ChatManager::ChatManager(QWidget *parent) :
     qDebug() << tr("Server Open");
 
     QSqlDatabase chatDB = QSqlDatabase::addDatabase("QODBC", "ChatManager");
-    chatDB.setDatabaseName("Oracle11g");
+    chatDB.setDatabaseName("Oracle11gx64");
     chatDB.setUserName("chat_manager");
     chatDB.setPassword("chat");
     if (!chatDB.open()) {
@@ -173,13 +163,13 @@ void ChatManager::receiveData()
         QModelIndexList indexes = customerModel->match(customerModel->index(0, 0), Qt::DisplayRole, ckName[0], 1, Qt::MatchFlags(Qt::MatchCaseSensitive));
 
         // Case of fail
-        // 이미 접속한 사람인 경우
+        // Case of Already connected customer
         if (customerChatSocketHash.contains(ckName[0]) || customerWaitSocketHash.contains(ckName[0])) {
             sendProtocol(receiveSocket, Sign_In_Fail, data);
         } else if (indexes.empty()) {   //ck가 없는 경우
             sendProtocol(receiveSocket, Sign_In_Fail, "fail");
             return;
-        } else {    // ck는 맞지만,이름이 틀린 경우
+        } else {    // Case of wrong name
             foreach (auto idx, indexes) {
                 if (ckName[1] != customerModel->data(idx.siblingAtColumn(1)).toString()) {
                     sendProtocol(receiveSocket, Sign_In_Fail, "fail");
@@ -188,10 +178,10 @@ void ChatManager::receiveData()
             }
         }
 
-        // 로그인 성공 시
+        // Connection succeed
         customerSocketList.append(receiveSocket);                  // Insert socket into waiting_list
         customerWaitSocketHash.insert(ckName[0], receiveSocket);
-        sendProtocol(receiveSocket, Sign_In, data);        //로그인한 해당 고객에게 성공여부 전달
+        sendProtocol(receiveSocket, Sign_In, data);        // Return to customer about success
         if (chatAdminSocket != nullptr)
             sendProtocol(chatAdminSocket, Sign_In, data);
         updateCustomerList();
@@ -204,8 +194,8 @@ void ChatManager::receiveData()
 void ChatManager::receiveFromAdmin(QTcpSocket* receiveSocket)
 {
 
-    Protocol_Type type;       // 채팅의 목적
-    char data[1020];         // 전송되는 메시지/데이터
+    Protocol_Type type;
+    char data[1020];
     memset(data, 0, 1020);
 
     QByteArray bytearray = receiveSocket->read(1024);
@@ -264,7 +254,7 @@ void ChatManager::receiveFromAdmin(QTcpSocket* receiveSocket)
     } // case Notice
     case Close: {
         for (auto i = customerChatSocketHash.begin(); i != customerChatSocketHash.end(); i++) {
-            sendProtocol(i.value(), Close, "Admin Close"); //채팅중이던 고객에게 Admin 종료 알려주기
+            sendProtocol(i.value(), Close, "Admin Close"); // Notify Customer that Admin disconnected
         }
         receiveSocket->deleteLater();
         chatAdminSocket = nullptr;
@@ -276,8 +266,8 @@ void ChatManager::receiveFromAdmin(QTcpSocket* receiveSocket)
 // Receive Data from Client
 void ChatManager::receiveFromClient(QTcpSocket* receiveSocket)
 {
-    Protocol_Type type;       // 채팅의 목적
-    char data[1020];        // 전송되는 메시지/데이터
+    Protocol_Type type;
+    char data[1020];
     memset(data, 0, 1020);
 
     QByteArray bytearray = receiveSocket->read(1024);
@@ -293,21 +283,20 @@ void ChatManager::receiveFromClient(QTcpSocket* receiveSocket)
             if (customerChatSocketHash.count() < 2) {
                 customerWaitSocketHash.remove(data);
                 customerChatSocketHash.insert(data, receiveSocket);
-                isIn = true;          // 연결가능한 AdminSocket 있을 경우
+                isIn = true;          // When There is AdminSocket for connection
             }
         }
 
-        if (isIn) {   // 연결가능한 AdminChat이 있어서 연결된 경우
+        if (isIn) {   // Case of connection success
             type = In;
             QString clientMsg = "<font color=orange><b>\n Hello! This is Osstem Implant! <b></font>";
-            sendProtocol(chatAdminSocket, type, data);    //ChatAdmin에게 전송
+            sendProtocol(chatAdminSocket, type, data);    // To ChatAdmin
             sendProtocol(receiveSocket, type, clientMsg);
             updateCustomerList();
         } else {
             type = In_Fail;
             sendProtocol(receiveSocket, type, "Fail");
         }
-                                   //해당 Client에게 전송
         break;
     }
     case Message: {
@@ -379,7 +368,7 @@ void ChatManager::readClient()
         QString currentFileName = info.fileName();
         file = new QFile("../Admin/data/file/" + currentFileName);
         file->open(QFile::WriteOnly);
-    } else {                    // 파일 데이터를 읽어서 저장
+    } else {
         if(checkFileName == fileName) return;
 
         inBlock = receivedSocket->readAll();
@@ -389,10 +378,10 @@ void ChatManager::readClient()
         file->flush();
     }
     progressDialog->setValue(byteReceived);
-    if (byteReceived == totalSize) {        /* 파일의 다 읽으면 QFile 객체를 닫고 삭제 */
+    if (byteReceived == totalSize) {        // file sending is done
         qDebug() << QString("%1 receive completed").arg(fileName);
 
-        //파일 디비에 저장하는 코드 작성
+        // Insert file information into file_table
         QList<QString> list = fileName.split("/");      // To save only File name without path
         QSqlDatabase chatDB = QSqlDatabase::database("ChatManager");
         QSqlQuery inputFile(chatDB);
@@ -412,6 +401,7 @@ void ChatManager::readClient()
     }
 }
 
+// Update NoticeTableView
 void ChatManager::updateNotice()
 {
     QSqlDatabase chatDB = QSqlDatabase::database("ChatManager");
@@ -424,6 +414,7 @@ void ChatManager::updateNotice()
                 "QHeaderView { font-size: 10pt; color: blue; }");
 }
 
+// Update CustomerTableView
 void ChatManager::updateCustomerList()
 {
     QSqlDatabase chatDB = QSqlDatabase::database("ChatManager");
@@ -458,6 +449,7 @@ void ChatManager::updateCustomerList()
     ui->customerTableView->setItemDelegateForColumn(1, delegate);
 }
 
+// Update FileTableView
 void ChatManager::updateFileList()
 {
     QSqlDatabase chatDB = QSqlDatabase::database("ChatManager");

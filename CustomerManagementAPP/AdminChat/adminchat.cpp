@@ -1,14 +1,3 @@
-/*
- *  Program Name    :  AdminChat
- *  File Name       :  adminchat.cpp
- *  Description     :  관리자용 채팅 프로그램
- *                      -> 채팅 기능
- *                      -> 파일 전송 기능
- *                      -> 공지사항 등록 기능
-*/
-
-
-
 #include "adminchat.h"
 #include "ui_adminchat.h"
 #include "delegate.h"
@@ -25,7 +14,6 @@
 #include <QProgressDialog>
 #include <QTextEdit>
 
-#include <QApplication>
 #include <QTableView>
 #include <QSqlQueryModel>
 #include <QSqlDatabase>
@@ -126,11 +114,9 @@ void AdminChat::receiveData()
         if (((QString)data).split("||")[0].toInt() > 0) {
             int count = ((QString)data).split("||")[0].toInt();
             QString ckList = ((QString)data).split("||")[1];
-
             for (int i = 0; i < count; i++) {
                 waitVector.append(ckList.split("|")[i]);
             }
-
         }
         updateNotice();
         updateCustomerList();
@@ -223,11 +209,9 @@ void AdminChat::chatOpen(QString ck)
 
     connect(sendButton, &QPushButton::clicked, chat,
             [=](){
-        qDebug("%d",__LINE__);
         if (!inputLine->text().length()) return;
-        qDebug("%d",__LINE__);
         QString tabText = ui->chatArea->tabText(ui->chatArea->currentIndex());
-        QString msg = tabText.split("_")[0] + "||" +        //CK_NAME형태(TabTitle)에서 CK만 보내기
+        QString msg = tabText.split("_")[0] + "||" +
                 "<font color=orange><b> OSSTEM IMPLANT : </b></font>" + inputLine->text();
         sendProtocol(Message, msg);
         message->append("<font color=orange><b> ME : </b></font>" + inputLine->text());
@@ -339,6 +323,7 @@ void AdminChat::on_noticeButton_clicked()
     ui->noticeInput->clear();
 }
 
+// File Sending
 void AdminChat::sendFile()
 {
     loadSize = 0;
@@ -380,6 +365,7 @@ void AdminChat::sendFile()
     qDebug() << QString("Sending file %1").arg(filename);
 }
 
+// Updating NoticeTableView
 void AdminChat::updateNotice()
 {
     QSqlDatabase chatDB = QSqlDatabase::database("Chat_Admin");
@@ -392,6 +378,7 @@ void AdminChat::updateNotice()
                 "QHeaderView { font-size: 10pt; color: blue; }");
 }
 
+// Inserting new Notice
 void AdminChat::insertNotice()
 {
     QSqlDatabase chatDB = QSqlDatabase::database("Chat_Admin");
@@ -404,11 +391,13 @@ void AdminChat::insertNotice()
     sendProtocol(Notice, "notice");
 }
 
+// If Client Programs are closed, send data to server
 void AdminChat::closeEvent(QCloseEvent*)
 {
     disconnect();
 }
 
+// Call this function when disconnected from server
 void AdminChat::disconnect()
 {
     sendProtocol(Close, ui->idLine->text().toStdString().data());
@@ -419,7 +408,7 @@ void AdminChat::disconnect()
     adminSocket->deleteLater();
 }
 
-
+// Updating CustomerTableView
 void AdminChat::updateCustomerList()
 {
     QSqlDatabase chatAdminDB = QSqlDatabase::database("Chat_Admin");
